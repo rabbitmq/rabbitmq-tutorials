@@ -145,13 +145,13 @@ The first thing we need to do is to connect to RabbitMQ server.
 4
 5
 6
-7</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="c">#!/usr/bin/env python</span>
-    <span class="k">import</span> <span class="nn">pika</span>
+7</code></pre></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="k">import</span> <span class="nn">pika</span>
 
-    <span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">AsyncoreConnection</span><span class="p">(</span><span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span>
-                   <span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span>
-                   <span class="n">credentials</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">PlainCredentials</span><span class="p">(</span><span class="s">&#39;guest&#39;</span><span class="p">,</span> <span class="s">&#39;guest&#39;</span><span class="p">))</span>
-    <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">AsyncoreConnection</span><span class="p">(</span><span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span>
+               <span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span>
+               <span class="n">credentials</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">PlainCredentials</span><span class="p">(</span><span class="s">&#39;guest&#39;</span><span class="p">,</span> <span class="s">&#39;guest&#39;</span><span class="p">))</span>
+<span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
 </pre></div>
 </td></tr></table>
 
@@ -161,7 +161,7 @@ RabbitMQ will just trash the message if can't deliver it. So, we need to
 create a queue to which the message will be delivered. Let's name this queue
 _test_:
 
-<table class="highlighttable"><tr><td class="linenos"><pre><code class="python">8</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+<table class="highlighttable"><tr><td class="linenos"><pre><code class="python">8</code></pre></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
@@ -172,10 +172,10 @@ a string _Hello World!_. We are going to send it to our _test_ queue:
 <table class="highlighttable"><tr><td class="linenos"><pre><code class="python"> 9
 10
 11
-12</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
-                          <span class="n">routing_key</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
-                          <span class="n">body</span><span class="o">=</span><span class="s">&#39;Hello World!&#39;</span><span class="p">)</span>
-    <span class="k">print</span> <span class="s">&quot; [x] Sent &#39;Hello World!&#39;&quot;</span>
+12</code></pre></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+                      <span class="n">routing_key</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
+                      <span class="n">body</span><span class="o">=</span><span class="s">&#39;Hello World!&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot; [x] Sent &#39;Hello World!&#39;&quot;</span>
 </pre></div>
 </td></tr></table>
 
@@ -204,7 +204,7 @@ Just like before, in the beginning we must make sure that the
 queue exists. Creating a queue using `queue_declare` is idempotent - you can
 run the command as many times you'd like, and only one queue will be created.
 
-<table class="highlighttable"><tr><td class="linenos"><pre><code class="python">8</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+<table class="highlighttable"><tr><td class="linenos"><pre><code class="python">8</code></pre></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
@@ -214,8 +214,8 @@ a message, a `callback` function is called. In our case
 this function will print on the screen the contents of the message.
 
 <table class="highlighttable"><tr><td class="linenos"><pre><code class="python"> 9
-10</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
-        <span class="k">print</span> <span class="s">&quot; [x] Received </span><span class="si">%.20r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">body</span><span class="p">,)</span>
+10</code></pre></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&quot; [x] Received </span><span class="si">%.20r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">body</span><span class="p">,)</span>
 </pre></div>
 </td></tr></table>
 
@@ -225,9 +225,9 @@ interested in messages from our _test_ queue:
 
 <table class="highlighttable"><tr><td class="linenos"><pre><code class="python">11
 12
-13</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="n">channel</span><span class="o">.</span><span class="n">basic_consume</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span>
-                          <span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
-                          <span class="n">no_ack</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+13</code></pre></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">basic_consume</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span>
+                      <span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
+                      <span class="n">no_ack</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
@@ -236,8 +236,8 @@ And finally, we enter never-ending loop that waits for data and runs callbacks
 whenever necessary.
 
 <table class="highlighttable"><tr><td class="linenos"><pre><code class="python">14
-15</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="k">print</span> <span class="s">&#39; [*] Waiting for messages. To exit press CTRL+C&#39;</span>
-    <span class="n">pika</span><span class="o">.</span><span class="n">asyncore_loop</span><span class="p">()</span>
+15</code></pre></td><td class="code"><div class="highlight"><pre><span class="k">print</span> <span class="s">&#39; [*] Waiting for messages. To exit press CTRL+C&#39;</span>
+<span class="n">pika</span><span class="o">.</span><span class="n">asyncore_loop</span><span class="p">()</span>
 </pre></div>
 </td></tr></table>
 
