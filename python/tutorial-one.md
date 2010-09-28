@@ -1,22 +1,14 @@
-<!---
-title: Learning RabbitMQ, part 1 (Hello world!)
-layout: post
---->
 
 Learning RabbitMQ, part 1 ("Hello world!")
 ==========================================
 
-<!--
-{% dot -Gsize="10,1.3" -Grankdir=LR %}
-digraph G {
-    P1 [label="P", {{ site.dotstyle.producer }}];
-    Q1 [label="{<s>||||<e>}", {{ site.dotstyle.queue }}];
-    C1 [label="C", {{ site.dotstyle.consumer }}];
 
-    P1 -> Q1 -> C1;
-}
-{% enddot %}
--->
+
+<center><div class="dot_bitmap">
+<img src="../../raw/master/_img/f102830d0b42138245d6a95010dad710.png" alt="Dot graph" width="384" height="59" />
+</div></center>
+
+
 
 
 Throughout this tutorial, we'll teach you the basic concepts required for
@@ -37,18 +29,12 @@ If you haven't installed it yet you can follow the [installation instructions](h
     localhost [127.0.0.1] 5672 (tcp/amqp) open
 
 
-<!--
-<div class="info" markdown="1">
--->
 
-#### Where to get help
+> #### Where to get help
+>
+> If you're having trouble going through this tutorial you can post a message to
+> [rabbitmq-discuss mailing list](https://lists.rabbitmq.com/cgi-bin/mailman/listinfo/rabbitmq-discuss).
 
-If you’re having trouble going through this tutorial you can post a message to
-[rabbitmq-discuss mailing list](https://lists.rabbitmq.com/cgi-bin/mailman/listinfo/rabbitmq-discuss).
-
-<!--
-</div>
--->
 
 Introduction
 ------------
@@ -67,30 +53,29 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
 
  * _Producing_ means nothing more than sending. A program that sends messages
    is a _producer_.
-<!--
-    {% dot -Gsize="10,0.3" -Grankdir=LR%}
-   digraph G {
-       P1 [label="P", {{ site.dotstyle.producer }}];
-   }
-   {% enddot %}
--->
+
+    
+<center><div class="dot_bitmap">
+<img src="../../raw/master/_img/5a5fa54ed009ea0185a5f0131d1faff6.png" alt="Dot graph" width="41" height="29" />
+</div></center>
+
+
  * _A queue_ is the name for a mailbox. It lives inside RabbitMQ.
-    {% dot -Gsize="10,0.3" -Grankdir=LR%}
-<!--
-   digraph G {
-       Q1 [label="{<s>||||<e>}", {{ site.dotstyle.queue }}];
-   }
-   {% enddot %}
--->
+    
+<center><div class="dot_bitmap">
+<img src="../../raw/master/_img/9bdb70c65ab8b2aa1f6b0b85c2931a54.png" alt="Dot graph" width="72" height="29" />
+</div></center>
+
+
  * _Consuming_ has a simmilar meaning to receiving. _Consumer_ is a program
    that mostly waits to receive messages.
-<!--
-    {% dot -Gsize="10,0.3" -Grankdir=LR %}
-   digraph G {
-       C1 [label="C", {{ site.dotstyle.consumer }}];
-   }
-   {% enddot %}
--->
+
+    
+<center><div class="dot_bitmap">
+<img src="../../raw/master/_img/c81197642d0b8ac05c7e7e89b65f2806.png" alt="Dot graph" width="41" height="29" />
+</div></center>
+
+
 
 Hello World!
 ------------
@@ -99,129 +84,113 @@ Our first "Hello world" won't be too complex - let's send a message, receive
 it and print it on the screen. To do so we need two programs, well, one that
 sends a message and one that receives and prints it.
 
-<!--
-Our overall design will look like:
-{% dot -Gsize="10,0.8" -Grankdir=LR %}
-digraph G {
-    P1 [label="P", {{ site.dotstyle.producer }}];
-    Q1 [label="{<s>||||<e>}", {{ site.dotstyle.queue }}];
-    C1 [label="C", {{ site.dotstyle.consumer }}];
 
-    P1 -> Q1 -> C1;
-}
-{% enddot %}
--->
+Our overall design will look like:
+
+<center><div class="dot_bitmap">
+<img src="../../raw/master/_img/3314f4be42ba3db9b161e564def3daca.png" alt="Dot graph" width="384" height="59" />
+</div></center>
+
+
 
 
 Creating a program
 ------------------
 
-<!--
-<div class="info" markdown="1">
--->
-#### RabbitMQ libraries
 
-RabbitMQ speaks AMQP protocol. To use Rabbit you'll need a library that
-understands the same protocol as Rabbit. There is a choice of libraries
-for almost every programming language. Python it's not different and there is
-a bunch of libraries to choose from:
- * [py-amqplib](http://barryp.org/software/py-amqplib/)
- * [txAMQP](https://launchpad.net/txamqp)
- * [pika](http://github.com/tonyg/pika)
 
-In this tutorial we're going to use `pika`. To install it you can use [`pip`](http://pip.openplans.org/) package management tool:
+> #### RabbitMQ libraries
+>
+> RabbitMQ speaks AMQP protocol. To use Rabbit you'll need a library that
+> understands the same protocol as Rabbit. There is a choice of libraries
+> for almost every programming language. Python it's not different and there is
+> a bunch of libraries to choose from:
+> * [py-amqplib](http://barryp.org/software/py-amqplib/)
+> * [txAMQP](https://launchpad.net/txamqp)
+> * [pika](http://github.com/tonyg/pika)
+>
+> In this tutorial we're going to use `pika`. To install it you can use [`pip`](http://pip.openplans.org/) package management tool:
+>
+>    $ sudo pip install -e git://github.com/tonyg/pika.git#egg=pika
+>
+>If you don't have `pip`, you may want to install it.
+>
+> * On Ubuntu:
+>
+>        $ sudo apt-get install python-pip
+>
+> * On Debian:
+>
+>        $ sudo apt-get install python-setuptools
+>        $ sudo easy_install pip
 
-    $ sudo pip install -e git://github.com/tonyg/pika.git#egg=pika
-
-If you don't have `pip`, you may want to install it.
-
- * On Ubuntu:
-
-        $ sudo apt-get install python-pip
-
- * On Debian:
-
-        $ sudo apt-get install python-setuptools
-        $ sudo easy_install pip
-
-<!--
-</div>
--->
 
 ### Sending
 
 
-<!--
-{% dot -Gsize="10,0.5" -Grankdir=LR %}
-digraph G {
-    P1 [label="P", {{ site.dotstyle.producer }}];
-    Q1 [label="{<s>||||<e>}", {{ site.dotstyle.queue }}];
 
-    P1 -> Q1;
-}
-{% enddot %}
--->
+
+<center><div class="dot_bitmap">
+<img src="../../raw/master/_img/28a5099cc807b687e36772091edcf740.png" alt="Dot graph" width="216" height="48" />
+</div></center>
+
+
 
 Our first program `send.py` will send a single message to the queue.
 The first thing we need to do is to connect to RabbitMQ server.
-<!--
-{% highlight python linenos=true linenostart=1 %}
--->
 
-    #!/usr/bin/env python
-    import pika
+<table class="highlighttable"><tr><td class="linenos"><pre><code class="python">1
+2
+3
+4
+5
+6
+7</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="c">#!/usr/bin/env python</span>
+    <span class="k">import</span> <span class="nn">pika</span>
 
-    connection = pika.AsyncoreConnection(pika.ConnectionParameters(
-                   '127.0.0.1',
-                   credentials = pika.PlainCredentials('guest', 'guest'))
-    channel = connection.channel()
-<!--
-{% endhighlight %}
--->
+    <span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">AsyncoreConnection</span><span class="p">(</span><span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span>
+                   <span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span>
+                   <span class="n">credentials</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">PlainCredentials</span><span class="p">(</span><span class="s">&#39;guest&#39;</span><span class="p">,</span> <span class="s">&#39;guest&#39;</span><span class="p">))</span>
+    <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
+</pre></div>
+</td></tr></table>
+
 
 Whenever we send a message we need to make sure the recipient queue exists.
 RabbitMQ will just trash the message if can't deliver it. So, we need to
 create a queue to which the message will be delivered. Let's name this queue
 _test_:
-<!--
-{% highlight python linenos=true linenostart=8 %}
--->
 
-    channel.queue_declare(queue='test')
-<!--
-{% endhighlight %}
--->
+<table class="highlighttable"><tr><td class="linenos"><pre><code class="python">8</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
 
 At that point we're ready to send a message. Our first message will contain
 a string _Hello World!_. We are going to send it to our _test_ queue:
-<!--
-{% highlight python linenos=true linenostart=9 %}
--->
 
-    channel.basic_publish(exchange='',
-                          routing_key='test',
-                          body='Hello World!')
-    print " [x] Sent 'Hello World!'"
-<!--
-{% endhighlight %}
--->
+<table class="highlighttable"><tr><td class="linenos"><pre><code class="python"> 9
+10
+11
+12</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+                          <span class="n">routing_key</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
+                          <span class="n">body</span><span class="o">=</span><span class="s">&#39;Hello World!&#39;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&quot; [x] Sent &#39;Hello World!&#39;&quot;</span>
+</pre></div>
+</td></tr></table>
+
 
 [(full send.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/send.py)
 
 ### Receiving
 
-<!--
-{% dot -Gsize="10,0.5" -Grankdir=LR %}
-digraph G {
-    rankdir=LR;
 
-    Q1 [label="{<s>||||<e>}", {{ site.dotstyle.queue }}];
-    C1 [label="C", {{ site.dotstyle.consumer }}];
 
-    Q1 -> C1;
-}
-{% enddot %}
--->
+<center><div class="dot_bitmap">
+<img src="../../raw/master/_img/39d6d05c8bd0aaf7d7993ada5a785ae2.png" alt="Dot graph" width="216" height="48" />
+</div></center>
+
+
 
 Our second program `receive.py` will receive messages from the queue and print
 them on the screen. 
@@ -234,52 +203,44 @@ You can copy the first 7 lines.
 Just like before, in the beginning we must make sure that the
 queue exists. Creating a queue using `queue_declare` is idempotent - you can
 run the command as many times you'd like, and only one queue will be created.
-<!--
-{% highlight python linenos=true linenostart=8 %}
--->
 
-    channel.queue_declare(queue='test')
-<!--
-{% endhighlight %}
--->
+<table class="highlighttable"><tr><td class="linenos"><pre><code class="python">8</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
 
 Receiving messages from the queue is a bit more complex. Whenever we receive
 a message, a `callback` function is called. In our case
 this function will print on the screen the contents of the message.
-<!--
-{% highlight python linenos=true linenostart=9 %}
--->
 
-    def callback(ch, method, header, body):
-        print " [x] Received %.20r" % (body,)
-<!--
-{% endhighlight %}
--->
+<table class="highlighttable"><tr><td class="linenos"><pre><code class="python"> 9
+10</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot; [x] Received </span><span class="si">%.20r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">body</span><span class="p">,)</span>
+</pre></div>
+</td></tr></table>
+
 
 Next, we need to tell RabbitMQ that this particular callback function is
 interested in messages from our _test_ queue:
-<!--
-{% highlight python linenos=true linenostart=11 %}
--->
 
-    channel.basic_consume(callback,
-                          queue='test',
-                          no_ack=True)
-<!--
-{% endhighlight %}
--->
+<table class="highlighttable"><tr><td class="linenos"><pre><code class="python">11
+12
+13</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="n">channel</span><span class="o">.</span><span class="n">basic_consume</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span>
+                          <span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
+                          <span class="n">no_ack</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
 
 And finally, we enter never-ending loop that waits for data and runs callbacks
 whenever necessary.
-<!--
-{% highlight python linenos=true linenostart=14 %}
--->
 
-    print ' [*] Waiting for messages. To exit press CTRL+C'
-    pika.asyncore_loop()
-<!--
-{% endhighlight %}
--->
+<table class="highlighttable"><tr><td class="linenos"><pre><code class="python">14
+15</code></pre></td><td class="code"><div class="highlight"><pre>    <span class="k">print</span> <span class="s">&#39; [*] Waiting for messages. To exit press CTRL+C&#39;</span>
+    <span class="n">pika</span><span class="o">.</span><span class="n">asyncore_loop</span><span class="p">()</span>
+</pre></div>
+</td></tr></table>
+
 [(full receive.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/receive.py)
 
 ### Putting it all together
