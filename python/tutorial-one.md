@@ -5,7 +5,7 @@ Learning RabbitMQ, part 1 ("Hello world!")
 
 
 <center><div class="dot_bitmap">
-<img src="../../raw/master/_img/f102830d0b42138245d6a95010dad710.png" alt="Dot graph" width="384" height="59" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/f102830d0b42138245d6a95010dad710.png" alt="Dot graph" width="384" height="59" />
 </div></center>
 
 
@@ -56,14 +56,14 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
 
     
 <center><div class="dot_bitmap">
-<img src="../../raw/master/_img/5a5fa54ed009ea0185a5f0131d1faff6.png" alt="Dot graph" width="41" height="29" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/5a5fa54ed009ea0185a5f0131d1faff6.png" alt="Dot graph" width="41" height="29" />
 </div></center>
 
 
  * _A queue_ is the name for a mailbox. It lives inside RabbitMQ.
     
 <center><div class="dot_bitmap">
-<img src="../../raw/master/_img/9bdb70c65ab8b2aa1f6b0b85c2931a54.png" alt="Dot graph" width="72" height="29" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/9bdb70c65ab8b2aa1f6b0b85c2931a54.png" alt="Dot graph" width="72" height="29" />
 </div></center>
 
 
@@ -72,7 +72,7 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
 
     
 <center><div class="dot_bitmap">
-<img src="../../raw/master/_img/c81197642d0b8ac05c7e7e89b65f2806.png" alt="Dot graph" width="41" height="29" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/c81197642d0b8ac05c7e7e89b65f2806.png" alt="Dot graph" width="41" height="29" />
 </div></center>
 
 
@@ -88,7 +88,7 @@ sends a message and one that receives and prints it.
 Our overall design will look like:
 
 <center><div class="dot_bitmap">
-<img src="../../raw/master/_img/3314f4be42ba3db9b161e564def3daca.png" alt="Dot graph" width="384" height="59" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/3314f4be42ba3db9b161e564def3daca.png" alt="Dot graph" width="384" height="59" />
 </div></center>
 
 
@@ -131,7 +131,7 @@ Creating a program
 
 
 <center><div class="dot_bitmap">
-<img src="../../raw/master/_img/28a5099cc807b687e36772091edcf740.png" alt="Dot graph" width="216" height="48" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/28a5099cc807b687e36772091edcf740.png" alt="Dot graph" width="216" height="48" />
 </div></center>
 
 
@@ -187,7 +187,7 @@ a string _Hello World!_. We are going to send it to our _test_ queue:
 
 
 <center><div class="dot_bitmap">
-<img src="../../raw/master/_img/39d6d05c8bd0aaf7d7993ada5a785ae2.png" alt="Dot graph" width="216" height="48" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/39d6d05c8bd0aaf7d7993ada5a785ae2.png" alt="Dot graph" width="216" height="48" />
 </div></center>
 
 
