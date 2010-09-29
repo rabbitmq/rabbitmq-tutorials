@@ -29,12 +29,21 @@ This tutorial consists of three parts:
 You need to have RabbitMQ server installed to go throught this tutorial.
 If you haven't installed it yet you can follow the
 [installation instructions](http://www.rabbitmq.com/install.html).
-You can tell RabbitMQ is installed by checking if the tcp/ip port 5672 is
-opened. For example if you have installed RabbitMQ you should see something like:
+You can tell RabbitMQ is installed by running:
 
-    $ nc -vz localhost 5672
-    localhost [127.0.0.1] 5672 (tcp/amqp) open
+    $ sudo rabbitmqctl status
 
+If you have installed RabbitMQ you should see something like:
+
+    Status of node rabbit@example ...
+    [{running_applications,[{os_mon,"CPO  CXC 138 46","2.2.5"},
+                            {sasl,"SASL  CXC 138 11","2.1.9"},
+                            {mnesia,"MNESIA  CXC 138 12","4.4.13"},
+                            {stdlib,"ERTS  CXC 138 10","1.16.5"},
+                            {kernel,"ERTS  CXC 138 10","2.13.5"}]},
+     {nodes,[{disc,[rabbit@example]}]},
+     {running_nodes,[rabbit@example]}]
+    ...done.
 
 
 > #### Where to get help
