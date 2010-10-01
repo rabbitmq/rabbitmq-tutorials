@@ -26,7 +26,7 @@ This tutorial consists of three parts:
  * Next we'll try to use Rabbit as a simple "Work queue" server.
  * Finally, we'll discuss the "Publish-subscribe" pattern.
 
-You need to have RabbitMQ server installed to go throught this tutorial.
+You need to have RabbitMQ server installed to go through this tutorial.
 If you haven't installed it yet you can follow the [installation instructions](http://www.rabbitmq.com/install.html). You can tell RabbitMQ is installed by checking if the tcp/ip port 5672 is opened. For example if you have installed RabbitMQ you should see something like:
 
     $ nc -vz localhost 5672
@@ -47,7 +47,7 @@ RabbitMQ is a message broker. The principle idea is pretty simple: it accepts
 and forwards messages. You can think about it as a post office: when you send
 mail to the post box and you're pretty sure that mr postman will eventually
 deliver the mail to your recipient. Using this metaphor RabbitMQ is a post box,
-post office and a mailman.
+post office and a postman.
 
 The major difference between RabbitMQ and the post office is the fact that it
 doesn't deal with the paper, instead it accepts, stores and forwards binary
@@ -85,8 +85,8 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
 Hello World!
 ------------
 
-Our first "Hello world" won't be too complex - let's send a message, receive
-it and print it on the screen. To do so we need two programs, well, one that
+Our "Hello world" won't be too complex - let's send a message, receive
+it and print it on the screen. To do so we need two programs: one that
 sends a message and one that receives and prints it.
 
 
@@ -100,13 +100,6 @@ digraph G {
     P1 -> Q1 -> C1;
 }
 {% enddot %}
-
-
-
-Creating a program
-------------------
-
-
 
 > #### RabbitMQ libraries
 >
@@ -133,10 +126,7 @@ Creating a program
 >        $ sudo apt-get install python-setuptools
 >        $ sudo easy_install pip
 
-
 ### Sending
-
-
 
 {% dot -Gsize="10,0.5" -Grankdir=LR %}
 digraph G {
@@ -149,7 +139,7 @@ digraph G {
 
 
 Our first program `send.py` will send a single message to the queue.
-The first thing we need to do is to connect to RabbitMQ server.
+The first thing we need to do is connect to RabbitMQ server.
 
 {% highlight python linenos=true linenostart=1 %}
 
@@ -210,16 +200,16 @@ digraph G {
 
 
 Our second program `receive.py` will receive messages from the queue and print
-them on the screen. 
+them on the screen.
 
-The code responsible for connecting to Rabbit is the same as in previous example.
+The code responsible for connecting to Rabbit is the same as the previous example.
 You can copy the first 7 lines.
 
      # ... connection code is the same, copy first 7 lines from send.py ...
 
 Just like before, in the beginning we must make sure that the
 queue exists. Creating a queue using `queue_declare` is idempotent - you can
-run the command as many times you'd like, and only one queue will be created.
+run the command as many times you like, and only one queue will be created.
 
 {% highlight python linenos=true linenostart=8 %}
 
@@ -255,7 +245,7 @@ interested in messages from our _test_ queue:
 {% endhighlight %}
 
 
-And finally, we enter never-ending loop that waits for data and runs callbacks
+And finally, we enter a never-ending loop that waits for data and runs callbacks
 whenever necessary.
 
 {% highlight python linenos=true linenostart=14 %}
@@ -270,8 +260,8 @@ whenever necessary.
 
 ### Putting it all together
 
-Now we can try out our programs. First, let's send
-a message using our `send.py` program:
+Now we can try out our programs. First, let's send a message using our
+`send.py` program:
 
     $ python send.py
      [x] Sent 'Hello World!'
@@ -283,5 +273,5 @@ Let's receive it:
      [x] Received 'Hello World!'
 
 Hurray! We were able to send our first message through RabbitMQ. As you might
-have noticed, the `receive.py` program haven't exited. It will stay ready to
-receive further messages. Try to run `send.py` in new terminal!
+have noticed, the `receive.py` program didn't exit. It will stay ready to
+receive further messages. Try to run `send.py` in a new terminal!
