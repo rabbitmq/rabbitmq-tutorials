@@ -103,10 +103,14 @@ sends a message and one that receives and prints it.
 
 
 Our overall design will look like:
-{% dot -Gsize="10,0.8" -Grankdir=LR %}
+{% dot -Gsize="10,1.3" -Grankdir=LR %}
 digraph G {
     P1 [label="P", {{ dotstyle.producer }}];
-    Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
+    subgraph cluster_Q1 {
+        label="queue_name=test";
+	color=transparent;
+        Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
+    };
     C1 [label="C", {{ dotstyle.consumer }}];
 
     P1 -> Q1 -> C1;
@@ -126,7 +130,7 @@ digraph G {
 > In this tutorial we're going to use `pika`. To install it you can use
 > [`pip`](http://pip.openplans.org/) package management tool:
 >
->    $ sudo pip install -e git://github.com/tonyg/pika.git#egg=pika
+>    $ sudo pip install -e git+http://github.com/tonyg/pika.git#egg=pika
 >
 >If you don't have `pip`, you may want to install it.
 >
@@ -141,10 +145,14 @@ digraph G {
 
 ### Sending
 
-{% dot -Gsize="10,0.5" -Grankdir=LR %}
+{% dot -Gsize="10,1.3" -Grankdir=LR %}
 digraph G {
     P1 [label="P", {{ dotstyle.producer }}];
-    Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
+    subgraph cluster_Q1 {
+        label="queue_name=test";
+	color=transparent;
+	Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
+    };
 
     P1 -> Q1;
 }
@@ -200,11 +208,15 @@ a string _Hello World!_. We are going to send it to our _test_ queue:
 ### Receiving
 
 
-{% dot -Gsize="10,0.5" -Grankdir=LR %}
+{% dot -Gsize="10,1.3" -Grankdir=LR %}
 digraph G {
     rankdir=LR;
 
-    Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
+    subgraph cluster_Q1 {
+        label="queue_name=test";
+	color=transparent;
+	Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
+    };
     C1 [label="C", {{ dotstyle.consumer }}];
 
     Q1 -> C1;
@@ -288,3 +300,7 @@ Let's receive it:
 Hurray! We were able to send our first message through RabbitMQ. As you might
 have noticed, the `receive.py` program didn't exit. It will stay ready to
 receive further messages. Try to run `send.py` in a new terminal!
+
+We've learned how to send and receive a message from a named
+queue. It's time to move on to part 2 of this tutorial and build a
+simple _task queue_.
