@@ -73,7 +73,14 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
 </div></center>
 
 
- * _A queue_ is the name for a mailbox. It lives inside RabbitMQ.
+ * _A queue_ is the name for a mailbox. It lives inside
+   RabbitMQ. Although messages flow through RabbitMQ and your
+   applications, they can be stored only inside a _queue_. A _queue_
+   is not bound by any limits, it can store how many messages you
+   like - it's essentially an infinite buffer. Many _producers_ can send
+   messages that go to the one queue, many _consumers_ can try to
+   receive data from one _queue_.
+
     
 <center><div class="dot_bitmap">
 <img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/9bdb70c65ab8b2aa1f6b0b85c2931a54.png" alt="Dot graph" width="76" height="29" />
@@ -170,8 +177,17 @@ _test_:
 </td></tr></table>
 
 
-At that point we're ready to send a message. Our first message will contain
-a string _Hello World!_. We are going to send it to our _test_ queue:
+At that point we're ready to send a message. Our first message will
+contain a string _Hello World!_ and we want to send it to our _test_
+queue.
+
+In RabbitMQ a message never goes directly to the queue, it always
+needs to go through an _exchange_. But let's not get dragged by the
+details - you can read more about _exchanges_ in third part of this
+tutorial. All we need to know now is how to use a default exchange
+identified by an empty string. That exchange is a special one that
+allows us to specify exactly to which queue the message should go.
+The queue name is specified by the `routing_key` variable:
 
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python"> 9
 10
@@ -212,6 +228,12 @@ run the command as many times you like, and only one queue will be created.
 </pre></div>
 </td></tr></table>
 
+You may ask why to declare queue again - we have already declared it
+in our previous code. We could have avoided that if we always run the
+`send.py` program before this one. But we're not sure yet which
+program to run as first. In such case it's a good practice to repeat
+declaring the queue in both programs.
+
 
 Receiving messages from the queue is a bit more complex. Whenever we receive
 a message, a `callback` function is called. In our case
@@ -235,6 +257,9 @@ interested in messages from our _test_ queue:
 </pre></div>
 </td></tr></table>
 
+For that command to succeed we must be sure that a queue which we want
+to subscribe to exists. Fortunately we're confident about that - we've
+created a queue above - using `queue_declare`.
 
 And finally, we enter a never-ending loop that waits for data and runs callbacks
 whenever necessary.
