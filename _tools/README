@@ -1,0 +1,13 @@
+Here are tools used to generate documentation in formats of .md or .html.
+
+The idea here is to process an file written in markdown, with some extensions (mdx),
+Currently we produce markdown that is acceptable by github and html.
+
+
+Code partially stolen from Jekyll project:
+  http://github.com/mojombo/jekyll (The MIT License)
+
+Github-markup is a part of:
+  http://github.com/github/markup (The MIT License)
+
+

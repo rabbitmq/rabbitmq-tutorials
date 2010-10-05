@@ -1,0 +1,12 @@
+dotstyle:
+  producer: 'style="filled", fillcolor="#00ffff"'
+  queue: 'style="filled", fillcolor="red", shape="record"'
+  anon_queue: 'style="filled", fillcolor="lightred", shape="record"'
+  consumer: 'style="filled", fillcolor="#33ccff"'
+  exchange: 'style="filled", fillcolor="#3333CC"'
+
+dot:
+  out_dir: '_img'
+  out_url: 'http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img'
+  opts: '-Gbgcolor=transparent -Gtruecolor=true'
+

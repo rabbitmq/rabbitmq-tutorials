@@ -1,11 +1,12 @@
 
+
 Learning RabbitMQ, part 1 ("Hello world!")
 ==========================================
 
 
 
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/f102830d0b42138245d6a95010dad710.png" alt="Dot graph" width="392" height="59" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/f102830d0b42138245d6a95010dad710.png" alt="Dot graph" width="392" height="59" />
 </div></center>
 
 
@@ -22,7 +23,7 @@ This tutorial consists of three parts:
  * Next we'll try to use Rabbit as a simple "Work queue" server.
  * Finally, we'll discuss the "Publish-subscribe" pattern.
 
-You need to have RabbitMQ server installed to go throught this tutorial.
+You need to have RabbitMQ server installed to go through this tutorial.
 If you haven't installed it yet you can follow the
 [installation instructions](http://www.rabbitmq.com/install.html).
 You can tell RabbitMQ is installed by running:
@@ -55,7 +56,7 @@ RabbitMQ is a message broker. The principle idea is pretty simple: it accepts
 and forwards messages. You can think about it as a post office: when you send
 mail to the post box and you're pretty sure that mr postman will eventually
 deliver the mail to your recipient. Using this metaphor RabbitMQ is a post box,
-post office and a mailman.
+post office and a postman.
 
 The major difference between RabbitMQ and the post office is the fact that it
 doesn't deal with the paper, instead it accepts, stores and forwards binary
@@ -68,14 +69,14 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
 
     
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/5a5fa54ed009ea0185a5f0131d1faff6.png" alt="Dot graph" width="41" height="29" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/5a5fa54ed009ea0185a5f0131d1faff6.png" alt="Dot graph" width="41" height="29" />
 </div></center>
 
 
  * _A queue_ is the name for a mailbox. It lives inside RabbitMQ.
     
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/9bdb70c65ab8b2aa1f6b0b85c2931a54.png" alt="Dot graph" width="76" height="29" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/9bdb70c65ab8b2aa1f6b0b85c2931a54.png" alt="Dot graph" width="76" height="29" />
 </div></center>
 
 
@@ -84,7 +85,7 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
 
     
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/c81197642d0b8ac05c7e7e89b65f2806.png" alt="Dot graph" width="41" height="29" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/c81197642d0b8ac05c7e7e89b65f2806.png" alt="Dot graph" width="41" height="29" />
 </div></center>
 
 
@@ -92,23 +93,16 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
 Hello World!
 ------------
 
-Our first "Hello world" won't be too complex - let's send a message, receive
-it and print it on the screen. To do so we need two programs, well, one that
+Our "Hello world" won't be too complex - let's send a message, receive
+it and print it on the screen. To do so we need two programs: one that
 sends a message and one that receives and prints it.
 
 
 Our overall design will look like:
 
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/3314f4be42ba3db9b161e564def3daca.png" alt="Dot graph" width="392" height="59" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/b3f3e23007aca653c04def0f8e859d18.png" alt="Dot graph" width="363" height="125" />
 </div></center>
-
-
-
-
-Creating a program
-------------------
-
 
 
 > #### RabbitMQ libraries
@@ -124,7 +118,7 @@ Creating a program
 > In this tutorial we're going to use `pika`. To install it you can use
 > [`pip`](http://pip.openplans.org/) package management tool:
 >
->    $ sudo pip install -e git://github.com/tonyg/pika.git#egg=pika
+>    $ sudo pip install -e git+http://github.com/tonyg/pika.git#egg=pika
 >
 >If you don't have `pip`, you may want to install it.
 >
@@ -137,20 +131,17 @@ Creating a program
 >        $ sudo apt-get install python-setuptools
 >        $ sudo easy_install pip
 
-
 ### Sending
 
 
-
-
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/28a5099cc807b687e36772091edcf740.png" alt="Dot graph" width="223" height="48" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/090975cc54ab88a30c0bb4d47611b674.png" alt="Dot graph" width="278" height="125" />
 </div></center>
 
 
 
 Our first program `send.py` will send a single message to the queue.
-The first thing we need to do is to connect to RabbitMQ server.
+The first thing we need to do is connect to RabbitMQ server.
 
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">1
 2
@@ -200,22 +191,22 @@ a string _Hello World!_. We are going to send it to our _test_ queue:
 
 
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/39d6d05c8bd0aaf7d7993ada5a785ae2.png" alt="Dot graph" width="223" height="48" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/e8c961b5097209b7e18281754f6403a4.png" alt="Dot graph" width="278" height="125" />
 </div></center>
 
 
 
 Our second program `receive.py` will receive messages from the queue and print
-them on the screen. 
+them on the screen.
 
-The code responsible for connecting to Rabbit is the same as in previous example.
+The code responsible for connecting to Rabbit is the same as the previous example.
 You can copy the first 7 lines.
 
      # ... connection code is the same, copy first 7 lines from send.py ...
 
 Just like before, in the beginning we must make sure that the
 queue exists. Creating a queue using `queue_declare` is idempotent - you can
-run the command as many times you'd like, and only one queue will be created.
+run the command as many times you like, and only one queue will be created.
 
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">8</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
 </pre></div>
@@ -245,7 +236,7 @@ interested in messages from our _test_ queue:
 </td></tr></table>
 
 
-And finally, we enter never-ending loop that waits for data and runs callbacks
+And finally, we enter a never-ending loop that waits for data and runs callbacks
 whenever necessary.
 
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">14
@@ -258,8 +249,8 @@ whenever necessary.
 
 ### Putting it all together
 
-Now we can try out our programs. First, let's send
-a message using our `send.py` program:
+Now we can try out our programs. First, let's send a message using our
+`send.py` program:
 
     $ python send.py
      [x] Sent 'Hello World!'
@@ -271,5 +262,10 @@ Let's receive it:
      [x] Received 'Hello World!'
 
 Hurray! We were able to send our first message through RabbitMQ. As you might
-have noticed, the `receive.py` program haven't exited. It will stay ready to
-receive further messages. Try to run `send.py` in new terminal!
+have noticed, the `receive.py` program didn't exit. It will stay ready to
+receive further messages. Try to run `send.py` in a new terminal!
+
+We've learned how to send and receive a message from a named
+queue. It's time to move on to part 2 of this tutorial and build a
+simple _task queue_.
+

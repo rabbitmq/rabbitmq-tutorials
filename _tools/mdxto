@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+$: << File.join(File.dirname(File.expand_path(__FILE__)), '.')
+
+def require_all(path)
+  glob = File.join(File.dirname(__FILE__), path, '*.rb')
+  Dir[glob].each do |f|
+    require f
+  end
+end
+
+require 'liquid'
+require 'lib/albino'
+require_all 'lib/tags'
+require 'yaml'
+
+config = YAML::load( IO.read(ARGV[0]) )
+output = ARGV[1]
+content = IO.read(ARGV[2])
+template = Liquid::Template.parse(content)
+
+markdown = [
+            config['md_prefix'] || '',
+            template.render(config),
+            config['md_suffix'] || '',
+           ].join("\n")
+
+
+if output == 'markdown'
+    puts markdown
+end
+
+if output == 'html'
+  $LOAD_PATH.unshift File.dirname(__FILE__) + "/../lib"
+  require 'github/markup'
+  require 'tempfile'
+
+  file = Tempfile.new('mdx_to_').path + '.md'
+  File.open(file, 'w') do |f|
+    f.write(markdown)
+  end
+
+  html = [
+          config['html_prefix'] || '',
+          GitHub::Markup.render(file),
+          config['html_suffix'] || '',
+         ].join("\n")
+  puts html
+  File.unlink(file)
+end
+
+

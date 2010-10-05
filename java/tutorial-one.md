@@ -1,3 +1,4 @@
+
 ## Introduction
 
 RabbitMQ is a message broker. In essence, it accepts messages from
@@ -19,7 +20,7 @@ on behalf of the consumer.
 
 
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/3314f4be42ba3db9b161e564def3daca.png" alt="Dot graph" width="392" height="59" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/3314f4be42ba3db9b161e564def3daca.png" alt="Dot graph" width="392" height="59" />
 </div></center>
 
 
@@ -49,7 +50,7 @@ code.
 
 
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/28a5099cc807b687e36772091edcf740.png" alt="Dot graph" width="223" height="48" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/28a5099cc807b687e36772091edcf740.png" alt="Dot graph" width="223" height="48" />
 </div></center>
 
 
@@ -61,10 +62,10 @@ In
 [`send.java`](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/send.java),
 we need some classes imported:
 
-<table class="highlighttable"><tr><td class="linenos"><pre><code class="java">1
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">1
 2
 3
-4</code></pre></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
+4</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
@@ -73,11 +74,11 @@ we need some classes imported:
 
 then we can create a connection to the server:
 
-<table class="highlighttable"><tr><td class="linenos"><pre><code class="java"> 6
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java"> 6
  7
  8
  9
-10</code></pre></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">send</span> <span class="o">{</span>
+10</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">send</span> <span class="o">{</span>
   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argv</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">try</span> <span class="o">{</span>
       <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">().</span><span class="na">newConnection</span><span class="o">();</span>
@@ -93,8 +94,8 @@ things done resides.
 To send, we must declare a queue for us to send to; then we can publish a message
 to the queue:
 
-<table class="highlighttable"><tr><td class="linenos"><pre><code class="java">11
-12</code></pre></td><td class="code"><div class="highlight"><pre>      <span class="n">chan</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="s">&quot;hello&quot;</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">11
+12</code></pre></div></td><td class="code"><div class="highlight"><pre>      <span class="n">chan</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="s">&quot;hello&quot;</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
       <span class="n">chan</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">,</span> <span class="s">&quot;hello&quot;</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="s">&quot;Hello World!&quot;</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
 </pre></div>
 </td></tr></table>
@@ -105,7 +106,7 @@ whatever you like there.
 
 Lastly, we close the channel and the connection;
 
-<table class="highlighttable"><tr><td class="linenos"><pre><code class="java">13</code></pre></td><td class="code"><div class="highlight"><pre>      <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">13</code></pre></div></td><td class="code"><div class="highlight"><pre>      <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
 </pre></div>
 </td></tr></table>
 
@@ -120,17 +121,17 @@ keep it running to listen for messages and print them out.
 
 
 <center><div class="dot_bitmap">
-<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/python/_img/39d6d05c8bd0aaf7d7993ada5a785ae2.png" alt="Dot graph" width="223" height="48" />
+<img src="http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img/39d6d05c8bd0aaf7d7993ada5a785ae2.png" alt="Dot graph" width="223" height="48" />
 </div></center>
 
 
 The code (in [`recv.java`](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/recv.java)) has almost the same imports as `send`:
 
-<table class="highlighttable"><tr><td class="linenos"><pre><code class="java">1
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">1
 2
 3
 4
-5</code></pre></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
+5</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">com.rabbitmq.client.QueueingConsumer</span><span class="o">;</span>
@@ -145,12 +146,12 @@ Setting up is the same as the sender; we open a connection and a
 channel, and declare the queue from which we're going to consume.
 Note this matches up with the queue `send` publishes to.
 
-<table class="highlighttable"><tr><td class="linenos"><pre><code class="java"> 7
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java"> 7
  8
  9
 10
 11
-12</code></pre></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">recv</span> <span class="o">{</span>
+12</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">recv</span> <span class="o">{</span>
   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argv</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">try</span> <span class="o">{</span>
       <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">().</span><span class="na">newConnection</span><span class="o">();</span>
@@ -168,12 +169,12 @@ queue. Since it will push us messages asynchronously, we provide a
 callback in the form of an object that will buffer the messages until
 we're ready to use them. That is what `QueueingConsumer` does.
 
-<table class="highlighttable"><tr><td class="linenos"><pre><code class="java">13
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">13
 14
 15
 16
 17
-18</code></pre></td><td class="code"><div class="highlight"><pre>      <span class="n">QueueingConsumer</span> <span class="n">consumer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QueueingConsumer</span><span class="o">(</span><span class="n">chan</span><span class="o">);</span>
+18</code></pre></div></td><td class="code"><div class="highlight"><pre>      <span class="n">QueueingConsumer</span> <span class="n">consumer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QueueingConsumer</span><span class="o">(</span><span class="n">chan</span><span class="o">);</span>
       <span class="n">chan</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="s">&quot;hello&quot;</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">consumer</span><span class="o">);</span>
       <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">QueueingConsumer</span><span class="o">.</span><span class="na">Delivery</span> <span class="n">delivery</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="na">nextDelivery</span><span class="o">();</span>
@@ -208,3 +209,4 @@ RabbitMQ. The receiver will keep running, waiting for messages; try running
 the sender from another terminal.
 
 Hello World!
+
