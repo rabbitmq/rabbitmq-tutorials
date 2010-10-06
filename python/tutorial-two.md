@@ -12,7 +12,7 @@ Learning RabbitMQ, part 2 (Task Queue)
 
 
 In the first part of this tutorial we've learned how to send messages
-to and receive from a named queue. In this part we'll try to create a
+to and receive from a named queue. In this part we'll create a
 _Task Queue_ to distribute time-consuming work across multiple
 workers.
 
