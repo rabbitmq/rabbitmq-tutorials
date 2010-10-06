@@ -10,3 +10,4 @@ dot:
   out_url: 'http://github.com/rabbitmq/rabbitmq-tutorials/raw/master/_img'
   opts: '-Gbgcolor=transparent -Gtruecolor=true'
 
+pygments: false
