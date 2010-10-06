@@ -156,6 +156,21 @@ Using that code we may be sure that even if you kill a worker using
 CTRL+C while it was processing a message, it will won't be lost.  Soon
 after the worker dies all unacknowledged messages will be redispatched.
 
+> #### Forgotten acknowledgment
+>
+> It's a pretty common mistake to miss `basic_ack`. It's an easy error,
+> but the consequences are serious. Messages will be redelivered
+> when your client quits (which may look like random redelivery),
+> Rabbit will eat more and more memory as it won't be able to release
+> any unacked messages.
+>
+> In order to debug this kind of mistakes you may use `rabbitmqctl`
+> to print `messages_unacknowledged` field:
+>
+>     $ sudo rabbitmqctl list_queues name messages_ready messages_unacknowledged
+>     Listing queues ...
+>     test    0       0
+>     ...done.
 
 Message durability
 ------------------
