@@ -148,6 +148,21 @@ Using that code we may be sure that even if you kill a worker using
 CTRL+C while it was processing a message, it will won't be lost.  Soon
 after the worker dies all unacknowledged messages will be redispatched.
 
+> #### Forgotten acknowledgment
+>
+> It's a pretty common mistake to miss `basic_ack`. It's an easy error,
+> but the consequences are serious. Messages will be redelivered
+> when your client quits (which may look like random redelivery),
+> Rabbit will eat more and more memory as it won't be able to release
+> any unacked messages.
+>
+> In order to debug this kind of mistakes you may use `rabbitmqctl`
+> to print `messages_unacknowledged` field:
+>
+>     $ sudo rabbitmqctl list_queues name messages_ready messages_unacknowledged
+>     Listing queues ...
+>     test    0       0
+>     ...done.
 
 Message durability
 ------------------
@@ -251,6 +266,8 @@ channel.basic_publish(exchange='', routing_key='test',
                       ))
 print &quot; [x] Sent %r&quot; % (message,)</code></pre></div>
 
+[(full new_task.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/new_task.py)
+
 
 And our worker:
 
@@ -278,6 +295,7 @@ channel.basic_consume(callback,
 
 pika.asyncore_loop()</code></pre></div>
 
+[(full worker.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/worker.py)
 
 
 Using message acknowledgments and `prefetch_count` you may set up

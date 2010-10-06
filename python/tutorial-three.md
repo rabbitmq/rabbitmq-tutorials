@@ -201,6 +201,7 @@ channel.basic_publish(exchange='logs',
                       body=message)
 print &quot; [x] Sent %r&quot; % (message,)</code></pre></div>
 
+[(full emit_log.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/emit_log.py)
 
 As you see, we avoided declaring exchange. If the `logs` exchange
 isn't created at the time this code is executed the message will be
@@ -236,6 +237,7 @@ channel.basic_consume(callback,
 
 pika.asyncore_loop()</code></pre></div>
 
+[(full receive_logs.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/receive_logs.py)
 
 
 We're done. If you want to save logs to a file, just open a console and type:
