@@ -46,7 +46,7 @@ module Jekyll
         data = s.join("\n")
       end
 
-      if true #context.registers[:site].pygments
+      if context['pygments']:
         render_pygments(context, data)
       else
         render_codehighlighter(context, data)
