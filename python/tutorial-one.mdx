@@ -262,6 +262,17 @@ in our previous code. We could have avoided that if we always run the
 program to run as first. In such case it's a good practice to repeat
 declaring the queue in both programs.
 
+> #### Listing queues
+>
+> Sometimes you may want to see what queues does RabbitMQ store and how many
+> messages are in them. You can do it using the `rabbitmqctl` tool:
+>
+>     $ sudo rabbitmqctl list_queues
+>     Listing queues ...
+>     test    0
+>     ...done.
+
+
 
 Receiving messages from the queue is a bit more complex. Whenever we receive
 a message, a `callback` function is called. In our case
