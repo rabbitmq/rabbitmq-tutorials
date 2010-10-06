@@ -131,12 +131,12 @@ Our overall design will look like:
 >
 > * On Ubuntu:
 >
->        $ sudo apt-get install python-pip
+>       $ sudo apt-get install python-pip
 >
 > * On Debian:
 >
->        $ sudo apt-get install python-setuptools
->        $ sudo easy_install pip
+>       $ sudo apt-get install python-setuptools
+>       $ sudo easy_install pip
 
 ### Sending
 
@@ -150,21 +150,18 @@ Our overall design will look like:
 Our first program `send.py` will send a single message to the queue.
 The first thing we need to do is connect to RabbitMQ server.
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">1
-2
-3
-4
-5
-6
-7</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="kn">import</span> <span class="nn">pika</span>
+<div>
+  <pre>
+    <code class='python'>#!/usr/bin/env python
+import pika
 
-<span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">AsyncoreConnection</span><span class="p">(</span><span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span>
-               <span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span>
-               <span class="n">credentials</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">PlainCredentials</span><span class="p">(</span><span class="s">&#39;guest&#39;</span><span class="p">,</span> <span class="s">&#39;guest&#39;</span><span class="p">))</span>
-<span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
-</pre></div>
-</td></tr></table>
+connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+               '127.0.0.1',
+               credentials = pika.PlainCredentials('guest', 'guest'))
+channel = connection.channel()</code>
+  </pre>
+</div>
+
 
 
 Whenever we send a message we need to make sure the recipient queue exists.
@@ -172,9 +169,12 @@ RabbitMQ will just trash the message if can't deliver it. So, we need to
 create a queue to which the message will be delivered. Let's name this queue
 _test_:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">8</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
-</pre></div>
-</td></tr></table>
+<div>
+  <pre>
+    <code class='python'>channel.queue_declare(queue='test')</code>
+  </pre>
+</div>
+
 
 
 At that point we're ready to send a message. Our first message will
@@ -189,15 +189,15 @@ identified by an empty string. That exchange is a special one that
 allows us to specify exactly to which queue the message should go.
 The queue name is specified by the `routing_key` variable:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python"> 9
-10
-11
-12</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
-                      <span class="n">routing_key</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
-                      <span class="n">body</span><span class="o">=</span><span class="s">&#39;Hello World!&#39;</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">&quot; [x] Sent &#39;Hello World!&#39;&quot;</span>
-</pre></div>
-</td></tr></table>
+<div>
+  <pre>
+    <code class='python'>channel.basic_publish(exchange='',
+                      routing_key='test',
+                      body='Hello World!')
+print &quot; [x] Sent 'Hello World!'&quot;</code>
+  </pre>
+</div>
+
 
 
 [(full send.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/send.py)
@@ -218,15 +218,18 @@ them on the screen.
 The code responsible for connecting to Rabbit is the same as the previous example.
 You can copy the first 7 lines.
 
-     # ... connection code is the same, copy first 7 lines from send.py ...
+    # ... connection code is the same, copy first 7 lines from send.py ...
 
 Just like before, in the beginning we must make sure that the
 queue exists. Creating a queue using `queue_declare` is idempotent - you can
 run the command as many times you like, and only one queue will be created.
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">8</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
-</pre></div>
-</td></tr></table>
+<div>
+  <pre>
+    <code class='python'>channel.queue_declare(queue='test')</code>
+  </pre>
+</div>
+
 
 You may ask why to declare queue again - we have already declared it
 in our previous code. We could have avoided that if we always run the
@@ -239,23 +242,26 @@ Receiving messages from the queue is a bit more complex. Whenever we receive
 a message, a `callback` function is called. In our case
 this function will print on the screen the contents of the message.
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python"> 9
-10</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
-    <span class="k">print</span> <span class="s">&quot; [x] Received </span><span class="si">%.20r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">body</span><span class="p">,)</span>
-</pre></div>
-</td></tr></table>
+<div>
+  <pre>
+    <code class='python'>def callback(ch, method, header, body):
+    print &quot; [x] Received %.20r&quot; % (body,)</code>
+  </pre>
+</div>
+
 
 
 Next, we need to tell RabbitMQ that this particular callback function is
 interested in messages from our _test_ queue:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">11
-12
-13</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">basic_consume</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span>
-                      <span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
-                      <span class="n">no_ack</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-</td></tr></table>
+<div>
+  <pre>
+    <code class='python'>channel.basic_consume(callback,
+                      queue='test',
+                      no_ack=True)</code>
+  </pre>
+</div>
+
 
 For that command to succeed we must be sure that a queue which we want
 to subscribe to exists. Fortunately we're confident about that - we've
@@ -264,11 +270,13 @@ created a queue above - using `queue_declare`.
 And finally, we enter a never-ending loop that waits for data and runs callbacks
 whenever necessary.
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">14
-15</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="k">print</span> <span class="s">&#39; [*] Waiting for messages. To exit press CTRL+C&#39;</span>
-<span class="n">pika</span><span class="o">.</span><span class="n">asyncore_loop</span><span class="p">()</span>
-</pre></div>
-</td></tr></table>
+<div>
+  <pre>
+    <code class='python'>print ' [*] Waiting for messages. To exit press CTRL+C'
+pika.asyncore_loop()</code>
+  </pre>
+</div>
+
 
 [(full receive.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/receive.py)
 
