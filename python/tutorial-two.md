@@ -41,35 +41,24 @@ by `Hello!...` will take three seconds.
 We need to slightly modify our `send.py` code, to allow sending
 arbitrary messages from command line:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">12
-13
-14
-15
-16</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">message</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="ow">or</span> <span class="s">&quot;Hello World!&quot;</span>
-<span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">routing_key</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
-                      <span class="n">body</span><span class="o">=</span><span class="n">message</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">&quot; [x] Sent </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">message</span><span class="p">,)</span>
-</pre></div>
-</td></tr></table>
+<div><pre><code class='python'>import sys
+message = ' '.join(sys.argv[1:]) or &quot;Hello World!&quot;
+channel.basic_publish(exchange='', routing_key='test',
+                      body=message)
+print &quot; [x] Sent %r&quot; % (message,)</code></pre></div>
+
 
 
 Our `receive.py` script also requires some changes: it needs to fake a
 second of work for every dot in the message body:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">12
-13
-14
-15
-16
-17</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
+<div><pre><code class='python'>import time
 
-<span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
-    <span class="k">print</span> <span class="s">&quot; [x] Received </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">body</span><span class="p">,)</span>
-	<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span> <span class="n">body</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span> <span class="p">)</span>
-    <span class="k">print</span> <span class="s">&quot; [x] Done&quot;</span>
-</pre></div>
-</td></tr></table>
+def callback(ch, method, header, body):
+    print &quot; [x] Received %r&quot; % (body,)
+	time.sleep( body.count('.') )
+    print &quot; [x] Done&quot;</code></pre></div>
+
 
 
 Round-robin dispatching
@@ -145,23 +134,15 @@ examples we had explicitly turned them off: `no_ack=True`. It's time
 to remove this flag and send a proper acknowledgment from the worker,
 once we're done with a task.
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">12
-13
-14
-15
-16
-17
-18
-19</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
-    <span class="k">print</span> <span class="s">&quot; [x] Received </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">body</span><span class="p">,)</span>
-	<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span> <span class="n">body</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span> <span class="p">)</span>
-    <span class="k">print</span> <span class="s">&quot; [x] Done&quot;</span>
-    <span class="n">ch</span><span class="o">.</span><span class="n">basic_ack</span><span class="p">(</span><span class="n">delivery_tag</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">delivery_tag</span><span class="p">)</span>
+<div><pre><code class='python'>def callback(ch, method, header, body):
+    print &quot; [x] Received %r&quot; % (body,)
+	time.sleep( body.count('.') )
+    print &quot; [x] Done&quot;
+    ch.basic_ack(delivery_tag = method.delivery_tag)
 
-<span class="n">channel</span><span class="o">.</span><span class="n">basic_consume</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span>
-                      <span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
-</pre></div>
-</td></tr></table>
+channel.basic_consume(callback,
+                      queue='test')</code></pre></div>
+
 
 Using that code we may be sure that even if you kill a worker using
 CTRL+C while it was processing a message, it will won't be lost.  Soon
@@ -242,9 +223,8 @@ more than one message to a worker at a time. Or, in other words, don't
 dispatch a new message to a worker until it has processed and
 acknowledged previous one.
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python">17</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="n">channel</span><span class="o">.</span><span class="n">basic_qos</span><span class="p">(</span><span class="n">prefetch_count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</td></tr></table>
+<div><pre><code class='python'>channel.basic_qos(prefetch_count=1)</code></pre></div>
+
 
 
 Putting it all together
@@ -252,93 +232,52 @@ Putting it all together
 
 Final code of our `new_task.py` script:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python"> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="kn">import</span> <span class="nn">pika</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<div><pre><code class='python'>#!/usr/bin/env python
+import pika
+import sys
 
-<span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">AsyncoreConnection</span><span class="p">(</span><span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span>
-        <span class="n">credentials</span><span class="o">=</span><span class="n">pika</span><span class="o">.</span><span class="n">PlainCredentials</span><span class="p">(</span><span class="s">&#39;guest&#39;</span><span class="p">,</span> <span class="s">&#39;guest&#39;</span><span class="p">)))</span>
-<span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
+connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+        host='127.0.0.1',
+        credentials=pika.PlainCredentials('guest', 'guest')))
+channel = connection.channel()
 
-<span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test_dur&#39;</span><span class="p">,</span> <span class="n">durable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+channel.queue_declare(queue='test_dur', durable=True)
 
-<span class="n">message</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="ow">or</span> <span class="s">&quot;Hello World!&quot;</span>
-<span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">routing_key</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">,</span>
-                      <span class="n">body</span><span class="o">=</span><span class="n">message</span>
-                      <span class="n">properties</span><span class="o">=</span><span class="n">pika</span><span class="o">.</span><span class="n">BasicProperties</span><span class="p">(</span>
-                         <span class="n">delivery_mode</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="c"># make message persistent</span>
-                      <span class="p">))</span>
-<span class="k">print</span> <span class="s">&quot; [x] Sent </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">message</span><span class="p">,)</span>
-</pre></div>
-</td></tr></table>
+message = ' '.join(sys.argv[1:]) or &quot;Hello World!&quot;
+channel.basic_publish(exchange='', routing_key='test',
+                      body=message,
+                      properties=pika.BasicProperties(
+                         delivery_mode = 2, # make message persistent
+                      ))
+print &quot; [x] Sent %r&quot; % (message,)</code></pre></div>
+
 
 And our worker:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="python"> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="kn">import</span> <span class="nn">pika</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<div><pre><code class='python'>#!/usr/bin/env python
+import pika
+import time
 
-<span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">AsyncoreConnection</span><span class="p">(</span><span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span>
-        <span class="n">credentials</span><span class="o">=</span><span class="n">pika</span><span class="o">.</span><span class="n">PlainCredentials</span><span class="p">(</span><span class="s">&#39;guest&#39;</span><span class="p">,</span> <span class="s">&#39;guest&#39;</span><span class="p">)))</span>
-<span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
+connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+        host='127.0.0.1',
+        credentials=pika.PlainCredentials('guest', 'guest')))
+channel = connection.channel()
 
-<span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">&#39; [*] Waiting for messages. To exit press CTRL+C&#39;</span>
+channel.queue_declare(queue='test')
+print ' [*] Waiting for messages. To exit press CTRL+C'
 
-<span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
-    <span class="k">print</span> <span class="s">&quot; [x] Received </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">body</span><span class="p">,)</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span> <span class="n">body</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span> <span class="p">)</span>
-    <span class="k">print</span> <span class="s">&quot; [x] Done&quot;</span>
-    <span class="n">ch</span><span class="o">.</span><span class="n">basic_ack</span><span class="p">(</span><span class="n">delivery_tag</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">delivery_tag</span><span class="p">)</span>
+def callback(ch, method, header, body):
+    print &quot; [x] Received %r&quot; % (body,)
+    time.sleep( body.count('.') )
+    print &quot; [x] Done&quot;
+    ch.basic_ack(delivery_tag = method.delivery_tag)
 
-<span class="n">channel</span><span class="o">.</span><span class="n">basic_qos</span><span class="p">(</span><span class="n">prefetch_count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">channel</span><span class="o">.</span><span class="n">basic_consume</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span>
-                      <span class="n">queue</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+channel.basic_qos(prefetch_count=1)
+channel.basic_consume(callback,
+                      queue='test')
 
-<span class="n">pika</span><span class="o">.</span><span class="n">asyncore_loop</span><span class="p">()</span>
-</pre></div>
-</td></tr></table>
+pika.asyncore_loop()</code></pre></div>
+
 
 
 Using message acknowledgments and `prefetch_count` you may set up

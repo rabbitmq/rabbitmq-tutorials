@@ -62,29 +62,20 @@ In
 [`send.java`](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/send.java),
 we need some classes imported:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">1
-2
-3
-4</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
-</pre></div>
-</td></tr></table>
+<div><pre><code class='java'>import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+import java.io.IOException;</code></pre></div>
+
 
 then we can create a connection to the server:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java"> 6
- 7
- 8
- 9
-10</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">send</span> <span class="o">{</span>
-  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argv</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">().</span><span class="na">newConnection</span><span class="o">();</span>
-      <span class="n">Channel</span> <span class="n">chan</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
-</pre></div>
-</td></tr></table>
+<div><pre><code class='java'>public class send {
+  public static void main(String[] argv) {
+    try {
+      Connection conn = new ConnectionFactory().newConnection();
+      Channel chan = conn.createChannel();</code></pre></div>
+
 
 The connection abstracts the socket connection, and takes care of
 protocol version negotiation and authentication and so on for us.
@@ -94,11 +85,9 @@ things done resides.
 To send, we must declare a queue for us to send to; then we can publish a message
 to the queue:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">11
-12</code></pre></div></td><td class="code"><div class="highlight"><pre>      <span class="n">chan</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="s">&quot;hello&quot;</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-      <span class="n">chan</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">,</span> <span class="s">&quot;hello&quot;</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="s">&quot;Hello World!&quot;</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
-</pre></div>
-</td></tr></table>
+<div><pre><code class='java'>chan.queueDeclare(&quot;hello&quot;, false, false, false, null);
+      chan.basicPublish(&quot;&quot;, &quot;hello&quot;, null, &quot;Hello World!&quot;.getBytes());</code></pre></div>
+
 
 Declaring a queue is idempotent; it will be created if it's doesn't
 exist already. The message contents is a byte array, so you can encode
@@ -106,9 +95,8 @@ whatever you like there.
 
 Lastly, we close the channel and the connection;
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">13</code></pre></div></td><td class="code"><div class="highlight"><pre>      <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-</pre></div>
-</td></tr></table>
+<div><pre><code class='java'>conn.close();</code></pre></div>
+
 
 Since many of these method calls can throw an `IOException`, we wrap
 the whole thing in a `try...catch`.  [Here's the whole of the class](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/send.java).
@@ -127,17 +115,12 @@ keep it running to listen for messages and print them out.
 
 The code (in [`recv.java`](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/java/recv.java)) has almost the same imports as `send`:
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">1
-2
-3
-4
-5</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">com.rabbitmq.client.ConnectionFactory</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">com.rabbitmq.client.QueueingConsumer</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
-</pre></div>
-</td></tr></table>
+<div><pre><code class='java'>import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.QueueingConsumer;
+import java.io.IOException;</code></pre></div>
+
 
 The extra `QueueingConsumer` is a class we'll use to buffer the
 messages pushed to us by the server.
@@ -146,19 +129,13 @@ Setting up is the same as the sender; we open a connection and a
 channel, and declare the queue from which we're going to consume.
 Note this matches up with the queue `send` publishes to.
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java"> 7
- 8
- 9
-10
-11
-12</code></pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">recv</span> <span class="o">{</span>
-  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argv</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">try</span> <span class="o">{</span>
-      <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">().</span><span class="na">newConnection</span><span class="o">();</span>
-      <span class="n">Channel</span> <span class="n">chan</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
-      <span class="n">chan</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="s">&quot;hello&quot;</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-</pre></div>
-</td></tr></table>
+<div><pre><code class='java'>public class recv {
+  public static void main(String[] argv) {
+    try {
+      Connection conn = new ConnectionFactory().newConnection();
+      Channel chan = conn.createChannel();
+      chan.queueDeclare(&quot;hello&quot;, false, false, false, null);</code></pre></div>
+
 
 Note that we declare the queue here, as well. Because we might start
 the receiver before the sender, we want to make sure the queue exists
@@ -169,19 +146,13 @@ queue. Since it will push us messages asynchronously, we provide a
 callback in the form of an object that will buffer the messages until
 we're ready to use them. That is what `QueueingConsumer` does.
 
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><code class="java">13
-14
-15
-16
-17
-18</code></pre></div></td><td class="code"><div class="highlight"><pre>      <span class="n">QueueingConsumer</span> <span class="n">consumer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QueueingConsumer</span><span class="o">(</span><span class="n">chan</span><span class="o">);</span>
-      <span class="n">chan</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="s">&quot;hello&quot;</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">consumer</span><span class="o">);</span>
-      <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">QueueingConsumer</span><span class="o">.</span><span class="na">Delivery</span> <span class="n">delivery</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="na">nextDelivery</span><span class="o">();</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getBody</span><span class="o">()));</span>
-      <span class="o">}</span>
-</pre></div>
-</td></tr></table>
+<div><pre><code class='java'>QueueingConsumer consumer = new QueueingConsumer(chan);
+      chan.basicConsume(&quot;hello&quot;, true, consumer);
+      while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        System.out.println(new String(delivery.getBody()));
+      }</code></pre></div>
+
 
 `QueueingConsumer.nextDelivery()` blocks until another message has
 been delivered from the server.

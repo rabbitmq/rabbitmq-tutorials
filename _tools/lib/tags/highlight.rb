@@ -63,11 +63,7 @@ module Jekyll
     def render_codehighlighter(context, code)
     #The div is required because RDiscount blows ass
       <<-HTML
-<div>
-  <pre>
-    <code class='#{@lang}'>#{h(code).strip}</code>
-  </pre>
-</div>
+<div><pre><code class='#{@lang}'>#{h(code).strip}</code></pre></div>
       HTML
     end
     

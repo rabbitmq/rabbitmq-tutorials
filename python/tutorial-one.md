@@ -150,17 +150,13 @@ Our overall design will look like:
 Our first program `send.py` will send a single message to the queue.
 The first thing we need to do is connect to RabbitMQ server.
 
-<div>
-  <pre>
-    <code class='python'>#!/usr/bin/env python
+<div><pre><code class='python'>#!/usr/bin/env python
 import pika
 
 connection = pika.AsyncoreConnection(pika.ConnectionParameters(
                '127.0.0.1',
                credentials = pika.PlainCredentials('guest', 'guest'))
-channel = connection.channel()</code>
-  </pre>
-</div>
+channel = connection.channel()</code></pre></div>
 
 
 
@@ -169,11 +165,7 @@ RabbitMQ will just trash the message if can't deliver it. So, we need to
 create a queue to which the message will be delivered. Let's name this queue
 _test_:
 
-<div>
-  <pre>
-    <code class='python'>channel.queue_declare(queue='test')</code>
-  </pre>
-</div>
+<div><pre><code class='python'>channel.queue_declare(queue='test')</code></pre></div>
 
 
 
@@ -189,14 +181,10 @@ identified by an empty string. That exchange is a special one that
 allows us to specify exactly to which queue the message should go.
 The queue name is specified by the `routing_key` variable:
 
-<div>
-  <pre>
-    <code class='python'>channel.basic_publish(exchange='',
+<div><pre><code class='python'>channel.basic_publish(exchange='',
                       routing_key='test',
                       body='Hello World!')
-print &quot; [x] Sent 'Hello World!'&quot;</code>
-  </pre>
-</div>
+print &quot; [x] Sent 'Hello World!'&quot;</code></pre></div>
 
 
 
@@ -224,11 +212,7 @@ Just like before, in the beginning we must make sure that the
 queue exists. Creating a queue using `queue_declare` is idempotent - you can
 run the command as many times you like, and only one queue will be created.
 
-<div>
-  <pre>
-    <code class='python'>channel.queue_declare(queue='test')</code>
-  </pre>
-</div>
+<div><pre><code class='python'>channel.queue_declare(queue='test')</code></pre></div>
 
 
 You may ask why to declare queue again - we have already declared it
@@ -242,25 +226,17 @@ Receiving messages from the queue is a bit more complex. Whenever we receive
 a message, a `callback` function is called. In our case
 this function will print on the screen the contents of the message.
 
-<div>
-  <pre>
-    <code class='python'>def callback(ch, method, header, body):
-    print &quot; [x] Received %.20r&quot; % (body,)</code>
-  </pre>
-</div>
+<div><pre><code class='python'>def callback(ch, method, header, body):
+    print &quot; [x] Received %.20r&quot; % (body,)</code></pre></div>
 
 
 
 Next, we need to tell RabbitMQ that this particular callback function is
 interested in messages from our _test_ queue:
 
-<div>
-  <pre>
-    <code class='python'>channel.basic_consume(callback,
+<div><pre><code class='python'>channel.basic_consume(callback,
                       queue='test',
-                      no_ack=True)</code>
-  </pre>
-</div>
+                      no_ack=True)</code></pre></div>
 
 
 For that command to succeed we must be sure that a queue which we want
@@ -270,12 +246,8 @@ created a queue above - using `queue_declare`.
 And finally, we enter a never-ending loop that waits for data and runs callbacks
 whenever necessary.
 
-<div>
-  <pre>
-    <code class='python'>print ' [*] Waiting for messages. To exit press CTRL+C'
-pika.asyncore_loop()</code>
-  </pre>
-</div>
+<div><pre><code class='python'>print ' [*] Waiting for messages. To exit press CTRL+C'
+pika.asyncore_loop()</code></pre></div>
 
 
 [(full receive.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/receive.py)
