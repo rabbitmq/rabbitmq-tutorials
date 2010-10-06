@@ -11,3 +11,5 @@ dot:
   opts: '-Gbgcolor=transparent -Gtruecolor=true'
 
 pygments: false
+
+examples_url: http://github.com/rabbitmq/rabbitmq-tutorials/blob/master

@@ -249,6 +249,7 @@ it's value is ignored for `fanout` exchanges. Here goes the code for
                           body=message)
     print " [x] Sent %r" % (message,)
 {% endhighlight %}
+[(full emit_log.py source)]({{ examples_url }}/python/emit_log.py)
 
 As you see, we avoided declaring exchange. If the `logs` exchange
 isn't created at the time this code is executed the message will be
@@ -285,6 +286,7 @@ The code for `receive_logs.py`:
 
     pika.asyncore_loop()
 {% endhighlight %}
+[(full receive_logs.py source)]({{ examples_url }}/python/receive_logs.py)
 
 
 We're done. If you want to save logs to a file, just open a console and type:
