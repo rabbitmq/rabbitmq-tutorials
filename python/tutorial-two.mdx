@@ -298,7 +298,7 @@ Final code of our `new_task.py` script:
     channel.queue_declare(queue='task_queue', durable=True)
 
     message = ' '.join(sys.argv[1:]) or "Hello World!"
-    channel.basic_publish(exchange='', routing_key='test',
+    channel.basic_publish(exchange='', routing_key='task_queue',
                           body=message,
                           properties=pika.BasicProperties(
                              delivery_mode = 2, # make message persistent
@@ -320,7 +320,7 @@ And our worker:
             credentials=pika.PlainCredentials('guest', 'guest')))
     channel = connection.channel()
 
-    channel.queue_declare(queue='test')
+    channel.queue_declare(queue='task_queue', durable=True)
     print ' [*] Waiting for messages. To exit press CTRL+C'
 
     def callback(ch, method, header, body):
@@ -331,7 +331,7 @@ And our worker:
 
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(callback,
-                          queue='test')
+                          queue='task_queue')
 
     pika.asyncore_loop()
 {% endhighlight %}
