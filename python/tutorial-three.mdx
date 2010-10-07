@@ -32,9 +32,9 @@ messages and second will receive and print them.
 In our logging system every running copy of the receiver program
 will be able to get the same messages. That way we'll be able to run one
 receiver and direct the logs to disk, in the same time we'll be able to run
-another reciver and see the same logs on the screen.
+another receiver and see the same logs on the screen.
 
-Essentially, emited log messages are going to be broadcasted to all
+Essentially, emitted log messages are going to be broadcasted to all
 the receivers.
 
 
@@ -119,9 +119,9 @@ queues it knows. And that's exactly what we need for our logger.
 > because we were using a default `""` _empty string_ (nameless) exchange.
 > Remember how publishing worked:
 >
->     chnnel.basic_publish(exchange='',
->                          routing_key='test',
->                          body=message)
+>     channel.basic_publish(exchange='',
+>                           routing_key='test',
+>                           body=message)
 >
 > The _empty string_ exchange is special: message is
 > routed to the queue with name specified by `routing_key`.

@@ -144,7 +144,7 @@ it.
 If consumer dies without sending ack, Rabbit will understand that a
 message wasn't processed fully and will redispatch it to another
 consumer. That way you can be sure that no message is lost, even if
-the workers occasionaly die.
+the workers occasionally die.
 
 There aren't any message timeouts, Rabbit will redispatch the
 message only when the worker connection dies. It's fine if processing
@@ -339,7 +339,7 @@ And our worker:
 
 
 Using message acknowledgments and `prefetch_count` you may set up
-quite a decent work queue. The durabiltiy options let the tasks
+quite a decent work queue. The durability options let the tasks
 to survive even if Rabbit is restarted.
 
 Now we can move on to [part 3]({{ python_three_url }}) and learn how to
