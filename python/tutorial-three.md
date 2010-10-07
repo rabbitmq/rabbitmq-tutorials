@@ -235,7 +235,7 @@ channel.basic_consume(callback,
 
 pika.asyncore_loop()</code></pre></div>
 
-[(full receive_logs.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/receive_logs.py)
+[(receive_logs.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/receive_logs.py)
 
 
 We're done. If you want to save logs to a file, just open a console and type:
