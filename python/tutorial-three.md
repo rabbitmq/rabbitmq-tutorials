@@ -9,22 +9,22 @@ Learning RabbitMQ, part 3 (Broadcast)
 </div></center>
 
 
-In previous part of this tutorial we've learned how to create a task
-queue. The idea behind a task queue is that a task should be delivered
-to exactly one worker. In this part we'll do something completely
+In [previous part](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/tutorial-two.md) of this tutorial we've learned how
+to create a task queue. The core assumption behind a task queue is that a task
+is delivered to exactly one worker. In this part we'll do something completely
 different - we'll try to deliver a message to multiple consumers. This
 pattern is known as "publish-subscribe".
 
 To illustrate this this tutorial, we're going to build a simple
-logging system. It will consist of two programs - one will emit log
-messages and one will receive them.
+logging system. It will consist of two programs - first will emit log
+messages and second will receive and print them.
 
-In our logging system we'll every running copy of the receiver program
+In our logging system every running copy of the receiver program
 will be able to get the same messages. That way we'll be able to run one
-receiver and direct the logs to disk. In the same time we'll be able to run
-another reciver and see the same logs on the screen.
+receiver and direct the logs to disk, in the same time we'll be able to run
+another receiver and see the same logs on the screen.
 
-Essentially, crated log messages are going to be broadcasted to all
+Essentially, emitted log messages are going to be broadcasted to all
 the receivers.
 
 
@@ -37,15 +37,15 @@ in Rabbit.
 
 Let's quickly remind what we've learned:
 
- * _Producer_ is a name for user application that sends messages.
+ * _Producer_ is user application that sends messages.
  * _Queue_ is a buffer that stores messages.
- * _Consumer_ is a name for user application that receives messages.
+ * _Consumer_ is user application that receives messages.
 
 
-The core idea behind the messaging model in Rabbit is that the
+The core idea in the messaging model in Rabbit is that the
 producer never sends any messages directly to the queue. Actually,
-quite often the producer doesn't even know that a message won't be
-delivered to any queue!
+quite often the producer doesn't even know if a message will be
+delivered to any queue at all!
 
 Instead, the producer can only send messages to an _exchange_. An
 exchange is a very simple thing. On one side it receives messages from
@@ -64,7 +64,7 @@ defined by the _exchange type_.
 
 There are a few exchange types available: `direct`, `topic`,
 `headers` and `fanout`. We'll focus on the last one - the
-fanout. Let's create an exchange of that type, and name it `logs`:
+fanout. Let's create an exchange of that type, and call it `logs`:
 
 <div><pre><code class='python'>channel.exchange_declare(exchange='logs',
                          type='fanout')</code></pre></div>
@@ -90,7 +90,7 @@ queues it knows. And that's exactly what we need for our logger.
 >     ...done.
 >
 > You can see a few `amq.` exchanges. They're created by default, but with a
-> bit of good luck you'll never need to use them.
+> bit of luck you'll never need to use them.
 
 <div></div>
 
@@ -101,33 +101,31 @@ queues it knows. And that's exactly what we need for our logger.
 > because we were using a default `""` _empty string_ (nameless) exchange.
 > Remember how publishing worked:
 >
->     chnnel.basic_publish(exchange='',
->                          routing_key='test',
->                          body=message)
+>     channel.basic_publish(exchange='',
+>                           routing_key='test',
+>                           body=message)
 >
-> The _empty string_ exchange is a special exchange: every queue is connected
-> to it using its queue name as a key. When you publish a message to the
-> nameless exchange it will be routed to the queue with name specified
-> by `routing_key`.
+> The _empty string_ exchange is special: message is
+> routed to the queue with name specified by `routing_key`.
 
 
 
 Temporary queues
 ----------------
 
-In previous tutorial parts we were using a queue which had a name -
-`test` in first `test_dur` in second tutorial. Being able to name a
+As you may remember previously we were using queues which had a specified name -
+`test` in first `task_queue` in second tutorial. Being able to name a
 queue was crucial for us - we needed to point the workers to the same
 queue.  Essentially, giving a queue a name is important when you don't
-want to loose any messages if the consumer disconnects.
+want to loose any messages when the consumer disconnects.
 
 But that's not true for our logger. We do want to hear only about
 currently flowing log messages, we do not want to hear the old
 ones. To solve that problem we need two things.
 
-First, whenever we connect the queue should be new and empty. To do it
-we could just use random queue name, or, even better - let server to
-choose a random unique queue name. We can do it by not supplying the
+First, whenever we connect to Rabbit we need a fresh, empty queue. To do it
+we could create a queue with a random name, or, even better - let server
+choose a random queue name for us. We can do it by not supplying the
 `queue` parameter to `queue_declare`:
 
 <div><pre><code class='python'>result = channel.queue_declare()</code></pre></div>
@@ -161,7 +159,7 @@ between exchange and a queue is called a _binding_.
                    queue=result.queue)</code></pre></div>
 
 
-From now on the `logs` exchange will broadcast the messages also to
+From now on the `logs` exchange will broadcast all the messages also to
 our queue.
 
 > #### Listing bindings
@@ -201,7 +199,7 @@ channel.basic_publish(exchange='logs',
                       body=message)
 print &quot; [x] Sent %r&quot; % (message,)</code></pre></div>
 
-[(full emit_log.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/emit_log.py)
+[(emit_log.py source)](http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/emit_log.py)
 
 As you see, we avoided declaring exchange. If the `logs` exchange
 isn't created at the time this code is executed the message will be
@@ -248,5 +246,8 @@ If you wish to see the logs on your screen, spawn a new terminal and run:
 
     $ ./receive_logs.py
 
+And of course, to emit logs type:
+
+    $ ./emit_log.py
 
 
