@@ -17,14 +17,16 @@ digraph G {
 
 Throughout this tutorial, we'll teach you the basic concepts required for
 creating RabbitMQ applications. The tutorial will be illustrated with
-code snippets written in [Python](http://www.python.org/). But don't worry if
-you don't know this language - the core ideas are the same for other languages.
+code snippets written in [Python](http://www.python.org/) and executed on Linux.
+But don't worry if you don't know this language - the core ideas are the same
+for other languages.
+
 
 This tutorial consists of three parts:
 
  * First we're going to write the simplest possible "Hello World" example.
- * Next we'll try to use Rabbit as a simple "Work queue" server.
- * Finally, we'll discuss the "Publish-subscribe" pattern.
+ * Next we'll try to use Rabbit as [a simple "Work queue" server]({{ python_two_url }}).
+ * Finally, we'll discuss how to [broadcast a message]({{ python_three_url }}).
 
 You need to have RabbitMQ server installed to go through this tutorial.
 If you haven't installed it yet you can follow the
@@ -49,7 +51,8 @@ If you have installed RabbitMQ you should see something like:
 > #### Where to get help
 >
 > If you're having trouble going through this tutorial you can post a message to
-> [rabbitmq-discuss mailing list](https://lists.rabbitmq.com/cgi-bin/mailman/listinfo/rabbitmq-discuss).
+> [rabbitmq-discuss mailing list](https://lists.rabbitmq.com/cgi-bin/mailman/listinfo/rabbitmq-discuss)
+> or join the [#rabbitmq](irc://irc.freenode.net/rabbitmq) irc channel.
 
 
 Introduction
@@ -57,7 +60,7 @@ Introduction
 
 RabbitMQ is a message broker. The principle idea is pretty simple: it accepts
 and forwards messages. You can think about it as a post office: when you send
-mail to the post box and you're pretty sure that mr postman will eventually
+mail to the post box and you're pretty sure that Mr. Postman will eventually
 deliver the mail to your recipient. Using this metaphor RabbitMQ is a post box,
 post office and a postman.
 
@@ -68,7 +71,7 @@ blobs of data - _messages_.
 RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
 
  * _Producing_ means nothing more than sending. A program that sends messages
-   is a _producer_.
+   is a _producer_. We'll draw it like that, with "P":
 
     {% dot -Gsize="10,0.3" -Grankdir=LR%}
    digraph G {
@@ -82,7 +85,8 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
    is not bound by any limits, it can store how many messages you
    like - it's essentially an infinite buffer. Many _producers_ can send
    messages that go to the one queue, many _consumers_ can try to
-   receive data from one _queue_.
+   receive data from one _queue_. Queue'll be drawn as like that, with
+   its name above it:
 
     {% dot -Gsize="10,0.9" -Grankdir=LR%}
    digraph G {
@@ -95,7 +99,7 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
    {% enddot %}
 
  * _Consuming_ has a simmilar meaning to receiving. _Consumer_ is a program
-   that mostly waits to receive messages.
+   that mostly waits to receive messages. On our drawings it's shown with "C":
 
     {% dot -Gsize="10,0.3" -Grankdir=LR %}
    digraph G {
@@ -126,6 +130,9 @@ digraph G {
     P1 -> Q1 -> C1;
 }
 {% enddot %}
+
+Producer sends messages to the "test" queue. The consumer receives
+messages from that queue.
 
 > #### RabbitMQ libraries
 >
@@ -171,7 +178,8 @@ digraph G {
 
 
 Our first program `send.py` will send a single message to the queue.
-The first thing we need to do is connect to RabbitMQ server.
+The first thing we need to do is to establish a connection with
+RabbitMQ server.
 
 {% highlight python %}
     #!/usr/bin/env python
@@ -183,11 +191,10 @@ The first thing we need to do is connect to RabbitMQ server.
     channel = connection.channel()
 {% endhighlight %}
 
-
-Whenever we send a message we need to make sure the recipient queue exists.
-RabbitMQ will just trash the message if can't deliver it. So, we need to
-create a queue to which the message will be delivered. Let's name this queue
-_test_:
+We're connected now. Next, before sending we need to make sure the
+recipient queue exists. If we send a message to non-existing location,
+RabbitMQ will just trash the message. Let's create a queue to which
+the message will be delivered, let's name it _test_:
 
 {% highlight python %}
     channel.queue_declare(queue='test')
@@ -195,16 +202,16 @@ _test_:
 
 
 At that point we're ready to send a message. Our first message will
-contain a string _Hello World!_ and we want to send it to our _test_
-queue.
+just contain a string _Hello World!_, we want to send it to our
+_test_ queue.
 
-In RabbitMQ a message never goes directly to the queue, it always
+In RabbitMQ a message never can be send directly to the queue, it always
 needs to go through an _exchange_. But let's not get dragged by the
-details - you can read more about _exchanges_ in third part of this
-tutorial. All we need to know now is how to use a default exchange
-identified by an empty string. That exchange is a special one that
+details - you can read more about _exchanges_ in [third part of this
+tutorial]({{ python_three_url }}). All we need to know now is how to use a default exchange
+identified by an empty string. This exchange is special - it
 allows us to specify exactly to which queue the message should go.
-The queue name is specified by the `routing_key` variable:
+The queue name needs to be specified in the `routing_key` parameter:
 
 {% highlight python %}
     channel.basic_publish(exchange='',
@@ -236,28 +243,27 @@ digraph G {
 Our second program `receive.py` will receive messages from the queue and print
 them on the screen.
 
-The code responsible for connecting to Rabbit is the same as the previous example.
-You can copy the first 7 lines.
+Again, first we need to connect to RabbitMQ server. The code
+responsible for connecting to Rabbit is the same as previously.
 
-    # ... connection code is the same, copy first 7 lines from send.py ...
-
-Just like before, in the beginning we must make sure that the
-queue exists. Creating a queue using `queue_declare` is idempotent - you can
-run the command as many times you like, and only one queue will be created.
+Next step, just like before, is to make sure that the
+queue exists. Creating a queue using `queue_declare` is idempotent - we can
+run the command as many times you like, and only one will be created.
 
 {% highlight python %}
     channel.queue_declare(queue='test')
 {% endhighlight %}
 
-You may ask why to declare queue again - we have already declared it
-in our previous code. We could have avoided that if we always run the
-`send.py` program before this one. But we're not sure yet which
+You may ask why to declare the queue again - we have already declared it
+in our previous code. We could have avoided that if we were sure
+that the queue already exists. For example if `send.py` program was
+runned before. But we're not yet sure which
 program to run as first. In such case it's a good practice to repeat
 declaring the queue in both programs.
 
 > #### Listing queues
 >
-> Sometimes you may want to see what queues does RabbitMQ store and how many
+> You may want to see what queues does RabbitMQ store and how many
 > messages are in them. You can do it using the `rabbitmqctl` tool:
 >
 >     $ sudo rabbitmqctl list_queues
@@ -267,9 +273,11 @@ declaring the queue in both programs.
 
 
 
-Receiving messages from the queue is a bit more complex. Whenever we receive
-a message, a `callback` function is called. In our case
-this function will print on the screen the contents of the message.
+Receiving messages from the queue is more complex. It works by subscribing
+a `callback` function to a queue. Whenever we receive
+a message, this `callback` function is called by the Pika library.
+In our case this function will print on the screen the contents of
+the message.
 
 {% highlight python %}
     def callback(ch, method, header, body):
@@ -277,8 +285,8 @@ this function will print on the screen the contents of the message.
 {% endhighlight %}
 
 
-Next, we need to tell RabbitMQ that this particular callback function is
-interested in messages from our _test_ queue:
+Next, we need to tell RabbitMQ that this particular callback function should
+receive messages from our _test_ queue:
 
 {% highlight python %}
     channel.basic_consume(callback,
@@ -289,6 +297,8 @@ interested in messages from our _test_ queue:
 For that command to succeed we must be sure that a queue which we want
 to subscribe to exists. Fortunately we're confident about that - we've
 created a queue above - using `queue_declare`.
+
+The `no_ack` parameter will be described [later on]({{ python_two_url }}).
 
 And finally, we enter a never-ending loop that waits for data and runs callbacks
 whenever necessary.
@@ -320,7 +330,7 @@ Full code for `send.py`:
                           body='Hello World!')
     print " [x] Sent 'Hello World!'"
 {% endhighlight %}
-[(full send.py source)]({{ examples_url }}/python/send.py)
+[(send.py source)]({{ examples_url }}/python/send.py)
 
 
 Full `receive.py` code:
@@ -347,8 +357,7 @@ Full `receive.py` code:
 
     pika.asyncore_loop()
 {% endhighlight %}
-
-[(full receive.py source)]({{ examples_url }}/python/receive.py)
+[(receive.py source)]({{ examples_url }}/python/receive.py)
 
 
 Now we can try out our programs. First, let's send a message using our
@@ -364,9 +373,9 @@ Let's receive it:
      [x] Received 'Hello World!'
 
 Hurray! We were able to send our first message through RabbitMQ. As you might
-have noticed, the `receive.py` program didn't exit. It will stay ready to
-receive further messages. Try to run `send.py` in a new terminal!
+have noticed, the `receive.py` program doesn't exit. It will stay ready to
+receive further messages. Try to run `send.py` again in a new terminal!
 
 We've learned how to send and receive a message from a named
-queue. It's time to move on to part 2 of this tutorial and build a
-simple _task queue_.
+queue. It's time to move on to [part 2]({{ python_two_url }})
+and build a simple _task queue_.

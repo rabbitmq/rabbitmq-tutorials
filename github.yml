@@ -13,3 +13,10 @@ dot:
 pygments: false
 
 examples_url: http://github.com/rabbitmq/rabbitmq-tutorials/blob/master
+
+
+python_one_url: http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/tutorial-one.md
+
+python_two_url: http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/tutorial-two.md
+
+python_three_url: http://github.com/rabbitmq/rabbitmq-tutorials/blob/master/python/tutorial-three.md
