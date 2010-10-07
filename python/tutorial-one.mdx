@@ -84,10 +84,13 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
    messages that go to the one queue, many _consumers_ can try to
    receive data from one _queue_.
 
-    {% dot -Gsize="10,0.3" -Grankdir=LR%}
-
+    {% dot -Gsize="10,0.9" -Grankdir=LR%}
    digraph G {
-       Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
+    subgraph cluster_Q1 {
+        label="queue_name";
+	color=transparent;
+        Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
+    };
    }
    {% enddot %}
 
@@ -114,7 +117,7 @@ Our overall design will look like:
 digraph G {
     P1 [label="P", {{ dotstyle.producer }}];
     subgraph cluster_Q1 {
-        label="queue_name=test";
+        label="test";
 	color=transparent;
         Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
     };
@@ -130,6 +133,7 @@ digraph G {
 > understands the same protocol as Rabbit. There is a choice of libraries
 > for almost every programming language. Python it's not different and there is
 > a bunch of libraries to choose from:
+>
 > * [py-amqplib](http://barryp.org/software/py-amqplib/)
 > * [txAMQP](https://launchpad.net/txamqp)
 > * [pika](http://github.com/tonyg/pika)
@@ -137,9 +141,9 @@ digraph G {
 > In this tutorial we're going to use `pika`. To install it you can use
 > [`pip`](http://pip.openplans.org/) package management tool:
 >
->    $ sudo pip install -e git+http://github.com/tonyg/pika.git#egg=pika
+>     $ sudo pip install -e git+http://github.com/tonyg/pika.git#egg=pika
 >
->If you don't have `pip`, you may want to install it.
+> If you don't have `pip`, you may need to install it.
 >
 > * On Ubuntu:
 >
@@ -156,7 +160,7 @@ digraph G {
 digraph G {
     P1 [label="P", {{ dotstyle.producer }}];
     subgraph cluster_Q1 {
-        label="queue_name=test";
+        label="test";
 	color=transparent;
 	Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
     };
@@ -169,9 +173,7 @@ digraph G {
 Our first program `send.py` will send a single message to the queue.
 The first thing we need to do is connect to RabbitMQ server.
 
-{% highlight python linenos=true linenostart=1 %}
-
-
+{% highlight python %}
     #!/usr/bin/env python
     import pika
 
@@ -179,7 +181,6 @@ The first thing we need to do is connect to RabbitMQ server.
                    '127.0.0.1',
                    credentials = pika.PlainCredentials('guest', 'guest'))
     channel = connection.channel()
-
 {% endhighlight %}
 
 
@@ -188,10 +189,8 @@ RabbitMQ will just trash the message if can't deliver it. So, we need to
 create a queue to which the message will be delivered. Let's name this queue
 _test_:
 
-{% highlight python linenos=true linenostart=8 %}
-
+{% highlight python %}
     channel.queue_declare(queue='test')
-
 {% endhighlight %}
 
 
@@ -207,17 +206,13 @@ identified by an empty string. That exchange is a special one that
 allows us to specify exactly to which queue the message should go.
 The queue name is specified by the `routing_key` variable:
 
-{% highlight python linenos=true linenostart=9 %}
-
+{% highlight python %}
     channel.basic_publish(exchange='',
                           routing_key='test',
                           body='Hello World!')
     print " [x] Sent 'Hello World!'"
-
 {% endhighlight %}
 
-
-[(full send.py source)]({{ examples_url }}/python/send.py)
 
 ### Receiving
 
@@ -227,7 +222,7 @@ digraph G {
     rankdir=LR;
 
     subgraph cluster_Q1 {
-        label="queue_name=test";
+        label="test";
 	color=transparent;
 	Q1 [label="{<s>||||<e>}", {{ dotstyle.queue }}];
     };
@@ -250,10 +245,8 @@ Just like before, in the beginning we must make sure that the
 queue exists. Creating a queue using `queue_declare` is idempotent - you can
 run the command as many times you like, and only one queue will be created.
 
-{% highlight python linenos=true linenostart=8 %}
-
+{% highlight python %}
     channel.queue_declare(queue='test')
-
 {% endhighlight %}
 
 You may ask why to declare queue again - we have already declared it
@@ -278,23 +271,19 @@ Receiving messages from the queue is a bit more complex. Whenever we receive
 a message, a `callback` function is called. In our case
 this function will print on the screen the contents of the message.
 
-{% highlight python linenos=true linenostart=9 %}
-
+{% highlight python %}
     def callback(ch, method, header, body):
         print " [x] Received %.20r" % (body,)
-
 {% endhighlight %}
 
 
 Next, we need to tell RabbitMQ that this particular callback function is
 interested in messages from our _test_ queue:
 
-{% highlight python linenos=true linenostart=11 %}
-
+{% highlight python %}
     channel.basic_consume(callback,
                           queue='test',
                           no_ack=True)
-
 {% endhighlight %}
 
 For that command to succeed we must be sure that a queue which we want
@@ -304,17 +293,63 @@ created a queue above - using `queue_declare`.
 And finally, we enter a never-ending loop that waits for data and runs callbacks
 whenever necessary.
 
-{% highlight python linenos=true linenostart=14 %}
-
-
+{% highlight python %}
     print ' [*] Waiting for messages. To exit press CTRL+C'
     pika.asyncore_loop()
+{% endhighlight %}
 
+
+### Putting it all together
+
+
+Full code for `send.py`:
+{% highlight python linenos=true %}
+    #!/usr/bin/env python
+    import pika
+
+    connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+            host='127.0.0.1',
+            credentials=pika.PlainCredentials('guest', 'guest')))
+    channel = connection.channel()
+
+
+    channel.queue_declare(queue='test')
+
+    channel.basic_publish(exchange='',
+                          routing_key='test',
+                          body='Hello World!')
+    print " [x] Sent 'Hello World!'"
+{% endhighlight %}
+[(full send.py source)]({{ examples_url }}/python/send.py)
+
+
+Full `receive.py` code:
+{% highlight python linenos=true %}
+    #!/usr/bin/env python
+    import pika
+
+    connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+            host='127.0.0.1',
+            credentials=pika.PlainCredentials('guest', 'guest')))
+    channel = connection.channel()
+
+
+    channel.queue_declare(queue='test')
+
+    print ' [*] Waiting for messages. To exit press CTRL+C'
+
+    def callback(ch, method, header, body):
+        print " [x] Received %.20r" % (body,)
+
+    channel.basic_consume(callback,
+                          queue='test',
+                          no_ack=True)
+
+    pika.asyncore_loop()
 {% endhighlight %}
 
 [(full receive.py source)]({{ examples_url }}/python/receive.py)
 
-### Putting it all together
 
 Now we can try out our programs. First, let's send a message using our
 `send.py` program:
