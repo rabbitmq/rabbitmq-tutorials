@@ -60,15 +60,15 @@ Introduction
 
 RabbitMQ is a message broker. The principle idea is pretty simple: it accepts
 and forwards messages. You can think about it as a post office: when you send
-mail to the post box and you're pretty sure that Mr. Postman will eventually
+mail to the post box you're pretty sure that Mr. Postman will eventually
 deliver the mail to your recipient. Using this metaphor RabbitMQ is a post box,
-post office and a postman.
+a post office and a postman.
 
 The major difference between RabbitMQ and the post office is the fact that it
 doesn't deal with the paper, instead it accepts, stores and forwards binary
 blobs of data - _messages_.
 
-RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
+RabbitMQ uses a specific jargon. For example:
 
  * _Producing_ means nothing more than sending. A program that sends messages
    is a _producer_. We'll draw it like that, with "P":
@@ -85,7 +85,7 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
    is not bound by any limits, it can store how many messages you
    like - it's essentially an infinite buffer. Many _producers_ can send
    messages that go to the one queue, many _consumers_ can try to
-   receive data from one _queue_. Queue'll be drawn as like that, with
+   receive data from one _queue_. A queue will be drawn as like that, with
    its name above it:
 
     {% dot -Gsize="10,0.9" -Grankdir=LR%}
@@ -98,7 +98,7 @@ RabbitMQ uses a weird jargon, but it's simple once you'll get it. For example:
    }
    {% enddot %}
 
- * _Consuming_ has a similar meaning to receiving. _Consumer_ is a program
+ * _Consuming_ has a similar meaning to receiving. A _consumer_ is a program
    that mostly waits to receive messages. On our drawings it's shown with "C":
 
     {% dot -Gsize="10,0.3" -Grankdir=LR %}
@@ -136,10 +136,10 @@ messages from that queue.
 
 > #### RabbitMQ libraries
 >
-> RabbitMQ speaks AMQP protocol. To use Rabbit you'll need a library that
-> understands the same protocol as Rabbit. There is a choice of libraries
-> for almost every programming language. Python it's not different and there is
-> a bunch of libraries to choose from:
+> RabbitMQ speaks a protocol called AMQP. To use Rabbit you'll need a library
+> that understands the same protocol as Rabbit. There is a choice of libraries
+> for almost every programming language. For python it's not different and there
+> is a bunch of libraries to choose from:
 >
 > * [py-amqplib](http://barryp.org/software/py-amqplib/)
 > * [txAMQP](https://launchpad.net/txamqp)
@@ -202,12 +202,12 @@ the message will be delivered, let's name it _test_:
 
 
 At that point we're ready to send a message. Our first message will
-just contain a string _Hello World!_, we want to send it to our
+just contain a string _Hello World!_ and we want to send it to our
 _test_ queue.
 
-In RabbitMQ a message never can be send directly to the queue, it always
+In RabbitMQ a message can never be send directly to the queue, it always
 needs to go through an _exchange_. But let's not get dragged by the
-details - you can read more about _exchanges_ in [third part of this
+details - you can read more about _exchanges_ in [the third part of this
 tutorial]({{ python_three_url }}). All we need to know now is how to use a default exchange
 identified by an empty string. This exchange is special - it
 allows us to specify exactly to which queue the message should go.
@@ -246,7 +246,7 @@ them on the screen.
 Again, first we need to connect to RabbitMQ server. The code
 responsible for connecting to Rabbit is the same as previously.
 
-Next step, just like before, is to make sure that the
+The next step, just like before, is to make sure that the
 queue exists. Creating a queue using `queue_declare` is idempotent - we can
 run the command as many times you like, and only one will be created.
 
@@ -258,7 +258,7 @@ You may ask why to declare the queue again - we have already declared it
 in our previous code. We could have avoided that if we were sure
 that the queue already exists. For example if `send.py` program was
 run before. But we're not yet sure which
-program to run as first. In such case it's a good practice to repeat
+program to run first. In such cases it's a good practice to repeat
 declaring the queue in both programs.
 
 > #### Listing queues
