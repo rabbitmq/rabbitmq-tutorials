@@ -79,31 +79,31 @@ see.
 You need three consoles open. First two to run `worker.py`
 script. These consoles will be our two consumers - C1 and C2.
 
-    shell1$ ./worker.py
+    shell1$ python worker.py
      [*] Waiting for messages. To exit press CTRL+C
 
-    shell2$ ./worker.py
+    shell2$ python worker.py
      [*] Waiting for messages. To exit press CTRL+C
 
 On the
 third one we'll be publishing new tasks. Once you've started the
 consumers you can produce few messages:
 
-    shell3$ ./new_task.py First message.
-    shell3$ ./new_task.py Second message..
-    shell3$ ./new_task.py Third message...
-    shell3$ ./new_task.py Fourth message....
-    shell3$ ./new_task.py Fifth message.....
+    shell3$ python new_task.py First message.
+    shell3$ python new_task.py Second message..
+    shell3$ python new_task.py Third message...
+    shell3$ python new_task.py Fourth message....
+    shell3$ python new_task.py Fifth message.....
 
 Let's see what is delivered to our workers:
 
-    shell1$ ./worker.py
+    shell1$ python worker.py
      [*] Waiting for messages. To exit press CTRL+C
      [x] Received 'First message.'
      [x] Received 'Third message...'
      [x] Received 'Fifth message.....'
 
-    shell2$ ./worker.py
+    shell2$ python worker.py
      [*] Waiting for messages. To exit press CTRL+C
      [x] Received 'Second message..'
      [x] Received 'Fourth message....'

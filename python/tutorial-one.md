@@ -135,15 +135,16 @@ messages from that queue.
 >
 >     $ sudo pip install -e git+http://github.com/tonyg/pika.git#egg=pika
 >
-> If you don't have `pip`, you may need to install it.
+> The installation depends on `pip` and `git-core` packages, you may
+> need to install them.
 >
 > * On Ubuntu:
 >
->       $ sudo apt-get install python-pip
+>       $ sudo apt-get install python-pip git-core
 >
 > * On Debian:
 >
->       $ sudo apt-get install python-setuptools
+>       $ sudo apt-get install python-setuptools git-core
 >       $ sudo easy_install pip
 
 ### Sending
