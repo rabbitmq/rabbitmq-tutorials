@@ -154,7 +154,7 @@ choose a random queue name for us. We can do it by not supplying the
 At that point `result.queue` contains a random queue name. For example it
 may look like `amq.gen-U0srCoW8TsaXjNh73pnVAw==`.
 
-Secondly, once we disconnect the client the queue should be
+Secondly, once we disconnect the consumer the queue should be
 deleted. There's an `auto_delete` flag for that:
 
 {% highlight python %}
@@ -291,13 +291,28 @@ The code for `receive_logs.py`:
 
 We're done. If you want to save logs to a file, just open a console and type:
 
-    $ ./receive_logs.py > logs_from_rabbit.log
+    $ python receive_logs.py > logs_from_rabbit.log
 
 If you wish to see the logs on your screen, spawn a new terminal and run:
 
-    $ ./receive_logs.py
+    $ python receive_logs.py
 
 And of course, to emit logs type:
 
-    $ ./emit_log.py
+    $ python emit_log.py
 
+
+Using `rabbitmqctl list_bindings` you can verify if the code actually
+creates bindings and queues as we wanted. With two `receive_logs.py`
+programs running you should see something like:
+
+    $ sudo rabbitmqctl list_bindings
+    Listing bindings ...
+     ...
+    logs    amq.gen-TJWkez28YpImbWdRKMa8sg==                []
+    logs    amq.gen-x0kymA4yPzAT6BoC/YP+zw==                []
+    ...done.
+
+The interpretation of the result is straightforward: data from
+exchange `logs` goes to two queues with server-assigned names. And
+that's exactly what we intended.
