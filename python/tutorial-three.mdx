@@ -242,6 +242,9 @@ its value is ignored for `fanout` exchanges. Here goes the code for
             credentials=pika.PlainCredentials('guest', 'guest')))
     channel = connection.channel()
 
+    channel.exchange_declare(exchange='logs',
+                             type='fanout')
+
     message = ' '.join(sys.argv[1:]) or "info: Hello World!"
     channel.basic_publish(exchange='logs',
                           routing_key='',
@@ -250,10 +253,13 @@ its value is ignored for `fanout` exchanges. Here goes the code for
 {% endhighlight %}
 [(emit_log.py source)]({{ examples_url }}/python/emit_log.py)
 
-As you see, we avoided declaring exchange here. If the `logs` exchange
-isn't created at the time this code is executed the message will be
-lost. That's okay for us - if no consumer is listening yet (ie:
-the exchange hasn't been created) we can discard the message.
+As you see, after establishing the connection we declared the
+exchange. This step is neccesary as publishing to a non-existing
+exchange is forbidden.
+
+The messages will be lost if no queue is bound to the exchange yet,
+but that's okay for us; if no consumer is listening yet (ie: the
+exchange hasn't been created) we can safely discard the message.
 
 The code for `receive_logs.py`:
 
