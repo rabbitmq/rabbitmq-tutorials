@@ -1,12 +1,12 @@
 <?php
 
 require_once(__DIR__ . '/lib/php-amqplib/amqp.inc');
-include_once(__DIR__ . '/config/config.php');
 
-$connection = new AMQPConnection(HOST, PORT, USER, PASS, VHOST);
+$connection = new AMQPConnection('localhost', 5672, 'guest', 'guest');
 $channel = $connection->channel();
 
-$channel->queue_declare('task_queue', false, true);
+
+$channel->queue_declare('task_queue', false, true, false, false);
 
 echo ' [*] Waiting for messages. To exit press CTRL+C', "\n";
 
@@ -18,8 +18,8 @@ $callback = function($msg){
 };
 
 $channel->basic_qos(null, 1, null);
-$channel->basic_consume('task_queue', 'consumer_tag', false, false, false, false, $callback);
-  
+$channel->basic_consume('task_queue', '', false, false, false, false, $callback);
+
 while(count($channel->callbacks)) {
     $channel->wait();
 }
