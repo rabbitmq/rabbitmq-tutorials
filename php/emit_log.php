@@ -1,11 +1,12 @@
 <?php
 
 require_once(__DIR__ . '/lib/php-amqplib/amqp.inc');
-include_once(__DIR__ . '/config/config.php');
 
-$connection = new AMQPConnection(HOST, PORT, USER, PASS, VHOST);
+$connection = new AMQPConnection('localhost', 5672, 'guest', 'guest');
 $channel = $connection->channel();
-$channel->exchange_declare('logs', 'fanout');
+
+
+$channel->exchange_declare('logs', 'fanout', false, false, false);
 
 $data = implode(' ', array_slice($argv, 1));
 if(empty($data)) $data = "info: Hello World!";
