@@ -10,12 +10,12 @@ First, you need Python Pip.
 
   * On Ubuntu:
 
-    $ sudo apt-get install python-pip git-core
+     $ sudo apt-get install python-pip git-core
 
  * On Debian:
 
-    $ sudo apt-get install python-setuptools git-core
-    $ sudo easy_install pip
+     $ sudo apt-get install python-setuptools git-core
+     $ sudo easy_install pip
 
 
 Now you can install Puka system-wide using Pip:
