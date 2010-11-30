@@ -12,26 +12,30 @@ class FibonacciClient(object):
         result = self.channel.queue_declare(auto_delete=True)
         self.callback_queue = result.queue
 
+        self.requests = {}
+        self.channel.basic_consume(self.on_response, no_ack=True,
+                                   queue=self.callback_queue)
+
+    def on_response(self, ch, method, props, body):
+        corr_id = props.correlation_id
+        if corr_id in self.requests:
+            self.requests[corr_id] = body
+
     def call(self, n):
-        correlation_id = str(uuid.uuid4())
+        corr_id = str(uuid.uuid4())
+        self.requests[corr_id] = None
         self.channel.basic_publish(exchange='',
                                    routing_key='rpc_queue',
                                    properties=pika.BasicProperties(
                                          reply_to = self.callback_queue,
-                                         correlation_id = correlation_id,
+                                         correlation_id = corr_id,
                                          ),
                                    body=str(n))
-        response = []
-        def on_basic_deliver(ch, method, props, body):
-            if props.correlation_id == correlation_id:
-                response.append(body)
-        self.channel.basic_consume(on_basic_deliver,
-                                   queue=self.callback_queue,
-                                   no_ack=True)
-        while not response:
+        while self.requests[corr_id] is None:
             pika.asyncore_loop(count=1)
-
-        return int(response[0])
+        response = self.requests[corr_id]
+        del self.requests[corr_id]
+        return int(response)
 
 
 fibonacci_rpc = FibonacciClient()
