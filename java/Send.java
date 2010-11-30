@@ -10,8 +10,8 @@ public class Send {
       try {
         conn = new ConnectionFactory().newConnection();
         Channel chan = conn.createChannel();
-        chan.queueDeclare("test", false, false, false, null);
-        chan.basicPublish("", "test", null, "Hello World!".getBytes());
+        chan.queueDeclare("hello", false, false, false, null);
+        chan.basicPublish("", "hello", null, "Hello World!".getBytes());
       }
       finally {
         if (conn != null) conn.close();

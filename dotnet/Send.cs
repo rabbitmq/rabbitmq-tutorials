@@ -9,12 +9,12 @@ namespace Send {
             IConnection connection = factory.CreateConnection();
             IModel channel = connection.CreateModel();
 
-            channel.QueueDeclare("test");
+            channel.QueueDeclare("hello");
 
             string message = "Hello World!";
             byte[] body = System.Text.Encoding.UTF8.GetBytes(message);
 
-            channel.BasicPublish("", "test", null, body);
+            channel.BasicPublish("", "hello", null, body);
             Console.WriteLine(" [x] Sent {0}", message);
 
             channel.Close();

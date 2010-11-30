@@ -10,9 +10,9 @@ public class Recv {
       try {
         conn = new ConnectionFactory().newConnection();
         Channel chan = conn.createChannel();
-        chan.queueDeclare("test", false, false, false, null);
+        chan.queueDeclare("hello", false, false, false, null);
         QueueingConsumer consumer = new QueueingConsumer(chan);
-        chan.basicConsume("test", true, consumer);
+        chan.basicConsume("hello", true, consumer);
         while (true) {
           QueueingConsumer.Delivery delivery = consumer.nextDelivery();
           System.out.println(new String(delivery.getBody()));
