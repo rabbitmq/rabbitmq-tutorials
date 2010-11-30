@@ -12,6 +12,7 @@ First, you need Python Pip.
 
        $ sudo apt-get install python-pip git-core
 
+
  * On Debian:
 
        $ sudo apt-get install python-setuptools git-core
