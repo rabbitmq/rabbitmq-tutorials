@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-import json
 import pika
-import random
+import uuid
 
 class FibonacciClient(object):
     def __init__(self):
@@ -13,15 +12,15 @@ class FibonacciClient(object):
         result = self.channel.queue_declare(auto_delete=True)
         self.callback_queue = result.queue
 
-    def call(self, *args, **kwargs):
-        correlation_id = str(random.random())
+    def call(self, n):
+        correlation_id = str(uuid.uuid4())
         self.channel.basic_publish(exchange='',
                                    routing_key='rpc_queue',
                                    properties=pika.BasicProperties(
                                          reply_to = self.callback_queue,
                                          correlation_id = correlation_id,
                                          ),
-                                   body=json.dumps([args, kwargs]))
+                                   body=str(n))
         response = []
         def on_basic_deliver(ch, method, props, body):
             if props.correlation_id == correlation_id:
@@ -32,12 +31,12 @@ class FibonacciClient(object):
         while not response:
             pika.asyncore_loop(count=1)
 
-        return json.loads(response[0])[0]
+        return int(response[0])
 
 
-rpc = FibonacciClient()
+fibonacci_rpc = FibonacciClient()
 
-print " [x] Requesting fib(33)"
-response = rpc.call(33)
+print " [x] Requesting fib(30)"
+response = fibonacci_rpc.call(30)
 print " [.] Got %r" % (response,)
 
