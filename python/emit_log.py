@@ -15,3 +15,4 @@ channel.basic_publish(exchange='logs',
                       routing_key='',
                       body=message)
 print " [x] Sent %r" % (message,)
+connection.close()

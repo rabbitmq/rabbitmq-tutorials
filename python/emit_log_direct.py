@@ -17,3 +17,4 @@ channel.basic_publish(exchange='direct_logs',
                       routing_key=severity,
                       body=message)
 print " [x] Sent %r:%r" % (severity, message)
+connection.close()
