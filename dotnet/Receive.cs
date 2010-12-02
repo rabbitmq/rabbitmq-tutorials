@@ -10,10 +10,10 @@ namespace Receive {
             IConnection connection = factory.CreateConnection();
             IModel channel = connection.CreateModel();
 
-            channel.QueueDeclare("test");
+            channel.QueueDeclare("hello");
 
             QueueingBasicConsumer consumer = new QueueingBasicConsumer(channel);
-            channel.BasicConsume("test", true, null, consumer);
+            channel.BasicConsume("hello", true, null, consumer);
 
             Console.WriteLine(" [*] Waiting for messages. To exit press CTRL+C");
             while(true) {
