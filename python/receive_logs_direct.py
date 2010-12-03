@@ -19,7 +19,6 @@ if not severities:
     sys.exit(1)
 
 for severity in severities:
-    assert severity in ('info', 'warning', 'error')
     channel.queue_bind(exchange='direct_logs',
                        queue=queue_name,
                        routing_key=severity)
