@@ -8,7 +8,9 @@ public class Recv {
     try {
       Connection conn = null;
       try {
-        conn = new ConnectionFactory().newConnection();
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        conn = factory.newConnection();
         Channel chan = conn.createChannel();
         chan.queueDeclare("hello", false, false, false, null);
         QueueingConsumer consumer = new QueueingConsumer(chan);
