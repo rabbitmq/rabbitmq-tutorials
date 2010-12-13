@@ -3,8 +3,7 @@ import pika
 import sys
 
 connection = pika.AsyncoreConnection(pika.ConnectionParameters(
-        host='127.0.0.1',
-        credentials=pika.PlainCredentials('guest', 'guest')))
+        host='localhost'))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='topic_logs',
