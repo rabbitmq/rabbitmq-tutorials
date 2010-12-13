@@ -5,22 +5,22 @@
 
 main(Argv) ->
     {ok, Connection} = amqp_connection:start(network,
-					     #amqp_params{host = "localhost"}),
+                                             #amqp_params{host = "localhost"}),
     {ok, Channel} = amqp_connection:open_channel(Connection),
 
     amqp_channel:call(Channel, #'queue.declare'{queue = <<"task_queue">>,
-						durable = true}),
+                                                durable = true}),
 
     Message = case Argv of
-		  [] -> <<"Hello World!">>;
-		  Msg -> list_to_binary(string:join(Msg, " "))
-	      end,
+                  [] -> <<"Hello World!">>;
+                  Msg -> list_to_binary(string:join(Msg, " "))
+              end,
     amqp_channel:cast(Channel,
-    		      #'basic.publish'{
-    			exchange = <<"">>,
-    			routing_key = <<"task_queue">>},
-    		      #amqp_msg{props = #'P_basic'{delivery_mode = 2},
-				payload = Message}),
+                      #'basic.publish'{
+                        exchange = <<"">>,
+                        routing_key = <<"task_queue">>},
+                      #amqp_msg{props = #'P_basic'{delivery_mode = 2},
+                                payload = Message}),
     io:format(" [x] Sent ~p\n", [Message]),
     ok = amqp_channel:close(Channel),
     ok = amqp_connection:close(Connection),
