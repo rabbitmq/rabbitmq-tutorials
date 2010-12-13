@@ -11,7 +11,9 @@ public class Send {
     factory.setHost("localhost");
     conn = factory.newConnection();
     Channel chan = conn.createChannel();
+
     chan.queueDeclare("hello", false, false, false, null);
+
     chan.basicPublish("", "hello", null, "Hello World!".getBytes());
     System.out.println(" [x] Sent 'Hello World!'");
     conn.close();
