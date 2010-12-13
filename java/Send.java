@@ -1,7 +1,6 @@
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
-import java.io.IOException;
 
 public class Send {
   public static void main(String[] argv)
@@ -16,6 +15,7 @@ public class Send {
 
     chan.basicPublish("", "hello", null, "Hello World!".getBytes());
     System.out.println(" [x] Sent 'Hello World!'");
+    chan.close();
     conn.close();
   }
 }
