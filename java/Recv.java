@@ -13,11 +13,13 @@ public class Recv {
         conn = factory.newConnection();
         Channel chan = conn.createChannel();
         chan.queueDeclare("hello", false, false, false, null);
+
+        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
         QueueingConsumer consumer = new QueueingConsumer(chan);
         chan.basicConsume("hello", true, consumer);
         while (true) {
           QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-          System.out.println(new String(delivery.getBody()));
+          System.out.println(" [x] Received " + new String(delivery.getBody()));
         }
       }
       finally {

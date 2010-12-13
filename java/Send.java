@@ -14,6 +14,7 @@ public class Send {
         Channel chan = conn.createChannel();
         chan.queueDeclare("hello", false, false, false, null);
         chan.basicPublish("", "hello", null, "Hello World!".getBytes());
+        System.out.println(" [x] Sent 'Hello World!'");
       }
       finally {
         if (conn != null) conn.close();
