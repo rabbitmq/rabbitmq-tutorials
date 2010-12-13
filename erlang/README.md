@@ -31,7 +31,7 @@ You need Erlang Client binaries:
     ./new_task.erl
     ./worker.erl
 
-[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
+[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html):
 
     ./emit_log.erl
     ./receive_logs.erl
