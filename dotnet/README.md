@@ -13,8 +13,8 @@ You need Mono and RabbitMQ dotnet client.
     sudo apt-get install mono-devel
     mkdir lib
     cd lib
-    wget http://www.rabbitmq.com/releases/rabbitmq-dotnet-client/v2.1.1/rabbitmq-dotnet-client-2.1.1-dotnet-3.0.zip
-    unzip rabbitmq-dotnet-client-2.1.1-dotnet-3.0.zip
+    wget http://www.rabbitmq.com/releases/rabbitmq-dotnet-client/v2.2.0/rabbitmq-dotnet-client-2.2.0-dotnet-3.0.zip
+    unzip rabbitmq-dotnet-client-2.2.0-dotnet-3.0.zip
     cd ..
 
 
