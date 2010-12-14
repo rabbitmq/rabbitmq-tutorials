@@ -2,14 +2,13 @@
 import pika
 
 connection = pika.AsyncoreConnection(pika.ConnectionParameters(
-        host='127.0.0.1',
-        credentials=pika.PlainCredentials('guest', 'guest')))
+        host='localhost'))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='logs',
                          type='fanout')
 
-result = channel.queue_declare(auto_delete=True)
+result = channel.queue_declare(exclusive=True)
 queue_name = result.queue
 
 channel.queue_bind(exchange='logs',
