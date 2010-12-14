@@ -9,7 +9,7 @@ class FibonacciClient(object):
 
         self.channel = self.connection.channel()
 
-        result = self.channel.queue_declare(auto_delete=True)
+        result = self.channel.queue_declare(exclusive=True)
         self.callback_queue = result.queue
 
         self.requests = {}
