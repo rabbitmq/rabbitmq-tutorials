@@ -3,7 +3,7 @@ import pika
 import sys
 
 connection = pika.AsyncoreConnection(pika.ConnectionParameters(
-        host='receive'))
+        host='localhost'))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='direct_logs',
