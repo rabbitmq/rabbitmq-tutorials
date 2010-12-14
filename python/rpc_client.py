@@ -6,6 +6,7 @@ class FibonacciClient(object):
     def __init__(self):
         self.connection = pika.AsyncoreConnection(pika.ConnectionParameters(
                 host='localhost'))
+
         self.channel = self.connection.channel()
 
         result = self.channel.queue_declare(auto_delete=True)

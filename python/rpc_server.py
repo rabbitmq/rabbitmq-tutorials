@@ -4,6 +4,7 @@ import pika
 
 connection = pika.AsyncoreConnection(pika.ConnectionParameters(
         host='localhost'))
+
 channel = connection.channel()
 
 
