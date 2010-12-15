@@ -21,7 +21,7 @@ main(Argv) ->
                         routing_key = <<"task_queue">>},
                       #amqp_msg{props = #'P_basic'{delivery_mode = 2},
                                 payload = Message}),
-    io:format(" [x] Sent ~p\n", [Message]),
+    io:format(" [x] Sent ~p~n", [Message]),
     ok = amqp_channel:close(Channel),
     ok = amqp_connection:close(Connection),
     ok.

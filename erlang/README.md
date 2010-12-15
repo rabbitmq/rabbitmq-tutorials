@@ -7,8 +7,13 @@ This code is using [RabbitMQ Erlang
 Client](http://hg.rabbitmq.com/rabbitmq-erlang-client/) ([User
 Guide](http://www.rabbitmq.com/erlang-client-user-guide.html)).
 
-
 ## Requirements
+
+To run this code you need at least [Erlang
+R13B03](http://erlang.org/download.html), on Ubuntu you can get it
+using apt:
+
+    sudo apt-get install erlang
 
 You need Erlang Client binaries:
 
@@ -28,10 +33,10 @@ You need Erlang Client binaries:
 
 [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html):
 
-    ./new_task.erl
+    ./new_task.erl "A very hard task which takes two seconds.."
     ./worker.erl
 
 [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html):
 
-    ./emit_log.erl
+    ./emit_log.erl "info: This is the log message"
     ./receive_logs.erl

@@ -15,7 +15,7 @@ main(_) ->
                         exchange = <<"">>,
                         routing_key = <<"hello">>},
                       #amqp_msg{payload = <<"Hello World!">>}),
-    io:format(" [x] Sent 'Hello World!'\n"),
+    io:format(" [x] Sent 'Hello World!'~n"),
     ok = amqp_channel:close(Channel),
     ok = amqp_connection:close(Connection),
     ok.

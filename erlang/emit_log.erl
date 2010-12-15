@@ -18,7 +18,7 @@ main(Argv) ->
     amqp_channel:cast(Channel,
                       #'basic.publish'{exchange = <<"logs">>},
                       #amqp_msg{payload = Message}),
-    io:format(" [x] Sent ~p\n", [Message]),
+    io:format(" [x] Sent ~p~n", [Message]),
     ok = amqp_channel:close(Channel),
     ok = amqp_connection:close(Connection),
     ok.

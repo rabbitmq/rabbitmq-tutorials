@@ -9,7 +9,7 @@ main(_) ->
     {ok, Channel} = amqp_connection:open_channel(Connection),
 
     amqp_channel:call(Channel, #'queue.declare'{queue = <<"hello">>}),
-    io:format(" [*] Waiting for messages. To exit press CTRL+C\n"),
+    io:format(" [*] Waiting for messages. To exit press CTRL+C~n"),
 
     amqp_channel:subscribe(Channel, #'basic.consume'{queue = <<"hello">>,
                                                      no_ack = true}, self()),
@@ -22,6 +22,6 @@ main(_) ->
 loop(Channel) ->
     receive
         {#'basic.deliver'{}, #amqp_msg{payload = Body}} ->
-            io:format(" [x] Received ~p\n", [Body]),
+            io:format(" [x] Received ~p~n", [Body]),
             loop(Channel)
     end.
