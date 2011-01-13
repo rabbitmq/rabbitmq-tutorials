@@ -4,26 +4,27 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.MessageProperties;
 
 public class NewTask {
-  public static void main(String[] argv)
-      throws java.io.IOException {
-    Connection conn = null;
-    ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost("localhost");
-    conn = factory.newConnection();
-    Channel chan = conn.createChannel();
+    public static void main(String[] argv) throws java.io.IOException {
+        Connection connection = null;
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        connection = factory.newConnection();
+        Channel channel = connection.createChannel();
 
-     // make durable
-    chan.queueDeclare("task_queue", true, false, false, null);
+        boolean durable = true;
+        channel.queueDeclare("task_queue", durable, false, false, null);
 
-    String message = joinStrings(argv);
-    if (message == "") message = "Hello World!";
+        String message = joinStrings(argv);
+        if (message == "") message = "Hello World!";
 
-     // make persistent
-    chan.basicPublish("", "task_queue", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
-    System.out.println(" [x] Sent '" + message + "'");
-    chan.close();
-    conn.close();
-  }
+        // make message props persistent
+        channel.basicPublish( "", "task_queue", 
+                MessageProperties.PERSISTENT_TEXT_PLAIN, 
+                message.getBytes());
+        System.out.println(" [x] Sent '" + message + "'");
+        channel.close();
+        connection.close();
+    }
   
   private static String joinStrings(String[] strings){
      String words = "";
