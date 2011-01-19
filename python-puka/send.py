@@ -5,11 +5,11 @@ client = puka.Client("amqp://localhost/")
 ticket = client.connect()
 client.wait(ticket)
 
-ticket = client.queue_declare(queue='test')
+ticket = client.queue_declare(queue='hello')
 client.wait(ticket)
 
 ticket = client.basic_publish(exchange='',
-                              routing_key='test',
+                              routing_key='hello',
                               body="Hello world!")
 client.wait(ticket)
 
