@@ -24,7 +24,7 @@ for binding_key in binding_keys:
 
 print ' [*] Waiting for logs. To exit press CTRL+C'
 
-def callback(ch, method, header, body):
+def callback(ch, method, properties, body):
     print " [x] %r:%r" % (method.routing_key, body,)
 
 channel.basic_consume(callback,

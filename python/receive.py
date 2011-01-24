@@ -10,7 +10,7 @@ channel.queue_declare(queue='hello')
 
 print ' [*] Waiting for messages. To exit press CTRL+C'
 
-def callback(ch, method, header, body):
+def callback(ch, method, properties, body):
     print " [x] Received %r" % (body,)
 
 channel.basic_consume(callback,
