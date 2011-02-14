@@ -3,6 +3,18 @@
 Here you can find a Python code examples from [RabbitMQ
 tutorials](http://www.rabbitmq.com/getstarted.html).
 
+## Requirements
+
+To run this code you need `pika` library version 0.5.2 (newer versions
+may not work). To install it run
+
+    pip install -e git+http://github.com/tonyg/pika.git@v0.5.2#egg=pika-v0.5.2
+
+or
+
+    easy_install pika==0.5.2
+
+
 ## Code
 
 [Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-python.html):
