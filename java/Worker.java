@@ -38,8 +38,8 @@ public class Worker {
   }
   
   private static void doWork(String task) throws InterruptedException {
-        for (char ch: task.toCharArray()) {
-        	if (ch == '.') Thread.sleep(1000);
-        }
+    for (char ch: task.toCharArray()) {
+      if (ch == '.') Thread.sleep(1000);
     }
+  }
 }
