@@ -27,10 +27,10 @@ public class Worker {
     
     while (true) {
       QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-      String body = new String(delivery.getBody());
+      String message = new String(delivery.getBody());
       
-      System.out.println(" [x] Received '" + body + "'");
-      doWork(body);
+      System.out.println(" [x] Received '" + message + "'");
+      doWork(message);
       System.out.println(" [x] Done");
 
       channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
