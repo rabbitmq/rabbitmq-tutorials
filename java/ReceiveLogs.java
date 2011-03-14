@@ -4,7 +4,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 
-public class ReceiveLog {
+public class ReceiveLogs {
 
   private static final String EXCHANGE_NAME = "logs";
 
