@@ -4,38 +4,33 @@ import uuid
 
 class FibonacciClient(object):
     def __init__(self):
-        self.connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(
                 host='localhost'))
 
         self.channel = self.connection.channel()
 
         result = self.channel.queue_declare(exclusive=True)
-        self.callback_queue = result.queue
+        self.callback_queue = result.method.queue
 
-        self.requests = {}
         self.channel.basic_consume(self.on_response, no_ack=True,
                                    queue=self.callback_queue)
 
     def on_response(self, ch, method, props, body):
-        corr_id = props.correlation_id
-        if corr_id in self.requests:
-            self.requests[corr_id] = body
+        if self.corr_id == props.correlation_id:
+            self.response = body
+            self.channel.stop_consuming()
 
     def call(self, n):
-        corr_id = str(uuid.uuid4())
-        self.requests[corr_id] = None
+        self.corr_id = str(uuid.uuid4())
         self.channel.basic_publish(exchange='',
                                    routing_key='rpc_queue',
                                    properties=pika.BasicProperties(
                                          reply_to = self.callback_queue,
-                                         correlation_id = corr_id,
+                                         correlation_id = self.corr_id,
                                          ),
                                    body=str(n))
-        while self.requests[corr_id] is None:
-            pika.asyncore_loop(count=1)
-        response = self.requests[corr_id]
-        del self.requests[corr_id]
-        return int(response)
+        self.channel.start_consuming()
+        return int(self.response)
 
 
 fibonacci_rpc = FibonacciClient()

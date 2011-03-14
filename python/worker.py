@@ -2,7 +2,7 @@
 import pika
 import time
 
-connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+connection = pika.BlockingConnection(pika.ConnectionParameters(
         host='localhost'))
 channel = connection.channel()
 
@@ -15,9 +15,8 @@ def callback(ch, method, properties, body):
     print " [x] Done"
     ch.basic_ack(delivery_tag = method.delivery_tag)
 
-channel.basic_qos(prefetch_count=1)
+channel.basic_qos(prefetch_count=1, prefetch_size=0L)
 channel.basic_consume(callback,
                       queue='task_queue')
 
-pika.asyncore_loop()
-
+channel.start_consuming()

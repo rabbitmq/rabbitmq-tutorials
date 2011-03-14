@@ -2,7 +2,7 @@
 import pika
 
 
-connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+connection = pika.BlockingConnection(pika.ConnectionParameters(
         host='localhost'))
 
 channel = connection.channel()
@@ -32,8 +32,8 @@ def on_request(ch, method, props, body):
                      body=str(response))
     ch.basic_ack(delivery_tag = method.delivery_tag)
 
-channel.basic_qos(prefetch_count=1)
+channel.basic_qos(prefetch_count=1, prefetch_size=0L)
 channel.basic_consume(on_request, queue='rpc_queue')
 
 print " [x] Awaiting RPC requests"
-pika.asyncore_loop()
+channel.start_consuming()

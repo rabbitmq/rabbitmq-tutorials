@@ -5,14 +5,13 @@ tutorials](http://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
 
-To run this code you need `pika` library version 0.5.2 (newer versions
-may not work). To install it run
+To run this code you need `pika` library version 0.9.4. To install it run
 
-    pip install -e git+http://github.com/tonyg/pika.git@v0.5.2#egg=pika-v0.5.2
+    pip install -e git+http://github.com/pika/pika.git@v0.9.4#egg=pika-v0.9.4
 
 or
 
-    easy_install pika==0.5.2
+    easy_install pika==0.9.4
 
 
 ## Code
@@ -34,3 +33,20 @@ or
     python receive_logs.py
     python emit_log.py
 
+
+[Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html)
+
+    python receive_logs_direct.py
+    python emit_log_direct.py
+
+
+[Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html)
+
+    python receive_logs_topic.py
+    python emit_log_topic.py
+
+
+[Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html)
+
+    python rpc_server.py
+    python rpc_client.py
