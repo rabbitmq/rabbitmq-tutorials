@@ -1,6 +1,6 @@
 # Python code for RabbitMQ tutorials
 
-Here you can find a Python code examples from [RabbitMQ
+Here you can find Python code examples from [RabbitMQ
 tutorials](http://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
