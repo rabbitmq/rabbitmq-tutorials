@@ -5,13 +5,13 @@ tutorials](http://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
 
-To run this code you need `pika` library version 0.9.4. To install it run
+To run this code you need `pika` library version 0.9.5. To install it run
 
-    pip install -e git+http://github.com/pika/pika.git@v0.9.4#egg=pika-v0.9.4
+    pip install -e git+http://github.com/pika/pika.git@v0.9.5#egg=pika-v0.9.5
 
 or
 
-    easy_install pika==0.9.4
+    easy_install pika==0.9.5
 
 
 ## Code
