@@ -20,9 +20,7 @@ public class EmitLogTopic {
     String routingKey = getRouting(argv);
     String message = getMessage(argv);
 
-    channel.basicPublish( EXCHANGE_NAME, routingKey, 
-            null,
-            message.getBytes());
+    channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes());
     System.out.println(" [x] Sent '" + routingKey + "':'" + message + "'");
 
     channel.close();
