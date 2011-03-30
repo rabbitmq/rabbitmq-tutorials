@@ -8,7 +8,7 @@ tutorials](http://www.rabbitmq.com/getstarted.html).
 To run this code you need `pika` library version 0.5.2 (newer versions
 may not work). To install it run
 
-    pip install -e git+http://github.com/tonyg/pika.git@v0.5.2#egg=pika-v0.5.2
+    pip install -e git+http://github.com/pika/pika.git@v0.5.2#egg=pika-v0.5.2
 
 or
 
