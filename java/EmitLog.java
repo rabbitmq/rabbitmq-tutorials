@@ -19,9 +19,7 @@ public class EmitLog {
 
     String message = getMessage(argv);
 
-    channel.basicPublish( EXCHANGE_NAME, "", 
-            null,
-            message.getBytes());
+    channel.basicPublish(EXCHANGE_NAME, "",  null, message.getBytes());
     System.out.println(" [x] Sent '" + message + "'");
 
     channel.close();
