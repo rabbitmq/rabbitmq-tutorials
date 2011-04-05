@@ -1,4 +1,3 @@
-import java.io.IOException;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -8,7 +7,7 @@ public class EmitLogTopic {
   private static final String EXCHANGE_NAME = "topic_logs";
 
   public static void main(String[] argv) 
-                      throws java.io.IOException {
+                      throws Exception {
 
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost("localhost");
