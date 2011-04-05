@@ -7,8 +7,7 @@ public class ReceiveLogsTopic {
 
   private static final String EXCHANGE_NAME = "topic_logs";
 
-  public static void main(String[] argv)
-                      throws Exception {
+  public static void main(String[] argv) throws Exception {
 
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost("localhost");
