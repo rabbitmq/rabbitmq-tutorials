@@ -1,4 +1,3 @@
-import java.io.IOException;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -9,9 +8,7 @@ public class RPCServer {
 
   private static final String RPC_QUEUE_NAME = "rpc_queue";
 
-  public static void main(String[] argv)
-                         throws java.io.IOException,
-                                java.lang.InterruptedException {
+  public static void main(String[] argv) throws Exception {
 
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost("localhost");
@@ -43,13 +40,12 @@ public class RPCServer {
     }         
   }
   
-  private static int fib(int n) throws InterruptedException {
+  private static int fib(int n) throws Exception {
     if (n == 0)
     	    return 0;	
     else if (n == 1)
     	    return 1;
-    else return fib(n-1) + fib(n-2);
-    
+    else return fib(n-1) + fib(n-2);    
   }
 }
 

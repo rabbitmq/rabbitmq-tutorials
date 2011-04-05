@@ -1,4 +1,3 @@
-import java.io.IOException;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -19,9 +18,7 @@ public class RPCClient {
           queue = queueName;
     }
     
-    public String call(String message)
-                        throws java.io.IOException,
-                               java.lang.InterruptedException {
+    public String call(String message) throws Exception {
       String replyQueueName = channel.queueDeclare().getQueue();      
       String corrId = UUID.randomUUID().toString();
       BasicProperties props = new BasicProperties();
@@ -47,15 +44,13 @@ public class RPCClient {
     }
   }
   
-  private static Connection defaultConnection()throws java.io.IOException{
+  private static Connection defaultConnection() throws Exception {
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost("localhost");
     return factory.newConnection();
   }
   
-  public static void main(String[] argv) 
-                    throws java.io.IOException,
-                           java.lang.InterruptedException {
+  public static void main(String[] argv) throws Exception {
 
     Connection connection = defaultConnection();
     Channel channel = connection.createChannel();
