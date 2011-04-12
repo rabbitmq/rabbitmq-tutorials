@@ -4,66 +4,82 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import java.util.UUID;
-
+    
 public class RPCClient {
-  
-  private static final String RPC_QUEUE_NAME = "rpc_queue";
-  
-  static class FibonacciClient {
+    
+  static class FibonacciRpcClient {
+    private Connection connection;
     private Channel channel;
-    private String queue;
+    private String requestQueueName = "rpc_queue";
+    private String replyQueueName;
+    private QueueingConsumer consumer;
     
-    public FibonacciClient(Channel chann, String queueName){
-          channel = chann;
-          queue = queueName;
+    public FibonacciRpcClient() throws Exception {
+      ConnectionFactory factory = new ConnectionFactory();
+      factory.setHost("localhost");
+      connection = factory.newConnection();
+      channel = connection.createChannel();
+
+      replyQueueName = channel.queueDeclare().getQueue(); 
+      consumer = new QueueingConsumer(channel);
+      channel.basicConsume(replyQueueName, true, consumer);
     }
-    
-    public String call(String message) throws Exception {
-      String replyQueueName = channel.queueDeclare().getQueue();      
+  
+    public String call(String message) throws Exception {     
+      String response = null;
+      boolean replied = false;
       String corrId = UUID.randomUUID().toString();
+    
       BasicProperties props = new BasicProperties();
       props.setReplyTo(replyQueueName);
       props.setCorrelationId(corrId);
-      
-      QueueingConsumer consumer = new QueueingConsumer(channel);
-      channel.basicConsume(replyQueueName, true, consumer);
-
-      channel.basicPublish("", queue, props, message.getBytes());
-      
-      String response = "";
-
-      while (!validResponse(response)){
-      	 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-      	 response = new String(delivery.getBody());        	         	         
+    
+      channel.basicPublish("", requestQueueName, props, message.getBytes());
+    
+      while (replied == false) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        if (delivery.getProperties().getCorrelationId().compareTo(corrId) == 0) {
+          response = new String(delivery.getBody());
+          replied = true;
+        }
       }
-      return response;  
-    }
-    
-    private Boolean validResponse(String response){
-    	    return (response.length() > 0);
-    }
-  }
-  
-  private static Connection defaultConnection() throws Exception {
-    ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost("localhost");
-    return factory.newConnection();
-  }
-  
-  public static void main(String[] argv) throws Exception {
 
-    Connection connection = defaultConnection();
-    Channel channel = connection.createChannel();
-      
-    RPCClient.FibonacciClient rpc = new RPCClient.FibonacciClient(channel, RPC_QUEUE_NAME);
+      return response; 
+    }
     
-    System.out.println(" [x] Requesting fib(30)");    
-    String response = rpc.call("30"); 
-    
-    System.out.println(" [.] Got '" + response + "'");
-    
-    channel.close();
-    connection.close();
-  }  
+    public void close() throws Exception {
+      channel.close();
+      connection.close();
+    }
+  }
+  
+  public static void main(String[] argv) {
+    RPCClient.FibonacciRpcClient fibonacciRpc = null;
+    String response = null;
+    try {
+      fibonacciRpc = new RPCClient.FibonacciRpcClient();
+  
+      System.out.println(" [x] Requesting fib(30)");   
+      response = fibonacciRpc.call("30");
+      System.out.println(" [.] Got '" + response + "'");
+      System.out.println(" [x] Requesting fib(-1)");   
+      response = fibonacciRpc.call("-1");
+      System.out.println(" [.] Got '" + response + "'");
+      System.out.println(" [x] Requesting fib(a)");   
+      response = fibonacciRpc.call("a");
+      System.out.println(" [.] Got '" + response + "'");            
+    }
+    catch  (Exception e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (fibonacciRpc!= null) {
+        try {
+          fibonacciRpc.close();
+        }
+        catch (Exception ignore) {}
+      }
+    }
+  }
 }
 
