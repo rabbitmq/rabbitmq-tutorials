@@ -8,19 +8,20 @@ public class RPCServer {
   
   private static final String RPC_QUEUE_NAME = "rpc_queue";
   
-  private static int fib(int n) throws Exception {
+  private static int fib(int n) {
     if (n > 1) return fib(n-1) + fib(n-2);
     else return n;
   }
     
   public static void main(String[] argv) {
     Connection connection = null;
+    Channel channel = null;
     try {
       ConnectionFactory factory = new ConnectionFactory();
       factory.setHost("localhost");
   
       connection = factory.newConnection();
-      Channel channel = connection.createChannel();
+      channel = connection.createChannel();
       
       channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
   
@@ -41,7 +42,7 @@ public class RPCServer {
         replyProps.setCorrelationId(props.getCorrelationId());        
         
         try {
-          String message = new String(delivery.getBody());
+          String message = new String(delivery.getBody(),"UTF-8");
           int n = Integer.parseInt(message);
   
           System.out.println(" [.] fib(" + message + ")");
@@ -52,7 +53,7 @@ public class RPCServer {
           response = "";
         }
         finally {  
-          channel.basicPublish( "", props.getReplyTo(), replyProps, response.getBytes());
+          channel.basicPublish( "", props.getReplyTo(), replyProps, response.getBytes("UTF-8"));
   
           channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
         }
