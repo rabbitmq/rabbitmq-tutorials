@@ -12,10 +12,12 @@ channel.queue_declare(queue='rpc_queue')
 
 
 def fib(n):
-    if n > 1:
-        return fib(n-1) + fib(n-2)
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
     else:
-        return n
+        return fib(n-1) + fib(n-2)
 
 def on_request(ch, method, props, body):
     n = int(body)
