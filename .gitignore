@@ -1,3 +1,5 @@
 php/lib/php-amqplib
 dotnet/*.exe
 dotnet/lib
+
+/java/ReceiveLog.java~
