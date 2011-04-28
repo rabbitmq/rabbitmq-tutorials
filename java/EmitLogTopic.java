@@ -6,23 +6,36 @@ public class EmitLogTopic {
 
   private static final String EXCHANGE_NAME = "topic_logs";
 
-  public static void main(String[] argv) throws Exception {
+  public static void main(String[] argv) {
+    Connection connection = null;
+    Channel channel = null;
+    try {
+      ConnectionFactory factory = new ConnectionFactory();
+      factory.setHost("localhost");
+  
+      connection = factory.newConnection();
+      channel = connection.createChannel();
 
-    ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost("localhost");
-    Connection connection = factory.newConnection();
-    Channel channel = connection.createChannel();
+      channel.exchangeDeclare(EXCHANGE_NAME, "topic");
 
-    channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+      String routingKey = getRouting(argv);
+      String message = getMessage(argv);
 
-    String routingKey = getRouting(argv);
-    String message = getMessage(argv);
+      channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes());
+      System.out.println(" [x] Sent '" + routingKey + "':'" + message + "'");
 
-    channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes());
-    System.out.println(" [x] Sent '" + routingKey + "':'" + message + "'");
-
-    channel.close();
-    connection.close();
+    }
+    catch  (Exception e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (connection != null) {
+        try {
+          connection.close();
+        }
+        catch (Exception ignore) {}
+      }
+    }
   }
   
   private static String getRouting(String[] strings){
