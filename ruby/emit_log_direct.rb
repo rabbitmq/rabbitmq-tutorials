@@ -5,11 +5,12 @@ require "amqp"
 
 AMQP.start(:host => "localhost") do |connection|
   channel  = AMQP::Channel.new(connection)
-  exchange = channel.fanout("logs")
-  message  = (ARGV[0..-1] || ["info: Hello World!"]).join(" ")
+  exchange = channel.direct("direct_logs")
+  severity = ARGV[0] || "info"
+  message  = (ARGV[1..-1] || ["Hello World!"]).join(" ")
 
-  exchange.publish(message)
-  puts " [x] Sent #{message}"
+  exchange.publish(message, :routing_key => severity)
+  puts " [x] Sent #{severity}:#{message}"
 
   EM.add_timer(0.5) do
     connection.close do
