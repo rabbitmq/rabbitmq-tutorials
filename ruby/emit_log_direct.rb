@@ -6,8 +6,8 @@ require "amqp"
 AMQP.start(:host => "localhost") do |connection|
   channel  = AMQP::Channel.new(connection)
   exchange = channel.direct("direct_logs")
-  severity = ARGV[0] || "info"
-  message  = (ARGV[1..-1] || ["Hello World!"]).join(" ")
+  severity = ARGV.shift || "info"
+  message  = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
 
   exchange.publish(message, :routing_key => severity)
   puts " [x] Sent #{severity}:#{message}"

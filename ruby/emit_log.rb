@@ -6,7 +6,7 @@ require "amqp"
 AMQP.start(:host => "localhost") do |connection|
   channel  = AMQP::Channel.new(connection)
   exchange = channel.fanout("logs")
-  message  = (ARGV[0..-1] || ["info: Hello World!"]).join(" ")
+  message  = ARGV.empty? ? "info: Hello World!" : ARGV.join(" ")
 
   exchange.publish(message)
   puts " [x] Sent #{message}"
