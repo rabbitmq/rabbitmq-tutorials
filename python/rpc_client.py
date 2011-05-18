@@ -32,10 +32,8 @@ class FibonacciRpcClient(object):
         self.channel.start_consuming()
         return int(self.response)
 
-
 fibonacci_rpc = FibonacciRpcClient()
 
 print " [x] Requesting fib(30)"
 response = fibonacci_rpc.call(30)
 print " [.] Got %r" % (response,)
-
