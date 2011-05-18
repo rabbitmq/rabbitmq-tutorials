@@ -16,7 +16,7 @@ AMQP.start(:host => "localhost") do |connection|
   puts " [*] Waiting for messages. To exit press CTRL+C"
 
   channel.prefetch(1)
-  queue.subscribe do |header, body|
+  queue.subscribe(:ack => true) do |header, body|
     puts " [x] Received #{body}"
     EM.add_timer(body.count(".")) do
       puts " [x] Done"
