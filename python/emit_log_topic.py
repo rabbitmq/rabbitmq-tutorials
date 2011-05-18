@@ -2,7 +2,7 @@
 import pika
 import sys
 
-connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+connection = pika.BlockingConnection(pika.ConnectionParameters(
         host='localhost'))
 channel = connection.channel()
 
