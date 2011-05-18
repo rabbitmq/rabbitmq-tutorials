@@ -9,7 +9,7 @@ To run this code you need [amqp gem](http://bit.ly/itcpVv) version 0.8
 (currently available as a prerelease version). This code won't work
 with earlier versions! You can install it via RubyGems thusly:
 
-    gem install amqp --pre
+    gem install amqp --pre --version "~> 0.8.0.rc12"
 
 ## Code
 
