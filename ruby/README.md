@@ -5,7 +5,7 @@ Here you can find Ruby code examples from
 
 ## Requirements
 
-To run this code you need [amqp gem](http://bit.ly/itcpVv) version 0.8
+To run this code you need [amqp gem](https://github.com/ruby-amqp/amqp) version 0.8
 (currently available as a prerelease version). This code won't work
 with earlier versions! You can install it via RubyGems thusly:
 
@@ -43,4 +43,4 @@ with earlier versions! You can install it via RubyGems thusly:
     ruby rpc_server.rb
     ruby rpc_client.rb
 
-To learn more, visit [Ruby AMQP gem documentation](http://bit.ly/mDm1JE) site.
+To learn more, visit [Ruby AMQP gem documentation](http://rdoc.info/github/ruby-amqp/amqp/master/frames) site.
