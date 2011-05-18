@@ -4,7 +4,7 @@ Here you can find Ruby code examples from [RabbitMQ tutorials](http://www.rabbit
 
 ## Requirements
 
-To run this code you need `AMQP` library version 0.8 (currently available as a prerelease version). This code won't work with earlier versions! You can install it via RubyGems thusly:
+To run this code you need [amqp gem](http://bit.ly/itcpVv) version 0.8 (currently available as a prerelease version). This code won't work with earlier versions! You can install it via RubyGems thusly:
 
     gem install amqp --pre
 
@@ -24,3 +24,5 @@ To run this code you need `AMQP` library version 0.8 (currently available as a p
 
     ruby receive_logs.rb
     ruby emit_log.rb
+
+To learn more, visit [Ruby AMQP gem documentation](http://bit.ly/mDm1JE) site.
