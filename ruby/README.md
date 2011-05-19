@@ -10,17 +10,17 @@ To run this code you need [amqp gem](http://bit.ly/itcpVv) version 0.8 (currentl
 
 ## Code
 
-[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-ruby.html):
+[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-python.html):
 
     ruby send.rb
     ruby receive.rb
 
-[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-ruby.html):
+[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html):
 
     ruby new_task.rb
     ruby worker.rb
 
-[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-ruby.html)
+[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
 
     ruby receive_logs.rb
     ruby emit_log.rb
