@@ -13,17 +13,17 @@ with earlier versions! You can install it via RubyGems thusly:
 
 ## Code
 
-[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-ruby.html)
+[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-python.html)
 
     ruby send.rb
     ruby receive.rb
 
-[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-ruby.html)
+[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html)
 
     ruby new_task.rb
     ruby worker.rb
 
-[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-ruby.html)
+[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
 
     ruby receive_logs.rb
     ruby emit_log.rb
