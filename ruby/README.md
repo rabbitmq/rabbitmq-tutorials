@@ -5,20 +5,29 @@ Here you can find Ruby code examples from
 
 ## Requirements
 
+If you use Microsoft Windows, we highly recommend you to use [JRuby](http://jruby.org).
+It is 1.9.2-compatible since 1.6.0.
+
 To run this code you need [amqp gem](https://github.com/ruby-amqp/amqp) version 0.8
 (currently available as a prerelease version). This code won't work
-with earlier versions! You can install it via RubyGems thusly:
+with earlier versions!
+
+You can install it via RubyGems. On Linux, Mac OS X and *BSD systems:
 
     gem install amqp --pre --version "~> 0.8.0.rc12"
 
+On Windows:
+
+    jruby.exe --1.9 -S gem install amqp --pre --version "~> 0.8.0.rc12"
+
 ## Code
 
-[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-python.html)
+[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-python.html):
 
     ruby send.rb
     ruby receive.rb
 
-[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html)
+[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html):
 
     ruby new_task.rb
     ruby worker.rb
