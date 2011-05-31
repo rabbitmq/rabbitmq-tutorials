@@ -53,7 +53,8 @@ You need Mono and RabbitMQ dotnet client.
     MONO_PATH=lib/bin mono Receive.exe
 
 
-#### [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html):
+#### [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html)
+
 
 ##### Windows
 
@@ -71,7 +72,7 @@ You need Mono and RabbitMQ dotnet client.
     MONO_PATH=lib/bin mono NewTask.exe
     MONO_PATH=lib/bin mono Worker.exe
 
-[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
+#### [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
 
 ##### Windows
 
