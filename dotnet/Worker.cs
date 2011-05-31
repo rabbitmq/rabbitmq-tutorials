@@ -1,7 +1,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Receive {
+namespace Worker {
     class Program {
         static void Main(string[] args) {
             ConnectionFactory factory = new ConnectionFactory();
@@ -9,10 +9,11 @@ namespace Receive {
             IConnection connection = factory.CreateConnection();
             IModel channel = connection.CreateModel();
 
-            channel.QueueDeclare("hello", false, false, false, null);
+            channel.QueueDeclare("task_queue", true, false, false, null);
 
+            channel.BasicQos(0, 1, false);
             QueueingBasicConsumer consumer = new QueueingBasicConsumer(channel);
-            channel.BasicConsume("hello", true, consumer);
+            channel.BasicConsume("task_queue", false, consumer);
 
             System.Console.WriteLine(" [*] Waiting for messages." +
                                      "To exit press CTRL+C");
@@ -23,6 +24,13 @@ namespace Receive {
                 byte[] body = ea.Body;
                 string message = System.Text.Encoding.UTF8.GetString(body);
                 System.Console.WriteLine(" [x] Received {0}", message);
+
+                int dots = message.Split('.').Length - 1;
+                System.Threading.Thread.Sleep(dots * 1000);
+
+                System.Console.WriteLine(" [x] Done");
+
+                channel.BasicAck(ea.DeliveryTag, false);
             }
         }
     }

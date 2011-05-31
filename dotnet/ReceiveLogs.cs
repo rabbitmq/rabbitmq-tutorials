@@ -1,7 +1,7 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Receive {
+namespace ReceiveLogs {
     class Program {
         static void Main(string[] args) {
             ConnectionFactory factory = new ConnectionFactory();
@@ -9,12 +9,15 @@ namespace Receive {
             IConnection connection = factory.CreateConnection();
             IModel channel = connection.CreateModel();
 
-            channel.QueueDeclare("hello", false, false, false, null);
+            channel.ExchangeDeclare("logs", "fanout");
 
+            string queue_name = channel.QueueDeclare();
+
+            channel.QueueBind(queue_name, "logs", "");
             QueueingBasicConsumer consumer = new QueueingBasicConsumer(channel);
-            channel.BasicConsume("hello", true, consumer);
+            channel.BasicConsume(queue_name, true, consumer);
 
-            System.Console.WriteLine(" [*] Waiting for messages." +
+            System.Console.WriteLine(" [*] Waiting for logs." +
                                      "To exit press CTRL+C");
             while(true) {
                 BasicDeliverEventArgs ea =
@@ -22,7 +25,7 @@ namespace Receive {
 
                 byte[] body = ea.Body;
                 string message = System.Text.Encoding.UTF8.GetString(body);
-                System.Console.WriteLine(" [x] Received {0}", message);
+                System.Console.WriteLine(" [x] {0}", message);
             }
         }
     }
