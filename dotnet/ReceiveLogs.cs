@@ -2,7 +2,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 class Program {
-    static void Main() {
+    public static void Main() {
         ConnectionFactory factory = new ConnectionFactory();
         factory.HostName = "localhost";
         using (IConnection connection = factory.CreateConnection())
