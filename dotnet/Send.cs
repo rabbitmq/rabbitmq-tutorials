@@ -1,13 +1,11 @@
 using RabbitMQ.Client;
 
-namespace Send {
-    class Program {
-        static void Main(string[] args) {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.HostName = "localhost";
-            IConnection connection = factory.CreateConnection();
-            IModel channel = connection.CreateModel();
-
+class Program {
+    static void Main() {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.HostName = "localhost";
+        using (IConnection connection = factory.CreateConnection())
+        using (IModel channel = connection.CreateModel()) {
             channel.QueueDeclare("hello", false, false, false, null);
 
             string message = "Hello World!";
@@ -15,9 +13,6 @@ namespace Send {
 
             channel.BasicPublish("", "hello", null, body);
             System.Console.WriteLine(" [x] Sent {0}", message);
-
-            channel.Close();
-            connection.Close();
         }
     }
 }

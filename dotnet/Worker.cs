@@ -1,14 +1,12 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Worker {
-    class Program {
-        static void Main(string[] args) {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.HostName = "localhost";
-            IConnection connection = factory.CreateConnection();
-            IModel channel = connection.CreateModel();
-
+class Program {
+    static void Main() {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.HostName = "localhost";
+        using (IConnection connection = factory.CreateConnection())
+        using (IModel channel = connection.CreateModel()) {
             channel.QueueDeclare("task_queue", true, false, false, null);
 
             channel.BasicQos(0, 1, false);
