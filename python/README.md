@@ -3,6 +3,8 @@
 Here you can find Python code examples from [RabbitMQ
 tutorials](http://www.rabbitmq.com/getstarted.html).
 
+To successfully use the examples you will need a running RabbitMQ server.
+
 ## Requirements
 
 To run this code you need `pika` library version 0.9.5. To install it run
