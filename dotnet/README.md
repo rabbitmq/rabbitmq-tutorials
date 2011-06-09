@@ -3,9 +3,9 @@
 Here you can find the C# code examples for [RabbitMQ
 tutorials](http://www.rabbitmq.com/getstarted.html).
 
-## Requirements
+To successfully use the examples you will need a running RabbitMQ server.
 
-To run the examples you also need a running RabbitMQ server
+## Requirements
 
 ### Requirements on Windows
 
