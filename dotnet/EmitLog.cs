@@ -1,6 +1,6 @@
 using RabbitMQ.Client;
 
-class Program {
+class EmitLog {
     public static void Main(string[] args) {
         ConnectionFactory factory = new ConnectionFactory();
         factory.HostName = "localhost";

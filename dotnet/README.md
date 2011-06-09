@@ -12,13 +12,13 @@ You need the RabbitMQ dotnet client.
 * Download [rabbitmq-dotnet-client-2.4.1-dotnet-3.0.zip](http://www.rabbitmq.com/releases/rabbitmq-dotnet-client/v2.4.1/rabbitmq-dotnet-client-2.4.1-dotnet-3.0.zip)
 * Extract it and copy "RabbitMQ.Client.dll" to your working folder.
 
-You also need to nsure your system can find the C# compiler `csc.exe`,
+You also need to ensure your system can find the C# compiler `csc.exe`,
 you may need to add `;C:\WINDOWS\Microsoft.NET\Framework\v3.5` to your
 Path.
 
-We're suggesting to use the command line (start->run cmd.exe) to
+We suggest using the commandline (start->run cmd.exe) to
 compile and run the code. Alternatively you could use Visual Studio, but
-due to the nature of examples command line is a preferred interface.
+due to the nature of examples commandline is a preferred interface.
 
 ### Requirements on Linux
 
@@ -89,3 +89,58 @@ You need Mono and RabbitMQ dotnet client.
 
     MONO_PATH=lib/bin mono ReceiveLogs.exe
     MONO_PATH=lib/bin mono EmitLog.exe
+
+#### [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html)
+
+##### Windows
+
+    csc /r:"RabbitMQ.Client.dll" ReceiveLogsDirect.cs
+    csc /r:"RabbitMQ.Client.dll" EmitLogDirect.cs
+
+    ReceiveLogsDirect.exe
+    EmitLogDirect.exe
+
+##### Linux
+
+    gmcs -r:lib/bin/RabbitMQ.Client.dll ReceiveLogsDirect.cs
+    gmcs -r:lib/bin/RabbitMQ.Client.dll EmitLogDirect.cs
+
+    MONO_PATH=lib/bin mono ReceiveLogsDirect.exe
+    MONO_PATH=lib/bin mono EmitLogDirect.exe
+
+#### [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html)
+
+##### Windows
+
+    csc /r:"RabbitMQ.Client.dll" ReceiveLogsTopic.cs
+    csc /r:"RabbitMQ.Client.dll" EmitLogTopic.cs
+
+    ReceiveLogsTopic.exe
+    EmitLogTopic.exe
+
+##### Linux
+
+    gmcs -r:lib/bin/RabbitMQ.Client.dll ReceiveLogsTopic.cs
+    gmcs -r:lib/bin/RabbitMQ.Client.dll EmitLogTopic.cs
+
+    MONO_PATH=lib/bin mono ReceiveLogsTopic.exe
+    MONO_PATH=lib/bin mono EmitLogTopic.exe
+
+#### [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html)
+
+##### Windows
+
+    csc /r:"RabbitMQ.Client.dll" RPCServer.cs
+    csc /r:"RabbitMQ.Client.dll" RPCClient.cs
+
+    RPCServer.exe
+    RPCClient.exe
+
+##### Linux
+
+    gmcs -r:lib/bin/RabbitMQ.Client.dll RPCServer.cs
+    gmcs -r:lib/bin/RabbitMQ.Client.dll RPCClient.cs
+
+    MONO_PATH=lib/bin mono RPCServer.exe
+    MONO_PATH=lib/bin mono RPCClient.exe
+
