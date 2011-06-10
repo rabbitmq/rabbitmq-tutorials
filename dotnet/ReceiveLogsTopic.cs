@@ -18,7 +18,7 @@ class ReceiveLogsTopic {
                 return;
             }
 
-            foreach (String bindingKey in args) {
+            foreach (string bindingKey in args) {
                 channel.QueueBind(queue_name, "topic_logs", bindingKey);
             }
 

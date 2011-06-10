@@ -1,3 +1,4 @@
+using System;
 using RabbitMQ.Client;
 
 class Send {
@@ -12,7 +13,7 @@ class Send {
             byte[] body = System.Text.Encoding.UTF8.GetBytes(message);
 
             channel.BasicPublish("", "hello", null, body);
-            System.Console.WriteLine(" [x] Sent {0}", message);
+            Console.WriteLine(" [x] Sent {0}", message);
         }
     }
 }

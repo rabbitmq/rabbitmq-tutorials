@@ -19,7 +19,7 @@ class ReceiveLogsDirect {
                 return;
             }
 
-            foreach (String severity in args) {
+            foreach (string severity in args) {
                 channel.QueueBind(queue_name, "direct_logs", severity);
             }
 

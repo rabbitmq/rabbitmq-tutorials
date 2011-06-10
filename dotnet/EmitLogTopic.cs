@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using RabbitMQ.Client;
 
@@ -14,7 +15,7 @@ class EmitLogTopic {
                                                : "Hello World!";
             byte[] body = System.Text.Encoding.UTF8.GetBytes(message);
             channel.BasicPublish("topic_logs", routingKey, null, body);
-            System.Console.WriteLine(" [x] Sent '{0}':'{1}'", routingKey, message);
+            Console.WriteLine(" [x] Sent '{0}':'{1}'", routingKey, message);
         }
     }
 }

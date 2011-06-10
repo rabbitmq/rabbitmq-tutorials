@@ -1,3 +1,4 @@
+using System;
 using RabbitMQ.Client;
 
 class NewTask {
@@ -8,7 +9,7 @@ class NewTask {
         using (IModel channel = connection.CreateModel()) {
             channel.QueueDeclare("task_queue", true, false, false, null);
 
-            string message = (args.Length > 0) ? System.String.Join(" ", args)
+            string message = (args.Length > 0) ? string.Join(" ", args)
                                                : "Hello World!";
             byte[] body = System.Text.Encoding.UTF8.GetBytes(message);
 
@@ -16,7 +17,7 @@ class NewTask {
             properties.DeliveryMode = 2;
 
             channel.BasicPublish("", "task_queue", properties, body);
-            System.Console.WriteLine(" [x] Sent {0}", message);
+            Console.WriteLine(" [x] Sent {0}", message);
         }
     }
 }

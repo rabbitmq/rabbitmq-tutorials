@@ -1,3 +1,4 @@
+using System;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -13,20 +14,20 @@ class Worker {
             QueueingBasicConsumer consumer = new QueueingBasicConsumer(channel);
             channel.BasicConsume("task_queue", false, consumer);
 
-            System.Console.WriteLine(" [*] Waiting for messages." +
-                                     "To exit press CTRL+C");
+            Console.WriteLine(" [*] Waiting for messages. " +
+                              "To exit press CTRL+C");
             while(true) {
                 BasicDeliverEventArgs ea =
                     (BasicDeliverEventArgs)consumer.Queue.Dequeue();
 
                 byte[] body = ea.Body;
                 string message = System.Text.Encoding.UTF8.GetString(body);
-                System.Console.WriteLine(" [x] Received {0}", message);
+                Console.WriteLine(" [x] Received {0}", message);
 
                 int dots = message.Split('.').Length - 1;
                 System.Threading.Thread.Sleep(dots * 1000);
 
-                System.Console.WriteLine(" [x] Done");
+                Console.WriteLine(" [x] Done");
 
                 channel.BasicAck(ea.DeliveryTag, false);
             }
