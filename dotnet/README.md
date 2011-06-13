@@ -1,7 +1,9 @@
 # Dotnet C# code for RabbitMQ tutorials
 
-Here you can find C# code examples for [RabbitMQ
+Here you can find the C# code examples for [RabbitMQ
 tutorials](http://www.rabbitmq.com/getstarted.html).
+
+To successfully use the examples you will need a running RabbitMQ server.
 
 ## Requirements
 
@@ -16,9 +18,9 @@ You also need to ensure your system can find the C# compiler `csc.exe`,
 you may need to add `;C:\WINDOWS\Microsoft.NET\Framework\v3.5` to your
 Path.
 
-We suggest using the commandline (start->run cmd.exe) to
+We're using the command line (start->run cmd.exe) to
 compile and run the code. Alternatively you could use Visual Studio, but
-due to the nature of examples commandline is a preferred interface.
+due to the nature of examples we prefer the command line.
 
 ### Requirements on Linux
 
