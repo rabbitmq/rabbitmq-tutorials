@@ -23,7 +23,8 @@ class ReceiveLogsDirect {
                 channel.QueueBind(queue_name, "direct_logs", severity);
             }
 
-            Console.WriteLine(" [*] Waiting for messages. To exit press CTRL+C");
+            Console.WriteLine(" [*] Waiting for messages. " +
+                              "To exit press CTRL+C");
 
             QueueingBasicConsumer consumer = new QueueingBasicConsumer(channel);
             channel.BasicConsume(queue_name, true, consumer);
@@ -35,7 +36,8 @@ class ReceiveLogsDirect {
                 byte[] body = ea.Body;
                 string message = System.Text.Encoding.UTF8.GetString(body);
                 string routingKey = ea.RoutingKey;
-                Console.WriteLine(" [x] Received '{0}':'{1}'", routingKey, message);
+                Console.WriteLine(" [x] Received '{0}':'{1}'",
+                                  routingKey, message);
             }
         }
     }

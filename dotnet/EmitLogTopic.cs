@@ -11,7 +11,8 @@ class EmitLogTopic {
             channel.ExchangeDeclare("topic_logs", "topic");
 
             string routingKey = (args.Length > 0) ? args[0] : "anonymous.info";
-            string message = (args.Length > 1) ? string.Join(" ", args.Skip(1).ToArray())
+            string message = (args.Length > 1) ? string.Join(" ", args.Skip(1)
+                                                                  .ToArray())
                                                : "Hello World!";
             byte[] body = System.Text.Encoding.UTF8.GetBytes(message);
             channel.BasicPublish("topic_logs", routingKey, null, body);

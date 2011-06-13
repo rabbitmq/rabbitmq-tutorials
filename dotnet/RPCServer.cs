@@ -16,7 +16,8 @@ class RPCServer {
 
             while(true) {
                 string response = null;
-                BasicDeliverEventArgs ea = (BasicDeliverEventArgs)consumer.Queue.Dequeue();
+                BasicDeliverEventArgs ea =
+                    (BasicDeliverEventArgs)consumer.Queue.Dequeue();
 
                 byte[] body = ea.Body;
                 IBasicProperties props = ea.BasicProperties;
@@ -32,8 +33,10 @@ class RPCServer {
                     Console.WriteLine(" [.] " + e);
                     response = "";
                 } finally {
-                    byte[] responseBytes = System.Text.Encoding.UTF8.GetBytes(response);
-                    channel.BasicPublish("", props.ReplyTo, replyProps, responseBytes);
+                    byte[] responseBytes =
+                        System.Text.Encoding.UTF8.GetBytes(response);
+                    channel.BasicPublish("", props.ReplyTo, replyProps,
+                                         responseBytes);
                     channel.BasicAck(ea.DeliveryTag, false);
                 }
             }
