@@ -3,9 +3,11 @@
 Here you can find the Java code examples from [RabbitMQ
 tutorials](http://www.rabbitmq.com/getstarted.html).
 
+To successfully use the examples you will need a running RabbitMQ server.
+
 ## Requirements
 
-To run this code you need to download the RabbitMQ 
+You'll need to download the RabbitMQ 
 [java client library package](http://www.rabbitmq.com/java-client.html),
 and check its signature as described there. 
 Unzip it into your working directory and ensure the JAR files from the 
