@@ -4,8 +4,8 @@
 -include_lib("amqp_client/include/amqp_client.hrl").
 
 main(Argv) ->
-    {ok, Connection} = amqp_connection:start(network,
-					     #amqp_params{host = "localhost"}),
+    {ok, Connection} =
+        amqp_connection:start(#amqp_params_network{host = "localhost"}),
     {ok, Channel} = amqp_connection:open_channel(Connection),
 
     amqp_channel:call(Channel, #'exchange.declare'{exchange = <<"logs">>,

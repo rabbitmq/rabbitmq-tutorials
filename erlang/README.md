@@ -17,11 +17,13 @@ using apt:
 
 You need Erlang Client binaries:
 
-    wget http://www.rabbitmq.com/releases/plugins/v2.2.0/rabbit_common-2.2.0.ez
-    unzip rabbit_common-2.2.0.ez
+    wget http://www.rabbitmq.com/releases/plugins/v2.5.0/rabbit_common-2.5.0.ez
+    unzip rabbit_common-2.5.0.ez
+    ln -s rabbit_common-2.5.0 rabbit_common
 
-    wget http://www.rabbitmq.com/releases/plugins/v2.2.0/amqp_client-2.2.0.ez
-    unzip amqp_client-2.2.0.ez
+    wget http://www.rabbitmq.com/releases/plugins/v2.5.0/amqp_client-2.5.0.ez
+    unzip amqp_client-2.5.0.ez
+    ln -s amqp_client-2.5.0 amqp_client
 
 
 ## Code
@@ -38,5 +40,5 @@ You need Erlang Client binaries:
 
 [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html):
 
-    ./emit_log.erl "info: This is the log message"
     ./receive_logs.erl
+    ./emit_log.erl "info: This is the log message"
