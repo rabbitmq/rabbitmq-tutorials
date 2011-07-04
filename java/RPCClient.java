@@ -28,9 +28,11 @@ public class RPCClient {
     String response = null;
     String corrId = UUID.randomUUID().toString();
     
-    BasicProperties props = new BasicProperties();
-    props.setReplyTo(replyQueueName);
-    props.setCorrelationId(corrId);
+    BasicProperties props = new BasicProperties
+                                .Builder()
+                                .correlationId(corrId)
+                                .replyTo(replyQueueName)
+                                .build();
     
     channel.basicPublish("", requestQueueName, props, message.getBytes());
     

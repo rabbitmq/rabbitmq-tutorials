@@ -4,14 +4,12 @@ Here you can find the Java code examples from [RabbitMQ
 tutorials](http://www.rabbitmq.com/getstarted.html).
 
 To successfully use the examples you will need a running RabbitMQ server.
-These tutorials require version 2.4.1 of the java client library, or earlier.
 
 ## Requirements
 
 You'll need to download the RabbitMQ
-[java client 2.4.1 library package](http://www.rabbitmq.com/releases/rabbitmq-java-client/v2.4.1/),
-and check its signature as described for the
-[java client](http://www.rabbitmq.com/java-client.html).
+[java client library package](http://www.rabbitmq.com/java-client.html),
+and check its signature as described there.
 Unzip it into your working directory and ensure the JAR files from the
 unzipped directory are placed in your working directory:
 
