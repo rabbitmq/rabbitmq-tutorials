@@ -9,14 +9,29 @@
 all:
 	@echo "Review README in the directory with your langage of choice."
 
-
-# Test all combinations of languages
-test: prerequisites dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok
+### Test all combinations of languages
+#
+#
+# Running everything requires quite a lot of dependencies you need at
+# least (as tested on debian 5.0):
+#
+#     apt-get install python-virtualenv git-core php5-cli \
+#         ruby1.8 ruby1.8-dev rdoc1.8 unzip mono-gmcs sun-java5-jdk
+#
+#
+# You also need recent erlang, you may install it from sources following
+# this commands:
+#     cd /usr/src
+#     apt-get -y install libncurses-dev libssl-dev
+#     [ -e otp_src_R14B03.tar.gz ] || wget http://www.erlang.org/download/otp_src_R14B03.tar.gz
+#     [ -e otp_src_R14B03 ] || tar xzf otp_src_R14B03.tar.gz
+#     cd otp_src_R14B03/
+#     ./configure
+#     make
+#     make install
+#
+test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok
 	python test.py
-
-.PHONY: prerequisites
-prerequisites:
-	dpkg -L python-virtualenv git-core php5-cli ruby1.8 ruby1.8-dev > /dev/null
 
 R=http://www.rabbitmq.com/releases
 dotnet/.ok:
@@ -61,6 +76,7 @@ clean::
 python/.ok:
 	(cd python && \
 		virtualenv venv && \
+		./venv/bin/easy_install pip && \
 		./venv/bin/pip install pika==0.9.5 && \
 		touch .ok)
 clean::
