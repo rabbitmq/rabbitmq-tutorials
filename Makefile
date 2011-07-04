@@ -16,7 +16,7 @@ test: prerequisites dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok
 
 .PHONY: prerequisites
 prerequisites:
-	dpkg -L python-virtualenv git-core php5-cli rubygems1.8 > /dev/null
+	dpkg -L python-virtualenv git-core php5-cli ruby1.9 ruby1.9-dev > /dev/null
 
 R=http://www.rabbitmq.com/releases
 dotnet/.ok:
@@ -36,10 +36,10 @@ clean::
 
 erlang/.ok:
 	(cd erlang && \
-		wget -c $(R)/plugins/v2.5.0/rabbit_common-2.5.0.ez && \
+		wget -c $(R)/plugins/v2.5.0/rabbit_common-2.5.0.ez \
+			$(R)/plugins/v2.5.0/amqp_client-2.5.0.ez && \
 		unzip -q rabbit_common-2.5.0.ez && \
 		ln -s rabbit_common-2.5.0 rabbit_common && \
-		wget -c $(R)/plugins/v2.5.0/amqp_client-2.5.0.ez && \
 		unzip -q amqp_client-2.5.0.ez && \
 		ln -s amqp_client-2.5.0 amqp_client && \
 		touch .ok)
@@ -75,9 +75,17 @@ clean::
 	(cd php && \
 		rm -rf .ok lib)
 
+GEMSVER=1.8.5
+TOPDIR:=$(PWD)
 ruby/.ok:
 	(cd ruby && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib gem1.8 install amqp --pre --version "= 0.8.0.rc12" && \
+		wget http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
+		tar xzf rubygems-$(GEMSVER).tgz && \
+		cd rubygems-$(GEMSVER) && \
+		ruby1.9 setup.rb --prefix=$(TOPDIR)/ruby/gems && \
+		cd .. && \
+		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib gem1.9 install amqp --version "0.8.0.rc13" && \
 		touch .ok)
 clean::
 	(cd ruby && \

@@ -65,8 +65,8 @@ def gen(prog, arg="", **kwargs):
         ('java', 'java -cp .:commons-io-1.2.jar:commons-cli-1.1.jar:'
              'rabbitmq-client.jar %(java)s %(arg)s' % ctx),
         ('dotnet', 'env MONO_PATH=lib/bin mono %(dotnet)s.exe %(arg)s' % ctx),
-        # ('ruby', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
-        #      'ruby1.8 %(ruby)s.rb %(arg)s' % ctx),
+        ('ruby', 'env GEM_HOME=gems/gems RUBYLIB=gems/lib '
+             'ruby1.9 %(ruby)s.rb %(arg)s' % ctx),
         ('php', 'php %(php)s.php %(arg)s' % ctx),
         ]
 
