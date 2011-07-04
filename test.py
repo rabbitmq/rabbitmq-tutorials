@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import time
+import random
 import re
 import subprocess
 import signal
@@ -8,7 +9,9 @@ import sys
 def run(cmd, verbose=False, **kwargs):
     if verbose:
         print " [s] Running %r" % (cmd,)
-    p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, **kwargs)
+    p = subprocess.Popen(cmd.split(),
+                         stdout=subprocess.PIPE,
+                         **kwargs)
     p.wait()
 
     if verbose:
@@ -23,7 +26,10 @@ def run(cmd, verbose=False, **kwargs):
 def spawn(cmd, verbose=False, **kwargs):
     if verbose:
         print " [r] Waiting for %r" % (cmd,)
-    p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+    p = subprocess.Popen(cmd.split(),
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         **kwargs)
     time.sleep(0.4)
     return p
 
@@ -66,20 +72,35 @@ def gen(prog, arg="", **kwargs):
 
 tests = {
     'tut1': (gen('send'), gen('receive', java='Recv'), 'Hello World!'),
-    'tut2': (gen('new_task', arg='xxxxxx'), gen('worker'), 'xxxxxx'),
-    'tut3': (gen('emit_log', arg='123456'), gen('receive_logs'), '123456'),
+    'tut2': (gen('new_task', arg='%(arg)s'), gen('worker'), '%(arg)s'),
+    'tut3': (gen('emit_log', arg='%(arg)s'), gen('receive_logs'), '%(arg)s'),
     }
 
 
 verbose = len(sys.argv) > 1
+errors = 0
 
 for test in sorted(tests.keys()):
-    (send_progs, recv_progs, mask) = tests[test]
-    for scwd, scmd in send_progs:
-        for rcwd, rcmd in recv_progs:
+    (send_progs, recv_progs, output_mask) = tests[test]
+    for scwd, send_cmd in send_progs:
+        for rcwd, recv_cmd in recv_progs:
+            ctx = {
+                'arg': 'rand_%s' % (random.randint(1,100),)
+                }
+            rcmd = recv_cmd % ctx
+            scmd = send_cmd % ctx
+            mask = output_mask % ctx
             p = spawn(rcmd, verbose=verbose, cwd=rcwd)
             run(scmd, verbose=verbose, cwd=scwd)
             if wait(p, mask, verbose=verbose):
                 print " [+] %s %-20s  ok" % (test, scwd+'/'+rcwd)
             else:
-                print " [!] %s %-20s  FAILED %r %r" % (test, scwd+'/'+rcwd, rcmd, scmd)
+                print " [!] %s %-20s  FAILED %r %r" % \
+                    (test, scwd+'/'+rcwd, rcmd, scmd)
+                errors += 1
+
+if errors:
+    print " [!] %s tests failed" % (errors,)
+
+sys.exit(errors)
+
