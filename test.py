@@ -5,6 +5,7 @@ import re
 import subprocess
 import signal
 import sys
+import os
 
 def run(cmd, verbose=False, **kwargs):
     if verbose:
@@ -34,7 +35,7 @@ def spawn(cmd, verbose=False, **kwargs):
     return p
 
 def wait(p, match, verbose=False):
-    p.send_signal(signal.SIGINT)
+    os.kill(p.pid, signal.SIGINT)
     p.wait()
     r = False
     for line in p.stdout:
