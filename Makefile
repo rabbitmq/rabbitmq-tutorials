@@ -31,7 +31,7 @@ all:
 #     make install
 #
 test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok
-	python test.py
+	RUBYVER=$(RUBYVER) python test.py
 
 R=http://www.rabbitmq.com/releases
 dotnet/.ok:
@@ -91,6 +91,7 @@ clean::
 	(cd php && \
 		rm -rf .ok lib)
 
+RUBYVER:=1.9
 GEMSVER=1.8.5
 TOPDIR:=$(PWD)
 ruby/.ok:
@@ -98,10 +99,10 @@ ruby/.ok:
 		wget http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
 		tar xzf rubygems-$(GEMSVER).tgz && \
 		cd rubygems-$(GEMSVER) && \
-		ruby1.8 setup.rb --prefix=$(TOPDIR)/ruby/gems && \
+		ruby$(RUBYVER) setup.rb --prefix=$(TOPDIR)/ruby/gems && \
 		cd .. && \
 		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib gems/bin/gem1.8 install amqp --version "0.8.0.rc13" && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib gems/bin/gem$(RUBYVER) install amqp --version "0.8.0.rc13" && \
 		touch .ok)
 clean::
 	(cd ruby && \
