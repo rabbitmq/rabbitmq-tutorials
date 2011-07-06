@@ -33,7 +33,7 @@ all:
 test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok
 	RUBYVER=$(RUBYVER) python test.py
 
-RABBITVER:=`curl -s http://www.rabbitmq.com/releases/bundles/|sed -n 's|.*folder.gif.*href="v\(.*\)/">.*|\1|p'|tail -n 1`
+RABBITVER:=`curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/?C=N;O=D;F=0;V=1" | grep -m1 -oe 'v[0-9\.]\+' | head -n 1`
 R=http://www.rabbitmq.com/releases
 
 DVER=$(RABBITVER)
@@ -97,7 +97,7 @@ clean::
 	(cd php && \
 		rm -rf .ok lib)
 
-RUBYVER:=1.9
+RUBYVER:=1.8
 GEMSVER=1.8.5
 TOPDIR:=$(PWD)
 RVER="~> 0.8.0.rc13"
