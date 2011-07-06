@@ -30,25 +30,25 @@ You may first need to run
     python worker.py
 
 
-[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
+[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html):
 
     python receive_logs.py
     python emit_log.py
 
 
-[Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html)
+[Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html):
 
     python receive_logs_direct.py
     python emit_log_direct.py
 
 
-[Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html)
+[Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html):
 
     python receive_logs_topic.py
     python emit_log_topic.py
 
 
-[Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html)
+[Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html):
 
     python rpc_server.py
     python rpc_client.py
