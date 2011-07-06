@@ -9,18 +9,18 @@ to [Puka](https://github.com/majek/puka) Python library.
 
 Now you can install `puka` using Pip:
 
-      $ pip install puka
+      pip install puka
 
 You may need to install `pip` first:
 
   * On Ubuntu:
 
-        $ sudo apt-get install python-pip git-core
+        sudo apt-get install python-pip git-core
 
- * On Debian:
+  * On Debian:
 
-        $ sudo apt-get install python-setuptools
-        $ sudo easy_install pip
+        sudo apt-get install python-setuptools
+        sudo easy_install pip
 
 
 ## Code
@@ -35,10 +35,17 @@ You may need to install `pip` first:
     python new_task.py
     python worker.py
 
-[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
+[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html):
 
     python receive_logs.py
     python emit_log.py
 
+[Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html):
 
+    python receive_logs_direct.py
+    python emit_log_direct.py
 
+[Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html):
+
+    python receive_logs_topic.py
+    python emit_log_topic.py
