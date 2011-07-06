@@ -2,16 +2,17 @@
 import puka
 
 client = puka.Client("amqp://localhost/")
-ticket = client.connect()
-client.wait(ticket)
+promise = client.connect()
+client.wait(promise)
 
-ticket = client.queue_declare(queue='hello')
-client.wait(ticket)
 
-ticket = client.basic_publish(exchange='',
-                              routing_key='hello',
-                              body="Hello world!")
-client.wait(ticket)
+promise = client.queue_declare(queue='hello')
+client.wait(promise)
 
+promise = client.basic_publish(exchange='',
+                               routing_key='hello',
+                               body="Hello World!")
+client.wait(promise)
 
 print " [x] Sent 'Hello World!'"
+client.close()

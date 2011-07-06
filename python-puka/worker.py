@@ -3,21 +3,18 @@ import puka
 import time
 
 client = puka.Client("amqp://localhost/")
-ticket = client.connect()
-client.wait(ticket)
+promise = client.connect()
+client.wait(promise)
 
 
-ticket = client.queue_declare(queue='task_queue')
-client.wait(ticket)
+promise = client.queue_declare(queue='task_queue', durable=True)
+client.wait(promise)
 print ' [*] Waiting for messages. To exit press CTRL+C'
 
-consume_ticket = client.basic_consume(queue='task_queue',
-                                      prefetch_count=1)
+consume_promise = client.basic_consume(queue='task_queue', prefetch_count=1)
 while True:
-    msg_result = client.wait(consume_ticket)
-    body = msg_result['body']
-    print " [x] Received %r" % (body,)
+    msg_result = client.wait(consume_promise)
+    print " [x] Received %r" % (msg_result['body'],)
     time.sleep( body.count('.') )
     print " [x] Done"
     client.basic_ack(msg_result)
-
