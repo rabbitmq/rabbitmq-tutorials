@@ -39,8 +39,10 @@ public class RPCServer {
         QueueingConsumer.Delivery delivery = consumer.nextDelivery();
         
         BasicProperties props = delivery.getProperties();
-        BasicProperties replyProps = new BasicProperties();
-        replyProps.setCorrelationId(props.getCorrelationId());        
+        BasicProperties replyProps = new BasicProperties
+                                         .Builder()
+                                         .correlationId(props.getCorrelationId())
+                                         .build();
         
         try {
           String message = new String(delivery.getBody(),"UTF-8");
