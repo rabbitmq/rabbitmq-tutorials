@@ -60,6 +60,7 @@ def gen(prog, arg="", **kwargs):
         'php': kwargs.get('php', prog),
         'arg': arg,
         'rubyver': os.environ.get('RUBYVER', '1.8'),
+        'python-puka': kwargs.get('python-puka', prog),
         }
     return [
         ('python', './venv/bin/python %(python)s.py %(arg)s' % ctx),
@@ -70,6 +71,7 @@ def gen(prog, arg="", **kwargs):
         ('ruby', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
              'ruby%(rubyver)s %(ruby)s.rb %(arg)s' % ctx),
         ('php', 'php %(php)s.php %(arg)s' % ctx),
+        ('python-puka', './venv/bin/python %(python-puka)s.py %(arg)s' % ctx),
         ]
 
 tests = {

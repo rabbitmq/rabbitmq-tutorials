@@ -30,7 +30,7 @@ all:
 #     make
 #     make install
 #
-test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok
+test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok python-puka/.ok
 	RUBYVER=$(RUBYVER) python test.py
 
 RABBITVER:=`curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/?C=N;O=D;F=0;V=1" | grep -oE '([0-9\.]{5,})' | head -n 1`
@@ -114,3 +114,13 @@ ruby/.ok:
 clean::
 	(cd ruby && \
 		rm -rf .ok gems)
+
+python-puka/.ok:
+	(cd python-puka && \
+		virtualenv venv && \
+		./venv/bin/easy_install pip && \
+		./venv/bin/pip install puka && \
+		touch .ok)
+clean::
+	(cd python-puka && \
+		rm -rf .ok venv distribute*.tar.gz)
