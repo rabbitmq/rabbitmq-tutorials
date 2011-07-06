@@ -66,7 +66,7 @@ clean::
 	(cd erlang && \
 		rm -rf .ok *.ez amqp_client* rabbit_common*)
 
-JVER=2.4.1
+JVER=$(RABBITVER)
 java/.ok:
 	(cd java && \
 		wget -c $(R)/rabbitmq-java-client/v$(JVER)/rabbitmq-java-client-bin-$(JVER).zip && \
