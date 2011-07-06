@@ -49,3 +49,8 @@ You may need to install `pip` first:
 
     python receive_logs_topic.py
     python emit_log_topic.py
+
+[Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html):
+
+    python rpc_server.py
+    python rpc_client.py
