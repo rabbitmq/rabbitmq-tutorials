@@ -1,7 +1,20 @@
 # Python code for RabbitMQ tutorials
 
-Here you can find a Python code examples from [RabbitMQ
+Here you can find Python code examples from [RabbitMQ
 tutorials](http://www.rabbitmq.com/getstarted.html).
+
+To successfully use the examples you will need a running RabbitMQ server.
+
+## Requirements
+
+To run this code you need `pika` library version 0.9.5. To install it run
+
+    pip install pika==0.9.5
+
+You may first need to run
+
+    easy_install pip
+
 
 ## Code
 
@@ -22,3 +35,20 @@ tutorials](http://www.rabbitmq.com/getstarted.html).
     python receive_logs.py
     python emit_log.py
 
+
+[Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html)
+
+    python receive_logs_direct.py
+    python emit_log_direct.py
+
+
+[Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html)
+
+    python receive_logs_topic.py
+    python emit_log_topic.py
+
+
+[Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html)
+
+    python rpc_server.py
+    python rpc_client.py

@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 import pika
 
-connection = pika.AsyncoreConnection(pika.ConnectionParameters(
-        host='127.0.0.1',
-        credentials=pika.PlainCredentials('guest', 'guest')))
+connection = pika.BlockingConnection(pika.ConnectionParameters(
+        host='localhost'))
 channel = connection.channel()
 
 
-channel.queue_declare(queue='test')
+channel.queue_declare(queue='hello')
 
 print ' [*] Waiting for messages. To exit press CTRL+C'
 
-def callback(ch, method, header, body):
+def callback(ch, method, properties, body):
     print " [x] Received %r" % (body,)
 
 channel.basic_consume(callback,
-                      queue='test',
+                      queue='hello',
                       no_ack=True)
 
-pika.asyncore_loop()
+channel.start_consuming()
