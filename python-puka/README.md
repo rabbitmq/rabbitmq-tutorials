@@ -1,12 +1,17 @@
-# Puka code for RabbitMQ tutorials
+# Python-Puka code for RabbitMQ tutorials
 
 Here you can find code examples from
 [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html) adapted
 to [Puka](https://github.com/majek/puka) Python library.
 
+
 ## Requirements
 
-First, you need Python Pip.
+Now you can install `puka` using Pip:
+
+      $ pip install puka
+
+You may need to install `pip` first:
 
   * On Ubuntu:
 
@@ -14,12 +19,8 @@ First, you need Python Pip.
 
  * On Debian:
 
-        $ sudo apt-get install python-setuptools git-core
+        $ sudo apt-get install python-setuptools
         $ sudo easy_install pip
-
-Now you can install Puka system-wide using Pip:
-
-      $ sudo pip install -e git+http://github.com/majek/puka.git#egg=puka
 
 
 ## Code
@@ -29,11 +30,15 @@ Now you can install Puka system-wide using Pip:
     python send.py
     python receive.py
 
-
 [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html):
 
     python new_task.py
     python worker.py
+
+[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
+
+    python receive_logs.py
+    python emit_log.py
 
 
 
