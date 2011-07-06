@@ -17,11 +17,12 @@ def run(cmd, verbose=False, **kwargs):
 
     if verbose:
         for line in p.stdout:
-            line = p.stdout.readline().strip()
+            line = line.strip()
             if line:
                 print ' [s]  %s' % (line,)
         print " [s] Done"
     time.sleep(0.1)
+    return p.returncode
 
 
 def spawn(cmd, verbose=False, **kwargs):
@@ -39,10 +40,11 @@ def wait(p, match, verbose=False):
     p.wait()
     r = False
     for line in p.stdout:
+        line = line.strip()
         if re.search(match, line):
             r = True
         if verbose:
-            print " [r]  %s" % (line.strip(),)
+            print " [r]  %s" % (line,)
     if verbose:
         print " [r] Done"
     return r
@@ -52,34 +54,48 @@ def wait(p, match, verbose=False):
 def gen(prog, arg="", **kwargs):
     Prog = ''.join([w.capitalize() for w in prog.split('_')])
     ctx = {
-        'python': kwargs.get('python', prog),
-        'erlang': kwargs.get('erlang', prog),
+        'prog': prog,
+        'Prog': Prog,
+        'rubyver': os.environ.get('RUBYVER', '1.8'),
+        'arg': arg,
         'java': kwargs.get('java', Prog),
         'dotnet': kwargs.get('dotnet', Prog),
-        'ruby': kwargs.get('ruby', prog),
-        'php': kwargs.get('php', prog),
-        'arg': arg,
-        'rubyver': os.environ.get('RUBYVER', '1.8'),
-        'python-puka': kwargs.get('python-puka', prog),
         }
     return [
-        ('python', './venv/bin/python %(python)s.py %(arg)s' % ctx),
-        ('erlang', './%(python)s.erl %(arg)s' % ctx),
+        ('python', './venv/bin/python %(prog)s.py %(arg)s' % ctx),
+        ('erlang', './%(prog)s.erl %(arg)s' % ctx),
         ('java', 'java -cp .:commons-io-1.2.jar:commons-cli-1.1.jar:'
              'rabbitmq-client.jar %(java)s %(arg)s' % ctx),
         ('dotnet', 'env MONO_PATH=lib/bin mono %(dotnet)s.exe %(arg)s' % ctx),
         ('ruby', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
-             'ruby%(rubyver)s %(ruby)s.rb %(arg)s' % ctx),
-        ('php', 'php %(php)s.php %(arg)s' % ctx),
-        ('python-puka', './venv/bin/python %(python-puka)s.py %(arg)s' % ctx),
+             'ruby%(rubyver)s %(prog)s.rb %(arg)s' % ctx),
+        ('php', 'php %(prog)s.php %(arg)s' % ctx),
+        ('python-puka', './venv/bin/python %(prog)s.py %(arg)s' % ctx),
         ]
+
+def skip(cwd_cmd, to_skip):
+    return [(cwd,cmd) for cwd, cmd in cwd_cmd if cwd not in to_skip]
 
 tests = {
     'tut1': (gen('send'), gen('receive', java='Recv'), 'Hello World!'),
     'tut2': (gen('new_task', arg='%(arg)s'), gen('worker'), '%(arg)s'),
     'tut3': (gen('emit_log', arg='%(arg)s'), gen('receive_logs'), '%(arg)s'),
+    'tut4': (skip(gen('emit_log_direct', arg='%(arg)s %(arg2)s'),
+                  ['erlang', 'php']),
+             skip(gen('receive_logs_direct', arg='%(arg)s'),
+                  ['erlang', 'php']),
+             '%(arg2)s'),
+    'tut5': (skip(gen('emit_log_topic', arg='%(arg)s.foo %(arg2)s'),
+                  ['erlang', 'php']),
+             skip(gen('receive_logs_topic', arg='%(arg)s.*'),
+                  ['erlang', 'php']),
+             '%(arg2)s'),
+    'tut6': (skip(gen('rpc_client', java='RPCClient', dotnet='RPCClient'),
+                  ['erlang', 'php']),
+             skip(gen('rpc_server', java='RPCServer', dotnet='RPCServer'),
+                  ['erlang', 'php']),
+             'fib[(]30[)]'),
     }
-
 
 verbose = len(sys.argv) > 1
 errors = 0
@@ -89,22 +105,22 @@ for test in sorted(tests.keys()):
     for scwd, send_cmd in send_progs:
         for rcwd, recv_cmd in recv_progs:
             ctx = {
-                'arg': 'rand_%s' % (random.randint(1,100),)
+                'arg':  'rand_%s' % (random.randint(1,100),),
+                'arg2': 'rand_%s' % (random.randint(1,100),),
                 }
             rcmd = recv_cmd % ctx
             scmd = send_cmd % ctx
             mask = output_mask % ctx
             p = spawn(rcmd, verbose=verbose, cwd=rcwd)
-            run(scmd, verbose=verbose, cwd=scwd)
-            if wait(p, mask, verbose=verbose):
-                print " [+] %s %-20s  ok" % (test, scwd+'/'+rcwd)
+            e = run(scmd, verbose=verbose, cwd=scwd)
+            if wait(p, mask, verbose=verbose) and e == 0:
+                print " [+] %s %-30s ok" % (test, scwd+'/'+rcwd)
             else:
-                print " [!] %s %-20s  FAILED %r %r" % \
-                    (test, scwd+'/'+rcwd, rcmd, scmd)
+                print " [!] %s %-30s FAILED %r %r (error=%r)" % \
+                    (test, scwd+'/'+rcwd, rcmd, scmd, e)
                 errors += 1
 
 if errors:
     print " [!] %s tests failed" % (errors,)
 
 sys.exit(errors)
-
