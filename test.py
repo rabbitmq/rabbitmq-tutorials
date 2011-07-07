@@ -24,7 +24,7 @@ def spawn(cmd, **kwargs):
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
                          **kwargs)
-    time.sleep(0.4)
+    time.sleep(1.0)
     return p
 
 def wait(p, match):
