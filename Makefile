@@ -41,7 +41,7 @@ dotnet/.ok:
 	(cd dotnet && \
 		mkdir lib && \
 		cd lib && \
-		wget -c $(R)/rabbitmq-dotnet-client/v$(DVER)/rabbitmq-dotnet-client-$(DVER)-dotnet-3.0.zip && \
+		wget -qc $(R)/rabbitmq-dotnet-client/v$(DVER)/rabbitmq-dotnet-client-$(DVER)-dotnet-3.0.zip && \
 		unzip -q rabbitmq-dotnet-client-$(DVER)-dotnet-3.0.zip && \
 		cd .. && \
 		for f in *.cs; do \
@@ -55,7 +55,7 @@ clean::
 EVER=$(RABBITVER)
 erlang/.ok:
 	(cd erlang && \
-		wget -c $(R)/plugins/v$(EVER)/rabbit_common-$(EVER).ez \
+		wget -qc $(R)/plugins/v$(EVER)/rabbit_common-$(EVER).ez \
 			$(R)/plugins/v$(EVER)/amqp_client-$(EVER).ez && \
 		unzip -q rabbit_common-$(EVER).ez && \
 		ln -s rabbit_common-$(EVER) rabbit_common && \
@@ -69,7 +69,7 @@ clean::
 JVER=$(RABBITVER)
 java/.ok:
 	(cd java && \
-		wget -c $(R)/rabbitmq-java-client/v$(JVER)/rabbitmq-java-client-bin-$(JVER).zip && \
+		wget -qc $(R)/rabbitmq-java-client/v$(JVER)/rabbitmq-java-client-bin-$(JVER).zip && \
 		unzip -q rabbitmq-java-client-bin-$(JVER).zip && \
 		cp rabbitmq-java-client-bin-$(JVER)/*.jar . && \
 		javac -cp rabbitmq-client.jar *.java && \
@@ -103,7 +103,7 @@ TOPDIR:=$(PWD)
 RVER="~> 0.8.0.rc13"
 ruby/.ok:
 	(cd ruby && \
-		wget http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
+		wget -qc http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
 		tar xzf rubygems-$(GEMSVER).tgz && \
 		cd rubygems-$(GEMSVER) && \
 		ruby$(RUBYVER) setup.rb --prefix=$(TOPDIR)/ruby/gems && \
