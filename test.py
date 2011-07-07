@@ -16,7 +16,7 @@ def run(cmd, **kwargs):
     out = p.stdout.read()
     err = p.stderr.read()
 
-    time.sleep(0.5)
+    time.sleep(0.2)
     return p.returncode, out + '\n' + err
 
 def spawn(cmd, **kwargs):
@@ -24,7 +24,7 @@ def spawn(cmd, **kwargs):
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
                          **kwargs)
-    time.sleep(1.0)
+    time.sleep(0.5)
     return p
 
 def wait(p, match):
