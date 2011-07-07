@@ -7,27 +7,19 @@ import signal
 import sys
 import os
 
-def run(cmd, verbose=False, **kwargs):
-    if verbose:
-        print " [s] Running %r" % (cmd,)
+def run(cmd, **kwargs):
     p = subprocess.Popen(cmd.split(),
                          stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
                          **kwargs)
     p.wait()
+    out = p.stdout.read()
+    err = p.stderr.read()
 
-    if verbose:
-        for line in p.stdout:
-            line = line.strip()
-            if line:
-                print ' [s]  %s' % (line,)
-        print " [s] Done"
     time.sleep(0.1)
-    return p.returncode
+    return p.returncode, out + '\n' + err
 
-
-def spawn(cmd, verbose=False, **kwargs):
-    if verbose:
-        print " [r] Waiting for %r" % (cmd,)
+def spawn(cmd, **kwargs):
     p = subprocess.Popen(cmd.split(),
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
@@ -35,19 +27,12 @@ def spawn(cmd, verbose=False, **kwargs):
     time.sleep(0.4)
     return p
 
-def wait(p, match, verbose=False):
+def wait(p, match):
     os.kill(p.pid, signal.SIGINT)
     p.wait()
-    r = False
-    for line in p.stdout:
-        line = line.strip()
-        if re.search(match, line):
-            r = True
-        if verbose:
-            print " [r]  %s" % (line,)
-    if verbose:
-        print " [r] Done"
-    return r
+    out = p.stdout.read()
+    err = p.stderr.read()
+    return bool(re.search(match, out)), out + '\n' + err
 
 
 
@@ -97,7 +82,6 @@ tests = {
              'fib[(]30[)]'),
     }
 
-verbose = len(sys.argv) > 1
 errors = 0
 
 for test in sorted(tests.keys()):
@@ -111,13 +95,16 @@ for test in sorted(tests.keys()):
             rcmd = recv_cmd % ctx
             scmd = send_cmd % ctx
             mask = output_mask % ctx
-            p = spawn(rcmd, verbose=verbose, cwd=rcwd)
-            e = run(scmd, verbose=verbose, cwd=scwd)
-            if wait(p, mask, verbose=verbose) and e == 0:
+            p = spawn(rcmd, cwd=rcwd)
+            serror, sout = run(scmd, cwd=scwd)
+            matched, rout = wait(p, mask)
+            if matched and serror == 0:
                 print " [+] %s %-30s ok" % (test, scwd+'/'+rcwd)
             else:
-                print " [!] %s %-30s FAILED %r %r (error=%r)" % \
-                    (test, scwd+'/'+rcwd, rcmd, scmd, e)
+                print " [!] %s %-30s FAILED" % (test, scwd+'/'+rcwd)
+                print " [!] %r output (error=%s):\n%s\n" % (scmd, serror,
+                                                            sout.strip())
+                print " [!] %r output:\n%s\n" % (rcmd, rout.strip())
                 errors += 1
 
 if errors:
