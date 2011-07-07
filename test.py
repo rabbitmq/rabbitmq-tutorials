@@ -16,7 +16,7 @@ def run(cmd, **kwargs):
     out = p.stdout.read()
     err = p.stderr.read()
 
-    time.sleep(0.1)
+    time.sleep(0.5)
     return p.returncode, out + '\n' + err
 
 def spawn(cmd, **kwargs):
