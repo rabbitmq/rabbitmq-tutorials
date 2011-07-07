@@ -12,6 +12,12 @@ AMQP.start(:host => "localhost") do |connection|
   channel = AMQP::Channel.new(connection)
   queue   = channel.queue("rpc_queue")
 
+  Signal.trap("INT") do
+    connection.close do
+      EM.stop { exit }
+    end
+  end
+
   channel.prefetch(1)
 
   queue.subscribe(:ack => true) do |header, body|
