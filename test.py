@@ -7,6 +7,8 @@ import signal
 import sys
 import os
 
+multiplier = float(os.environ.get('SLOWNESS', 1))
+
 def run(cmd, **kwargs):
     p = subprocess.Popen(cmd.split(),
                          stdout=subprocess.PIPE,
@@ -16,7 +18,7 @@ def run(cmd, **kwargs):
     out = p.stdout.read()
     err = p.stderr.read()
 
-    time.sleep(0.2)
+    time.sleep(0.2 * multiplier)
     return p.returncode, out + '\n' + err
 
 def spawn(cmd, **kwargs):
@@ -24,7 +26,7 @@ def spawn(cmd, **kwargs):
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
                          **kwargs)
-    time.sleep(0.5)
+    time.sleep(0.5 * multiplier)
     return p
 
 def wait(p, match):
@@ -84,6 +86,7 @@ tests = {
 
 errors = 0
 
+print " [.] Running tests with SLOWNESS=%r" % (multiplier,)
 for test in sorted(tests.keys()):
     (send_progs, recv_progs, output_mask) = tests[test]
     for scwd, send_cmd in send_progs:
