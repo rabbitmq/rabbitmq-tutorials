@@ -26,26 +26,26 @@ You may first need to run
 
 [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html):
 
-    python new_task.py
+    python new_task.py "A very hard task which takes two seconds.."
     python worker.py
 
 
 [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html):
 
     python receive_logs.py
-    python emit_log.py
+    python emit_log.py "info: This is the log message"
 
 
 [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html):
 
-    python receive_logs_direct.py
-    python emit_log_direct.py
+    python receive_logs_direct.py info
+    python emit_log_direct.py info "The message"
 
 
 [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html):
 
-    python receive_logs_topic.py
-    python emit_log_topic.py
+    python receive_logs_topic.py "*.rabbit"
+    python emit_log_topic.py red.rabbit Hello
 
 
 [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html):
