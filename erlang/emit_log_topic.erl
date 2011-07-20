@@ -12,14 +12,17 @@ main(Argv) ->
                                                    type = <<"topic">>}),
 
     {RoutingKey, Message} = case Argv of
-           [] -> {<<"anonymous.info">>, <<"Hello World!">>};
-           [R] -> {list_to_binary(R), <<"Hello World!">>};
-           [R | Msg] -> {list_to_binary(R), list_to_binary(string:join(Msg, " "))}
-          end,
+                                [] ->
+                                    {<<"anonymous.info">>, <<"Hello World!">>};
+                                [R] ->
+                                    {list_to_binary(R), <<"Hello World!">>};
+                                [R | Msg] ->
+                                    {list_to_binary(R), list_to_binary(string:join(Msg, " "))}
+                            end,
     amqp_channel:cast(Channel,
                       #'basic.publish'{
-                          exchange = <<"topic_logs">>,
-                          routing_key = RoutingKey},
+                        exchange = <<"topic_logs">>,
+                        routing_key = RoutingKey},
                       #amqp_msg{payload = Message}),
     io:format(" [x] Sent ~p:~p~n", [RoutingKey, Message]),
     ok = amqp_channel:close(Channel),

@@ -50,5 +50,5 @@ You need Erlang Client binaries:
 
 [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html):
 
-    ./receive_logs_topic.erl *.rabbit
+    ./receive_logs_topic.erl "*.rabbit"
     ./emit_log_topic.erl red.rabbit Hello

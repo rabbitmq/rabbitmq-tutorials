@@ -14,11 +14,10 @@ main(Argv) ->
     #'queue.declare_ok'{queue = Queue} =
         amqp_channel:call(Channel, #'queue.declare'{exclusive = true}),
 
-    lists:foreach(fun(S) ->
-                    amqp_channel:call(Channel, #'queue.bind'{exchange = <<"direct_logs">>,
-                                                             routing_key = list_to_binary(S),
-                                                             queue = Queue})
-                  end, Argv),
+    [amqp_channel:call(Channel, #'queue.bind'{exchange = <<"direct_logs">>,
+                                              routing_key = list_to_binary(Severity),
+                                              queue = Queue})
+     || Severity <- Argv],
 
     io:format(" [*] Waiting for logs. To exit press CTRL+C~n"),
 
@@ -31,7 +30,7 @@ main(Argv) ->
 
 loop(Channel) ->
     receive
-        {#'basic.deliver'{routing_key=RoutingKey}, #amqp_msg{payload = Body}} ->
+        {#'basic.deliver'{routing_key = RoutingKey}, #amqp_msg{payload = Body}} ->
             io:format(" [x] ~p:~p~n", [RoutingKey, Body]),
             loop(Channel)
     end.
