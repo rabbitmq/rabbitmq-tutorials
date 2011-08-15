@@ -19,7 +19,6 @@ class RPCClient {
     }
 
     public string Call(string message) {
-        string response = null;
         string corrId = Guid.NewGuid().ToString();
         IBasicProperties props = channel.CreateBasicProperties();
         props.ReplyTo = replyQueueName;
@@ -32,13 +31,11 @@ class RPCClient {
             BasicDeliverEventArgs ea =
                 (BasicDeliverEventArgs)consumer.Queue.Dequeue();
             if (ea.BasicProperties.CorrelationId == corrId) {
-                byte[] body = ea.Body;
-                response = System.Text.Encoding.UTF8.GetString(body);
-                break;
+                return System.Text.Encoding.UTF8.GetString(ea.Body);
             }
         }
-        return response;
     }
+
     public void Close() {
         connection.Close();
     }
