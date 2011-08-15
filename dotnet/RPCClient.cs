@@ -2,7 +2,7 @@ using System;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-class RPCClient : IDisposable {
+class RPCClient {
     private IConnection connection;
     private IModel channel;
     private string replyQueueName;
@@ -34,21 +34,24 @@ class RPCClient : IDisposable {
             if (ea.BasicProperties.CorrelationId == corrId) {
                 byte[] body = ea.Body;
                 response = System.Text.Encoding.UTF8.GetString(body);
-                channel.BasicCancel(consumer.ConsumerTag);
                 break;
             }
         }
         return response;
     }
-    public void Dispose() {
+    public void Close() {
         connection.Close();
     }
+}
 
+class RPC {
     public static void Main() {
+        RPCClient rpcClient = new RPCClient();
+
         Console.WriteLine(" [x] Requesting fib(30)");
-        using (RPCClient rpcClient = new RPCClient()) {
-            string response = rpcClient.Call("30");
-            Console.WriteLine(" [.] Got '{0}'", response);
-        }
+        string response = rpcClient.Call("30");
+        Console.WriteLine(" [.] Got '{0}'", response);
+
+        rpcClient.Close();
     }
 }
