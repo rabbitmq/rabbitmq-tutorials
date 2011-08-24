@@ -18,9 +18,9 @@ class FibonacciRpcClient(object):
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
             self.response = body
-            self.channel.stop_consuming()
 
     def call(self, n):
+        self.response = None
         self.corr_id = str(uuid.uuid4())
         self.channel.basic_publish(exchange='',
                                    routing_key='rpc_queue',
@@ -29,7 +29,8 @@ class FibonacciRpcClient(object):
                                          correlation_id = self.corr_id,
                                          ),
                                    body=str(n))
-        self.channel.start_consuming()
+        while self.response is None:
+            self.connection.process_data_events()
         return int(self.response)
 
 fibonacci_rpc = FibonacciRpcClient()
