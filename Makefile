@@ -100,7 +100,7 @@ clean::
 RUBYVER:=1.8
 GEMSVER=1.8.5
 TOPDIR:=$(PWD)
-RVER="~> 0.8.0.rc13"
+RVER="0.8.0"
 ruby/.ok:
 	(cd ruby && \
 		wget -qc http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
