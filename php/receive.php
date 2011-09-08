@@ -10,11 +10,11 @@ $channel->queue_declare('hello', false, false, false, false);
 
 echo ' [*] Waiting for messages. To exit press CTRL+C', "\n";
 
-$callback = function($msg) {
+function process_message($msg) {
   echo " [x] Received ", $msg->body, "\n";
 };
 
-$channel->basic_consume('hello', '', false, true, false, false, $callback);
+$channel->basic_consume('hello', '', false, true, false, false, 'process_message');
 
 while(count($channel->callbacks)) {
     $channel->wait();
