@@ -78,9 +78,9 @@ tests = {
                   ['php']),
              '%(arg2)s'),
     'tut6': (skip(gen('rpc_client', java='RPCClient', dotnet='RPCClient'),
-                  ['erlang', 'php']),
+                  ['erlang']),
              skip(gen('rpc_server', java='RPCServer', dotnet='RPCServer'),
-                  ['erlang', 'php']),
+                  ['erlang']),
              'fib[(]30[)]'),
     }
 
