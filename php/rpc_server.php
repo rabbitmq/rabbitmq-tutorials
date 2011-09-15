@@ -21,7 +21,7 @@ $callback = function($req) {
 	echo " [.] fib(", $n, ")\n";
 
 	$msg = new AMQPMessage(
-		'' + fib($n),
+		(string) fib($n),
 		array('correlation_id' => $req->properties['correlation_id'])
 		);
 

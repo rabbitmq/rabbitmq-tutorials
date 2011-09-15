@@ -9,7 +9,7 @@ class FibonacciRpcClient {
 	private $response;
 	private $corr_id;
 
-	function __construct() {
+	public function __construct() {
 		$this->connection = new AMQPConnection(
 			'localhost', 5672, 'guest', 'guest');
 		$this->channel = $this->connection->channel();
@@ -30,7 +30,7 @@ class FibonacciRpcClient {
 		$this->corr_id = uniqid();
 
 		$msg = new AMQPMessage(
-			'' + $n,
+			(string) $n,
 			array('correlation_id' => $this->corr_id,
 			      'reply_to' => $this->callback_queue)
 			);

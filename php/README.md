@@ -34,3 +34,7 @@ dependencies on Ubuntu type:
     php receive_logs.php
     php emit_log.php
 
+[Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html):
+
+    php rpc_server.php
+    php rpc_client.php
