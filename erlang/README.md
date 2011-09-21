@@ -46,7 +46,7 @@ You need Erlang Client binaries:
 [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html):
 
     ./receive_logs_direct.erl info
-    ./emit_log_direct.py info Hello
+    ./emit_log_direct.erl info Hello
 
 [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html):
 
