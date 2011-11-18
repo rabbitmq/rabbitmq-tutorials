@@ -8,12 +8,17 @@ tutorials](http://www.rabbitmq.com/getstarted.html).
 
 To run the examples you need a running RabbitMQ server.
 
-Additionaly you need `PHP 5.3` and `php-amqplib`. To get these
+Additionally you need `PHP 5.3` and `php-amqplib`. To get these
 dependencies on Ubuntu type:
 
     sudo apt-get install git-core php5-cli
-    git clone http://github.com/tnc/php-amqplib.git lib/php-amqplib
+    git clone http://github.com/videlalvaro/php-amqplib.git lib/php-amqplib
 
+Since the tutorials are tested with `php-amqplib` v1.0 you might want to checkout the `v1.0` tag as well:
+
+    pushd lib/php-amqplib/
+    git checkout v1.0
+    popd
 
 ## Code
 
