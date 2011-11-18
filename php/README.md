@@ -16,9 +16,8 @@ dependencies on Ubuntu type:
 
 Since the tutorials are tested with `php-amqplib` v1.0 you might want to checkout the `v1.0` tag as well:
 
-    pushd lib/php-amqplib/
+    cd lib/php-amqplib/
     git checkout v1.0
-    popd
 
 ## Code
 
