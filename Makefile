@@ -55,8 +55,8 @@ clean::
 EVER=$(RABBITVER)
 erlang/.ok:
 	(cd erlang && \
-		wget -qc $(R)/plugins/v$(EVER)/rabbit_common-$(EVER).ez \
-			$(R)/plugins/v$(EVER)/amqp_client-$(EVER).ez && \
+		wget -qc $(R)/rabbitmq-erlang-client/v$(EVER)/rabbit_common-$(EVER).ez \
+			$(R)/rabbitmq-erlang-client/v$(EVER)/amqp_client-$(EVER).ez && \
 		unzip -q rabbit_common-$(EVER).ez && \
 		ln -s rabbit_common-$(EVER) rabbit_common && \
 		unzip -q amqp_client-$(EVER).ez && \
