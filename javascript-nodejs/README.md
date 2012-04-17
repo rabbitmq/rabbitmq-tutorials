@@ -11,7 +11,8 @@ Apart from `npm` and `node`, to run this code you need
 [`node-amqp`](https://github.com/postwait/node-amqp) version 0.1.X. To
 pull the dependency from `npm` run:
 
-    npm install
+    npm install amqp
+
 
 ## Code
 
@@ -19,6 +20,13 @@ pull the dependency from `npm` run:
 
     node send.js
     node receive.js
+
+
+[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html):
+
+    node new_task.js "A very hard task which takes two seconds.."
+    node worker.js
+
 
 [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html):
 
