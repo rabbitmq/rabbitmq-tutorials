@@ -1,4 +1,4 @@
-var amqp       = require('amqp');
+var amqp = require('amqp');
 
 var connection = amqp.createConnection({host: 'localhost'});
 
