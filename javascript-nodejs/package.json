@@ -1,0 +1,10 @@
+{
+    "name": "rabbitmq-tutorials",
+    "version": "0.0.0-unreleasable",
+    "private": true,
+    "main": "none",
+    "description": "Node.JS implementation of RabbitMQ tutorials",
+    "dependencies": {
+        "amqp": "0.1.3"
+    }
+}
