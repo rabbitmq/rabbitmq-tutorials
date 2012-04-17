@@ -20,3 +20,7 @@ pull the dependency from `npm` run:
     node send.js
     node receive.js
 
+[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html):
+
+    node receive_logs.js
+    node emit_log.js "info: This is the log message"
