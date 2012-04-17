@@ -15,7 +15,7 @@ You may need to install `pip` first:
 
   * On Ubuntu:
 
-        sudo apt-get install python-pip git-core
+        sudo apt-get install python-pip
 
   * On Debian:
 
