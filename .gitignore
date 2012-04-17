@@ -1,1 +1,14 @@
+*/.ok
+*/distribute-*.tar.gz
+erlang/amqp_client*
+erlang/rabbit_common*
+python/venv
+dotnet/*.exe
+dotnet/lib
+java/*.class
+java/*.jar
+java/rabbitmq-java-client-bin*
 javascript-nodejs/node_modules
+php/lib/
+python-puka/venv
+ruby/gems/
