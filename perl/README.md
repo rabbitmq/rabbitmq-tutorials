@@ -9,7 +9,11 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 To run this code you need to intall Net::RabbitFoot
 
+    cpan -i Net::RabbitFoot
+
 For tutorial six UUID::Tiny needs to be installed.
+
+    cpan -i UUID::Tiny
 
 ## Code
 
