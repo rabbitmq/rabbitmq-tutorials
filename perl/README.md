@@ -7,13 +7,18 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 ## Requirements
 
-To run this code you need to intall Net::RabbitFoot
+To run this code you need to intall Net::RabbitFoot.
 
     cpan -i Net::RabbitFoot
 
 For tutorial six UUID::Tiny needs to be installed.
 
     cpan -i UUID::Tiny
+
+On Ubuntu:
+    
+    sudo apt-get install make libclass-data-inheritable-perl libtest-deep-perl libmoosex-app-cmd-perl libcoro-perl libjson-xs-perl libxml-libxml-perl libconfig-any-perl libmoosex-attributehelpers-perl libmoosex-configfromfile-perl libtest-exception-perl libfile-sharedir-perl libreadonly-xs-perl libuuid-tiny-perl
+    sudo cpan -i Net::RabbitFoot
 
 ## Code
 
