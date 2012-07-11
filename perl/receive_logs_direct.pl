@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+$|++;
 use AnyEvent;
 use Net::RabbitFoot;
 

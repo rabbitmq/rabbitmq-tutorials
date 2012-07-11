@@ -7,7 +7,7 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 ## Requirements
 
-To run this code you need to intall Net::RabbitFoot.
+To run this code you need to install Net::RabbitFoot.
 
     cpan -i Net::RabbitFoot
 

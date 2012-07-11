@@ -3,8 +3,9 @@
 use strict;
 use warnings;
 
-use Net::RabbitFoot;
+$|++;
 use AnyEvent;
+use Net::RabbitFoot;
 
 my $conn = Net::RabbitFoot->new()->load_xml_spec()->connect(
     host => 'localhost',
@@ -23,7 +24,7 @@ print " [*] Waiting for messages. To exit press CTRL-C\n";
 sub callback {
     my $var = shift;
     my $body = $var->{body}->{payload};
-    print " [X] Recevied $body\n";
+    print " [x] Received $body\n";
 }
 
 $ch->consume(

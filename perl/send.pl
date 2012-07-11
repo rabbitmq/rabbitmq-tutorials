@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+$|++;
 use Net::RabbitFoot;
 
 my $conn = Net::RabbitFoot->new()->load_xml_spec()->connect(
@@ -11,7 +12,6 @@ my $conn = Net::RabbitFoot->new()->load_xml_spec()->connect(
     user => 'guest',
     pass => 'guest',
     vhost => '/',
-    timeout => 1,
 );
 
 
@@ -21,9 +21,6 @@ $chan->publish(
     exchange => '',
     routing_key => 'hello',
     body => 'Hello World!',
-    on_return => sub {
-        print "hello World\n";
-    },
 );
 
 print " [x] Sent 'Hello World!'\n";

@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+$|++;
 use Net::RabbitFoot;
 
 my $conn = Net::RabbitFoot->new()->load_xml_spec()->connect(
@@ -11,7 +12,6 @@ my $conn = Net::RabbitFoot->new()->load_xml_spec()->connect(
     user => 'guest',
     pass => 'guest',
     vhost => '/',
-    timeout => 1,
 );
 
 

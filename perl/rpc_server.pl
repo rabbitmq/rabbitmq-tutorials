@@ -3,10 +3,9 @@
 use strict;
 use warnings;
 
-use Net::RabbitFoot;
+$|++;
 use AnyEvent;
-
-use Data::Dumper;
+use Net::RabbitFoot;
 
 my $conn = Net::RabbitFoot->new()->load_xml_spec()->connect(
     host => 'localhost',

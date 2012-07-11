@@ -3,9 +3,8 @@
 use strict;
 use warnings;
 
+$|++;
 use Net::RabbitFoot;
-
-use Data::Dumper;
 
 my $conn = Net::RabbitFoot->new()->load_xml_spec()->connect(
     host => 'localhost',
