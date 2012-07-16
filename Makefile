@@ -16,7 +16,8 @@ all:
 # least (as tested on debian 5.0):
 #
 #     apt-get install python-virtualenv git-core php5-cli \
-#         ruby1.8 ruby1.8-dev rdoc1.8 unzip mono-gmcs sun-java5-jdk
+#         ruby1.8 ruby1.8-dev rdoc1.8 unzip mono-gmcs sun-java5-jdk \
+#         cpan perl
 #
 #
 # You also need recent erlang, you may install it from sources following
@@ -30,7 +31,7 @@ all:
 #     make
 #     make install
 #
-test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok python-puka/.ok
+test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok python-puka/.ok perl/.ok
 	RUBYVER=$(RUBYVER) python test.py
 
 RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/?C=N;O=D;F=0;V=1" | grep -oE '([0-9\.]{5,})' | head -n 1)
@@ -121,6 +122,13 @@ python-puka/.ok:
 		./venv/bin/easy_install pip && \
 		./venv/bin/pip install puka && \
 		touch .ok)
+
+perl/.ok:
+	(cd perl && \
+		cpan -i Net::RabbitFoot && \
+		cpan -i UUID::Tiny && \
+		touch .ok)
+
 clean::
 	(cd python-puka && \
 		rm -rf .ok venv distribute*.tar.gz)
