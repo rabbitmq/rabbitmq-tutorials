@@ -33,7 +33,7 @@ class FibonacciRpcClient
     corr_id = rand(10_000_000).to_s
     self.requests[corr_id] = nil
     self.callback_queue.append_callback(:declare) do
-      AMQP::Exchange.default.publish(n.to_s, :routing_key => "rpc_queue", :reply_to => self.callback_queue.name, :correlation_id => corr_id)
+      self.channel.default_exchange.publish(n.to_s, :routing_key => "rpc_queue", :reply_to => self.callback_queue.name, :correlation_id => corr_id)
 
       EM.add_periodic_timer(0.1) do
         # p self.requests
