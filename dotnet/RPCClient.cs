@@ -15,7 +15,7 @@ class RPCClient {
         channel = connection.CreateModel();
         replyQueueName = channel.QueueDeclare();
         consumer = new QueueingBasicConsumer(channel);
-        channel.BasicConsume(replyQueueName, false, consumer);
+        channel.BasicConsume(replyQueueName, true, consumer);
     }
 
     public string Call(string message) {
