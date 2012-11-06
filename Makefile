@@ -34,7 +34,7 @@ all:
 test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok python-puka/.ok perl/.ok
 	RUBYVER=$(RUBYVER) python test.py
 
-RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/?C=N;O=D;F=0;V=1" | grep -oE '([0-9\.]{5,})' | head -n 1)
+RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" | grep -oE '([0-9\.]{5,})' | tail -n 1)
 R=http://www.rabbitmq.com/releases
 
 DVER=$(RABBITVER)
