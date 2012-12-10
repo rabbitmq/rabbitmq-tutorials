@@ -79,7 +79,7 @@ clean::
 	(cd java && \
 		rm -rf .ok *.jar *.class *.zip rabbitmq-java-client-bin*)
 
-PVER=0.9.5
+PVER=0.9.8
 python/.ok:
 	(cd python && \
 		virtualenv venv && \
