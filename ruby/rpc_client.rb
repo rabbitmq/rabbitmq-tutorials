@@ -31,17 +31,9 @@ class FibonacciRpcClient
 
   def call(n, &block)
     corr_id = rand(10_000_000).to_s
-    self.requests[corr_id] = nil
+    self.requests[corr_id] = block
     self.callback_queue.append_callback(:declare) do
       self.channel.default_exchange.publish(n.to_s, :routing_key => "rpc_queue", :reply_to => self.callback_queue.name, :correlation_id => corr_id)
-
-      EM.add_periodic_timer(0.1) do
-        # p self.requests
-        if result = self.requests[corr_id]
-          block.call(result.to_i)
-          EM.stop
-        end
-      end
     end
   end
 
@@ -49,8 +41,10 @@ class FibonacciRpcClient
   def subscribe_to_callback_queue
     self.callback_queue.subscribe do |header, body|
       corr_id = header.correlation_id
-      unless self.requests[corr_id]
-        self.requests[corr_id] = body
+      if (self.requests.key? corr_id)
+        self.requests[corr_id].call(body.to_i)
+        self.requests.delete corr_id
+        EM.stop
       end
     end
   end
