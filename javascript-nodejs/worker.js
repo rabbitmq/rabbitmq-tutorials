@@ -18,3 +18,7 @@ connection.on('ready', function(){
         });
     });
 });
+
+connection.on('close', function() {
+    console.log(' [*] Connection closed, trying to reconnect...');
+});
