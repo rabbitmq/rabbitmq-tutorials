@@ -14,7 +14,8 @@ print ' [*] Waiting for messages. To exit press CTRL+C'
 consume_promise = client.basic_consume(queue='task_queue', prefetch_count=1)
 while True:
     msg_result = client.wait(consume_promise)
-    print " [x] Received %r" % (msg_result['body'],)
+    body = msg_result['body']
+    print " [x] Received %r" % (body,)
     time.sleep( body.count('.') )
     print " [x] Done"
     client.basic_ack(msg_result)
