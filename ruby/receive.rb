@@ -9,7 +9,7 @@ conn.start
 ch   = conn.create_channel
 q    = ch.queue("hello")
 
-puts "Will wait from messages in #{q.name}"
+puts " [*] Waiting for messages in #{q.name}. To exit press CTRL+C"
 q.subscribe(:block => true) do |delivery_info, properties, body|
   puts " [x] Received #{body}"
 
