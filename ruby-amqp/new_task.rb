@@ -8,7 +8,7 @@ AMQP.start(:host => "localhost") do |connection|
   queue   = channel.queue("task_queue", :durable => true)
   message = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
 
-  AMQP::Exchange.default.publish(message, :routing_key => queue.name, :persistent => true)
+  channel.default_exchange.publish(message, :routing_key => queue.name, :persistent => true)
   puts " [x] Sent #{message}"
 
   EM.add_timer(0.5) do
