@@ -1,4 +1,4 @@
-# Ruby code for RabbitMQ tutorials
+# Ruby (amqp gem) code for RabbitMQ tutorials
 
 Here you can find Ruby code examples from
 [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
@@ -6,19 +6,16 @@ Here you can find Ruby code examples from
 ## Requirements
 
 If you use Microsoft Windows, we highly recommend you to use [JRuby](http://jruby.org).
-It is 1.9.2-compatible since 1.6.0.
 
-To run this code you need [amqp gem](https://github.com/ruby-amqp/amqp) version 0.8
-(currently available as a prerelease version). This code won't work
-with earlier versions!
+To run this code you need [amqp gem](http://rubyamqp.info).
 
 You can install it via RubyGems. On Linux, Mac OS X and *BSD systems:
 
-    gem install amqp --pre --version "~> 0.8.0.rc12"
+    gem install amqp --version ">= 1.0.2"
 
 On Windows:
 
-    jruby.exe --1.9 -S gem install amqp --pre --version "~> 0.8.0.rc12"
+    jruby.exe --1.9 -S gem install amqp --version ">= 1.0.2"
 
 ## Code
 
@@ -52,4 +49,4 @@ On Windows:
     ruby rpc_server.rb
     ruby rpc_client.rb
 
-To learn more, visit [Ruby AMQP gem documentation](http://rdoc.info/github/ruby-amqp/amqp/master/frames) site.
+To learn more, visit [Ruby AMQP gem documentation](http://rubyamqp.info) site.
