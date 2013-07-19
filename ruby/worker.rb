@@ -14,10 +14,9 @@ puts " [*] Waiting for messages. To exit press CTRL+C"
 
 begin
   q.subscribe(:ack => true, :block => true) do |delivery_info, properties, body|
-    puts " [x] Received #{body}"
+    puts " [x] Received '#{body}'"
     # imitate some work
     sleep 1.0
-    puts " [x] Done"
 
     ch.ack(delivery_info.delivery_tag)
   end
