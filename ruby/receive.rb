@@ -9,12 +9,13 @@ conn.start
 ch   = conn.create_channel
 q    = ch.queue("hello")
 
-puts " [*] Waiting for messages in #{q.name}. To exit press CTRL+C"
-q.subscribe(:block => true) do |delivery_info, properties, body|
-  puts " [x] Received #{body}"
+begin
+  puts " [*] Waiting for messages in #{q.name}. To exit press CTRL+C"
+  q.subscribe(:block => true) do |delivery_info, properties, body|
+    puts " [x] Received #{body}"
+  end
+rescue Interrupt => _
+  puts " [x] Shutting down..."
 
-  # cancel the consumer to exit
-  delivery_info.consumer.cancel
+  conn.close
 end
-
-conn.close
