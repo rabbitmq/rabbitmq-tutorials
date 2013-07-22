@@ -17,9 +17,9 @@ begin
     puts " [x] Received '#{body}'"
     # imitate some work
     sleep 1.0
-
+    puts " [x] Done"
     ch.ack(delivery_info.delivery_tag)
   end
 rescue Interrupt => _
-  puts " [*] Shutting down..."
+  conn.close
 end

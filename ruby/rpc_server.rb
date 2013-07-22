@@ -22,8 +22,6 @@ class FibonacciServer
       n = payload.to_i
       r = self.class.fib(n)
 
-      puts " [*] Serving a request: #{n} => #{r}. Replying to #{properties.reply_to}"
-
       @x.publish(r.to_s, :routing_key => properties.reply_to, :correlation_id => properties.correlation_id)
     end
   end
@@ -41,11 +39,9 @@ end
 
 begin
   server = FibonacciServer.new(ch)
-  puts " [*] Waiting for requests..."
+  " [x] Awaiting RPC requests"
   server.start("rpc_queue")
 rescue Interrupt => _
-  puts " [*] Shutting down..."
-
   ch.close
   conn.close
 end

@@ -49,14 +49,10 @@ class FibonacciClient
 end
 
 
-begin
-  client   = FibonacciClient.new(ch, "rpc_queue")
-  puts " [x] Requesting fib(30). Collecting replies from #{client.reply_queue.name}"
-  response = client.call(30)
-  puts " [.] Got #{response}"
-rescue Interrupt => _
-  puts " [*] Shutting down..."
+client   = FibonacciClient.new(ch, "rpc_queue")
+puts " [x] Requesting fib(30)"
+response = client.call(30)
+puts " [.] Got #{response}"
 
-  ch.close
-  conn.close
-end
+ch.close
+conn.close

@@ -19,8 +19,6 @@ begin
     puts " [x] #{body}"
   end
 rescue Interrupt => _
-  puts " [*] Shutting down..."
-
   ch.close
   conn.close
 end

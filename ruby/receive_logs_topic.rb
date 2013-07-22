@@ -25,8 +25,6 @@ begin
     puts " [x] #{delivery_info.routing_key}:#{body}"
   end
 rescue Interrupt => _
-  puts " [*] Shutting down..."
-
   ch.close
   conn.close
 end
