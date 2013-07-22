@@ -105,12 +105,6 @@ GEMSVER=2.0.4
 TOPDIR:=$(PWD)
 ruby/.ok:
 	(cd ruby && \
-		wget -qc http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
-		tar xzf rubygems-$(GEMSVER).tgz && \
-		cd rubygems-$(GEMSVER) && \
-		$(RUBY) setup.rb --prefix=$(TOPDIR)/ruby/gems && \
-		cd .. && \
-		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
 		GEM_HOME=gems/gems RUBYLIB=gems/lib $(TOPDIR)/ruby/gems/bin/gem install bunny --no-ri --no-rdoc && \
 		touch .ok)
 clean::
@@ -119,12 +113,6 @@ clean::
 
 ruby-amqp/.ok:
 	(cd ruby && \
-		wget -qc http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
-		tar xzf rubygems-$(GEMSVER).tgz && \
-		cd rubygems-$(GEMSVER) && \
-		$(RUBY) setup.rb --prefix=$(TOPDIR)/ruby-amqp/gems && \
-		cd .. && \
-		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
 		GEM_HOME=gems/gems RUBYLIB=gems/lib $(TOPDIR)/ruby-amqp/gems/bin/gem install amqp --no-ri --no-rdoc && \
 		touch .ok)
 clean::
