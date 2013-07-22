@@ -126,7 +126,7 @@ ruby-amqp/.ok:
 		GEM_HOME=gems/gems RUBYLIB=gems/lib $(TOPDIR)/ruby-amqp/gems/bin/gem install amqp --no-ri --no-rdoc && \
 		touch .ok)
 clean::
-	(cd ruby && \
+	(cd ruby-amqp && \
 		rm -rf .ok gems)
 
 python-puka/.ok:
