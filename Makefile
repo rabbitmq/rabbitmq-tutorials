@@ -109,7 +109,7 @@ ruby/.ok:
 		ruby$(RUBYVER) setup.rb --prefix=$(TOPDIR)/ruby/gems && \
 		cd .. && \
 		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib gems/bin/gem install bunny --no-ri --no-rdoc && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib $(TOPDIR)/ruby/gems/bin/gem install bunny --no-ri --no-rdoc && \
 		touch .ok)
 clean::
 	(cd ruby && \
@@ -123,7 +123,7 @@ ruby-amqp/.ok:
 		ruby$(RUBYVER) setup.rb --prefix=$(TOPDIR)/ruby-amqp/gems && \
 		cd .. && \
 		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib gems/bin/gem install amqp --no-ri --no-rdoc && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib $(TOPDIR)/ruby-amqp/gems/bin/gem install amqp --no-ri --no-rdoc && \
 		touch .ok)
 clean::
 	(cd ruby && \
