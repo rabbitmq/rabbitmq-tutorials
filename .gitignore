@@ -11,4 +11,5 @@ java/rabbitmq-java-client-bin*
 javascript-nodejs/node_modules
 php/lib/
 python-puka/venv
-ruby/gems/
+ruby*/gems/
+venv/*
