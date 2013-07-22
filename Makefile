@@ -16,7 +16,7 @@ all:
 # least (as tested on debian 5.0):
 #
 #     apt-get install python-virtualenv git-core php5-cli \
-#         ruby1.8 ruby1.8-dev rdoc1.8 unzip mono-gmcs sun-java5-jdk \
+#         ruby1.9 ruby1.9-dev rdoc1.9 unzip mono-gmcs sun-java5-jdk \
 #         cpan perl
 #
 #
@@ -31,7 +31,7 @@ all:
 #     make
 #     make install
 #
-test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok python-puka/.ok perl/.ok
+test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok
 	RUBYVER=$(RUBYVER) python test.py
 
 RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" | grep -oE '([0-9\.]{5,})' | tail -n 1)
@@ -98,10 +98,9 @@ clean::
 	(cd php && \
 		rm -rf .ok lib)
 
-RUBYVER:=1.8
-GEMSVER=1.8.5
+RUBYVER:=1.9.3
+GEMSVER=2.0.4
 TOPDIR:=$(PWD)
-RVER="0.8.0"
 ruby/.ok:
 	(cd ruby && \
 		wget -qc http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
@@ -110,7 +109,21 @@ ruby/.ok:
 		ruby$(RUBYVER) setup.rb --prefix=$(TOPDIR)/ruby/gems && \
 		cd .. && \
 		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib gems/bin/gem$(RUBYVER) install amqp --version $(RVER) && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib gems/bin/gem install bunny --no-ri --no-rdoc && \
+		touch .ok)
+clean::
+	(cd ruby && \
+		rm -rf .ok gems)
+
+ruby-amqp/.ok:
+	(cd ruby && \
+		wget -qc http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
+		tar xzf rubygems-$(GEMSVER).tgz && \
+		cd rubygems-$(GEMSVER) && \
+		ruby$(RUBYVER) setup.rb --prefix=$(TOPDIR)/ruby-amqp/gems && \
+		cd .. && \
+		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib gems/bin/gem install amqp --no-ri --no-rdoc && \
 		touch .ok)
 clean::
 	(cd ruby && \
