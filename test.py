@@ -57,6 +57,8 @@ def gen(prog, arg="", **kwargs):
         ('dotnet', 'env MONO_PATH=lib/bin mono %(dotnet)s.exe %(arg)s' % ctx),
         ('ruby', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
              'ruby%(rubyver)s %(prog)s.rb %(arg)s' % ctx),
+        ('ruby-amqp', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
+             'ruby%(rubyver)s %(prog)s.rb %(arg)s' % ctx),
         ('php', 'php %(prog)s.php %(arg)s' % ctx),
         ('python-puka', './venv/bin/python %(prog)s.py %(arg)s' % ctx),
         ]
