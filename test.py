@@ -43,7 +43,7 @@ def gen(prog, arg="", **kwargs):
     ctx = {
         'prog': prog,
         'Prog': Prog,
-        'rubyver': os.environ.get('RUBYVER', '1.8'),
+        'rubyver': os.environ.get('RUBYVER', '1.9'),
         'arg': arg,
         'java': kwargs.get('java', Prog),
         'dotnet': kwargs.get('dotnet', Prog),
