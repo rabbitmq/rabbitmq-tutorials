@@ -38,7 +38,7 @@ RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" |
 R=http://www.rabbitmq.com/releases
 
 # Default value assumes CI environment
-RUBY="ruby1.9.1"
+RUBY=ruby1.9.1
 
 DVER=$(RABBITVER)
 dotnet/.ok:
@@ -101,11 +101,11 @@ clean::
 	(cd php && \
 		rm -rf .ok lib)
 
-GEMSVER=2.0.4
+GEM=gem1.9.1
 TOPDIR:=$(PWD)
 ruby/.ok:
 	(cd ruby && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib $(TOPDIR)/ruby/gems/bin/gem install bunny --no-ri --no-rdoc && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib $(GEM) install bunny --no-ri --no-rdoc && \
 		touch .ok)
 clean::
 	(cd ruby && \
@@ -113,7 +113,7 @@ clean::
 
 ruby-amqp/.ok:
 	(cd ruby && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib $(TOPDIR)/ruby-amqp/gems/bin/gem install amqp --no-ri --no-rdoc && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib $(GEM) install amqp --no-ri --no-rdoc && \
 		touch .ok)
 clean::
 	(cd ruby-amqp && \
