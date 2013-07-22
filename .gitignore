@@ -13,3 +13,4 @@ php/lib/
 python-puka/venv
 ruby*/gems/
 venv/*
+ruby*/rubygems*
