@@ -12,7 +12,7 @@ severity = ARGV.shift || "anonymous.info"
 msg      = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
 
 x.publish(msg, :routing_key => severity)
-puts " [x] Sent '#{msg}'"
+puts " [x] Sent #{severity}:#{msg}"
 
 sleep 0.5
 conn.close
