@@ -37,6 +37,9 @@ test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok p
 RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" | grep -oE '([0-9\.]{5,})' | tail -n 1)
 R=http://www.rabbitmq.com/releases
 
+# Default value assumes CI environment
+RUBY="ruby1.9.1"
+
 DVER=$(RABBITVER)
 dotnet/.ok:
 	(cd dotnet && \
@@ -98,7 +101,6 @@ clean::
 	(cd php && \
 		rm -rf .ok lib)
 
-RUBYVER:=1.9.3
 GEMSVER=2.0.4
 TOPDIR:=$(PWD)
 ruby/.ok:
@@ -106,7 +108,7 @@ ruby/.ok:
 		wget -qc http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
 		tar xzf rubygems-$(GEMSVER).tgz && \
 		cd rubygems-$(GEMSVER) && \
-		ruby$(RUBYVER) setup.rb --prefix=$(TOPDIR)/ruby/gems && \
+		$(RUBY) setup.rb --prefix=$(TOPDIR)/ruby/gems && \
 		cd .. && \
 		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
 		GEM_HOME=gems/gems RUBYLIB=gems/lib $(TOPDIR)/ruby/gems/bin/gem install bunny --no-ri --no-rdoc && \
@@ -120,7 +122,7 @@ ruby-amqp/.ok:
 		wget -qc http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
 		tar xzf rubygems-$(GEMSVER).tgz && \
 		cd rubygems-$(GEMSVER) && \
-		ruby$(RUBYVER) setup.rb --prefix=$(TOPDIR)/ruby-amqp/gems && \
+		$(RUBY) setup.rb --prefix=$(TOPDIR)/ruby-amqp/gems && \
 		cd .. && \
 		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
 		GEM_HOME=gems/gems RUBYLIB=gems/lib $(TOPDIR)/ruby-amqp/gems/bin/gem install amqp --no-ri --no-rdoc && \
