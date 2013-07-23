@@ -87,10 +87,18 @@ tests = {
              'fib[(]30[)]'),
     }
 
+def tests_to_run():
+    if os.environ.get('TUTORIALS'):
+        return sorted(str.split(os.environ.get('TUTORIALS'), ","))
+    else:
+        return sorted(tests.keys())
+
 errors = 0
+ts     = tests_to_run()
 
 print " [.] Running tests with SLOWNESS=%r" % (multiplier,)
-for test in sorted(tests.keys()):
+print " [.] Will test %s" % (ts)
+for test in ts:
     (send_progs, recv_progs, output_mask) = tests[test]
     for scwd, send_cmd in send_progs:
         for rcwd, recv_cmd in recv_progs:
@@ -102,13 +110,13 @@ for test in sorted(tests.keys()):
             scmd = send_cmd % ctx
             mask = output_mask % ctx
             p = spawn(rcmd, cwd=rcwd)
-            serror, sout = run(scmd, cwd=scwd)
+            exit_code, sout = run(scmd, cwd=scwd)
             matched, rout = wait(p, mask)
-            if matched and serror == 0:
+            if matched and exit_code == 0:
                 print " [+] %s %-30s ok" % (test, scwd+'/'+rcwd)
             else:
                 print " [!] %s %-30s FAILED" % (test, scwd+'/'+rcwd)
-                print " [!] %r output (error=%s):\n%s\n" % (scmd, serror,
+                print " [!] %r exited with status %s, output:\n%s\n" % (scmd, exit_code,
                                                             sout.strip())
                 print " [!] %r output:\n%s\n" % (rcmd, rout.strip())
                 errors += 1
