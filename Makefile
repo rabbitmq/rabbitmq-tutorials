@@ -43,7 +43,7 @@ RUBY=ruby1.9.1
 DVER=$(RABBITVER)
 dotnet/.ok:
 	(cd dotnet && \
-		mkdir lib && \
+		mkdir -p lib && \
 		cd lib && \
 		wget -qc $(R)/rabbitmq-dotnet-client/v$(DVER)/rabbitmq-dotnet-client-$(DVER)-dotnet-3.0.zip && \
 		unzip -q rabbitmq-dotnet-client-$(DVER)-dotnet-3.0.zip && \
