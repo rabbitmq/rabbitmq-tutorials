@@ -16,4 +16,6 @@ begin
   end
 rescue Interrupt => _
   conn.close
+
+  exit(0)
 end

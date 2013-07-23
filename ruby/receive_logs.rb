@@ -21,4 +21,6 @@ begin
 rescue Interrupt => _
   ch.close
   conn.close
+
+  exit(0)
 end
