@@ -112,7 +112,7 @@ clean::
 		rm -rf .ok gems)
 
 ruby-amqp/.ok:
-	(cd ruby && \
+	(cd ruby-amqp && \
 		GEM_HOME=gems/gems RUBYLIB=gems/lib $(GEM) install amqp --no-ri --no-rdoc && \
 		touch .ok)
 clean::
