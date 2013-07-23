@@ -128,8 +128,8 @@ python-puka/.ok:
 
 perl/.ok:
 	(cd perl && \
-		cpan -i -f Net::RabbitFoot && \
-		cpan -i -f UUID::Tiny && \
+		PERL_MM_USE_DEFAULT=1 cpan -i -f Net::RabbitFoot && \
+		PERL_MM_USE_DEFAULT=1 cpan -i -f UUID::Tiny && \
 		touch .ok)
 
 clean::
