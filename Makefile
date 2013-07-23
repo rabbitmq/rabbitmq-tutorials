@@ -32,7 +32,7 @@ all:
 #     make install
 #
 test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok
-	RUBYVER=$(RUBYVER) python test.py
+	RUBY=$(RUBY) python test.py
 
 RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" | grep -oE '([0-9\.]{5,})' | tail -n 1)
 R=http://www.rabbitmq.com/releases

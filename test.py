@@ -43,10 +43,10 @@ def gen(prog, arg="", **kwargs):
     ctx = {
         'prog': prog,
         'Prog': Prog,
-        'rubyver': os.environ.get('RUBYVER', '1.9'),
         'arg': arg,
         'java': kwargs.get('java', Prog),
         'dotnet': kwargs.get('dotnet', Prog),
+        'ruby': kwargs.get('ruby', os.environ.get('RUBY', 'ruby1.9.1')),
         }
     return [
         ('python', './venv/bin/python %(prog)s.py %(arg)s' % ctx),
@@ -56,9 +56,9 @@ def gen(prog, arg="", **kwargs):
              'rabbitmq-client.jar %(java)s %(arg)s' % ctx),
         ('dotnet', 'env MONO_PATH=lib/bin mono %(dotnet)s.exe %(arg)s' % ctx),
         ('ruby', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
-             'ruby%(rubyver)s %(prog)s.rb %(arg)s' % ctx),
+             '%(ruby)s %(prog)s.rb %(arg)s' % ctx),
         ('ruby-amqp', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
-             'ruby%(rubyver)s %(prog)s.rb %(arg)s' % ctx),
+             '%(ruby)s %(prog)s.rb %(arg)s' % ctx),
         ('php', 'php %(prog)s.php %(arg)s' % ctx),
         ('python-puka', './venv/bin/python %(prog)s.py %(arg)s' % ctx),
         ]
