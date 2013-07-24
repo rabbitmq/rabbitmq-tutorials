@@ -71,9 +71,9 @@ tests = {
     'tut2': (gen('new_task', arg='%(arg)s'), gen('worker'), '%(arg)s'),
     'tut3': (gen('emit_log', arg='%(arg)s'), gen('receive_logs'), '%(arg)s'),
     'tut4': (skip(gen('emit_log_direct', arg='%(arg)s %(arg2)s'),
-                  ['php']),
+                  ['php', 'ruby']),
              skip(gen('receive_logs_direct', arg='%(arg)s'),
-                  ['php']),
+                  ['php', 'ruby']),
              '%(arg2)s'),
     'tut5': (skip(gen('emit_log_topic', arg='%(arg)s.foo %(arg2)s'),
                   ['php', 'ruby']),
@@ -81,9 +81,9 @@ tests = {
                   ['php', 'ruby']),
              '%(arg2)s'),
     'tut6': (skip(gen('rpc_client', java='RPCClient', dotnet='RPCClient'),
-                  ['erlang']),
+                  ['erlang', 'ruby']),
              skip(gen('rpc_server', java='RPCServer', dotnet='RPCServer'),
-                  ['erlang']),
+                  ['erlang', 'ruby']),
              'fib[(]30[)]'),
     }
 
