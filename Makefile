@@ -33,7 +33,7 @@ all:
 #
 setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok
 
-setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok
+setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok php/.ok
 
 test: setup
 	RUBY=$(RUBY) python test.py

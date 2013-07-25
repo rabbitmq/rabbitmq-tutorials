@@ -55,7 +55,8 @@ def gen(prog, arg="", **kwargs):
              'rabbitmq-client.jar %(java)s %(arg)s' % ctx),
         ('dotnet', 'env MONO_PATH=lib/bin mono %(dotnet)s.exe %(arg)s' % ctx),
         ('ruby', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
-             '%(ruby)s %(prog)s.rb %(arg)s' % ctx)
+             '%(ruby)s %(prog)s.rb %(arg)s' % ctx),
+        ('php', 'php %(prog)s.php %(arg)s' % ctx)
         ]
 
 def skip(cwd_cmd, to_skip):
