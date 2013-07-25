@@ -31,8 +31,15 @@ all:
 #     make
 #     make install
 #
-test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok
+setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok
+
+setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby-amqp/.ok ruby/.ok perl/.ok
+
+test: setup
 	RUBY=$(RUBY) python test.py
+
+test-travisci: setup-travisci
+		RUBY=ruby python travisci.py
 
 RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" | grep -oE '([0-9\.]{5,})' | tail -n 1)
 R=http://www.rabbitmq.com/releases
