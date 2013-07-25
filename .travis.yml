@@ -2,10 +2,10 @@ language: ruby
 rvm: "2.0"
 before_install: ./bin/travisci/before_install.sh
 script: make test-travisci
-notifications:
-  email: michael@rabbitmq.com
 services:
   - rabbitmq
+notifications:
+  email: michael@rabbitmq.com
 branches:
   only:
     - master
