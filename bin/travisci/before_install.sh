@@ -1,5 +1,7 @@
 #!/bin/sh
 
+sudo apt-get update
+
 sudo apt-get install -y mercurial make xsltproc zip unzip ant ed curl
 
 # Mono
