@@ -10,4 +10,4 @@ branches:
   only:
     - master
 env:
-  - RUBY=ruby GEM=gem SLOWNESS=3
+  - RUBY=ruby GEM=gem SLOWNESS=4
