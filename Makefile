@@ -33,7 +33,7 @@ all:
 #
 setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok
 
-setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok perl-cpanm/.ok
+setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok
 
 test: setup
 	RUBY=$(RUBY) python test.py
@@ -137,12 +137,6 @@ perl/.ok:
 	(cd perl && \
 		PERL_MM_USE_DEFAULT=1 cpan -i -f Net::RabbitFoot && \
 		PERL_MM_USE_DEFAULT=1 cpan -i -f UUID::Tiny && \
-		touch .ok)
-
-perl-cpanm/.ok:
-	(cd perl && \
-		cpanm --notest -i Net::RabbitFoot && \
-		cpanm --notest -i UUID::Tiny && \
 		touch .ok)
 
 clean::
