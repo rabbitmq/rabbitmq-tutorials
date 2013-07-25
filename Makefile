@@ -45,7 +45,7 @@ RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" |
 R=http://www.rabbitmq.com/releases
 
 # Default value assumes CI environment
-RUBY=ruby1.9.1
+RUBY?=ruby1.9.1
 
 DVER=$(RABBITVER)
 dotnet/.ok:
@@ -108,7 +108,6 @@ clean::
 	(cd php && \
 		rm -rf .ok lib)
 
-GEM=$(GEM)
 GEM?=gem1.9.1
 TOPDIR:=$(PWD)
 ruby/.ok:
