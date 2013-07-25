@@ -108,7 +108,8 @@ clean::
 	(cd php && \
 		rm -rf .ok lib)
 
-GEM=gem1.9.1
+GEM=$(GEM)
+GEM?=gem1.9.1
 TOPDIR:=$(PWD)
 ruby/.ok:
 	(cd ruby && \
