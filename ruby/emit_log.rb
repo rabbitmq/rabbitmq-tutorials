@@ -14,5 +14,4 @@ msg  = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
 x.publish(msg)
 puts " [x] Sent #{msg}"
 
-sleep 0.5
 conn.close

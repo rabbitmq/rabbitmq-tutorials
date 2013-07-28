@@ -14,5 +14,4 @@ msg  = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
 q.publish(msg, :persistent => true)
 puts " [x] Sent #{msg}"
 
-sleep 1.0
 conn.close

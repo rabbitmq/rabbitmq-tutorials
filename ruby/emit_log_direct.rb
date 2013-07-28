@@ -14,5 +14,4 @@ msg      = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
 x.publish(msg, :routing_key => severity)
 puts " [x] Sent '#{msg}'"
 
-sleep 0.5
 conn.close

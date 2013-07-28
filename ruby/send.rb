@@ -12,5 +12,4 @@ q    = ch.queue("hello")
 ch.default_exchange.publish("Hello World!", :routing_key => q.name)
 puts " [x] Sent 'Hello World!'"
 
-sleep 0.5
 conn.close
