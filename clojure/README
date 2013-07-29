@@ -1,0 +1,7 @@
+RabbitMQ Tutorial Clojure Examples
+Martin Trojer <martin.trojer@gmail.com>
+
+You'll need leiningen to run them; https://github.com/technomancy/leiningen/
+
+See instructions in src/rmq_tut_clj/*.clj
+
