@@ -13,10 +13,9 @@ dependencies on Ubuntu type:
 
     sudo apt-get install git-core php5-cli
 
-
 Then you can install `php-amqplib` using [Composer](http://getcomposer.org).
 
-Install Composer and add it to your path, then run the following command
+To do that install Composer and add it to your path, then run the following command
 inside this project folder:
 
     composer.phar install
