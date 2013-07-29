@@ -39,7 +39,7 @@ test: setup
 	RUBY=$(RUBY) python test.py
 
 test-travisci: setup-travisci
-		RUBY=ruby python travisci.py
+		SLOWNESS=4 RUBY=ruby python travisci.py
 
 RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" | grep -oE '([0-9\.]{5,})' | tail -n 1)
 R=http://www.rabbitmq.com/releases
