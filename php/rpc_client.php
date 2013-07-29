@@ -22,7 +22,7 @@ class FibonacciRpcClient {
 			array($this, 'on_response'));
 	}
 	public function on_response($rep) {
-		if($rep->properties['correlation_id'] == $this->corr_id) {
+		if($rep->get('correlation_id') == $this->corr_id) {
 			$this->response = $rep->body;
 		}
 	}

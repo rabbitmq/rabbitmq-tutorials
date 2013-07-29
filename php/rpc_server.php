@@ -24,11 +24,11 @@ $callback = function($req) {
 
 	$msg = new AMQPMessage(
 		(string) fib($n),
-		array('correlation_id' => $req->properties['correlation_id'])
+		array('correlation_id' => $req->get('correlation_id'))
 		);
 
 	$req->delivery_info['channel']->basic_publish(
-		$msg, '', $req->properties['reply_to']);
+		$msg, '', $req->get('reply_to'));
 	$req->delivery_info['channel']->basic_ack(
 		$req->delivery_info['delivery_tag']);
 };
