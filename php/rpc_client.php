@@ -1,6 +1,8 @@
 <?php
 
-require_once(__DIR__ . '/lib/php-amqplib/amqp.inc');
+require_once __DIR__ . '/vendor/autoload.php';
+use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class FibonacciRpcClient {
 	private $connection;
@@ -20,7 +22,7 @@ class FibonacciRpcClient {
 			array($this, 'on_response'));
 	}
 	public function on_response($rep) {
-		if($rep->properties['correlation_id'] == $this->corr_id) {
+		if($rep->get('correlation_id') == $this->corr_id) {
 			$this->response = $rep->body;
 		}
 	}

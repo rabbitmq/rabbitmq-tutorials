@@ -1,10 +1,10 @@
 <?php
 
-require_once(__DIR__ . '/lib/php-amqplib/amqp.inc');
+require_once __DIR__ . '/vendor/autoload.php';
+use PhpAmqpLib\Connection\AMQPConnection;
 
 $connection = new AMQPConnection('localhost', 5672, 'guest', 'guest');
 $channel = $connection->channel();
-
 
 $channel->queue_declare('task_queue', false, true, false, false);
 
