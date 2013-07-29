@@ -102,7 +102,10 @@ clean::
 
 php/.ok:
 	(cd php && \
+		mkdir -p ./bin && \
+		curl -sS https://getcomposer.org/installer | php -- --install-dir=bin && \
 		git clone http://github.com/tnc/php-amqplib.git lib/php-amqplib && \
+		composer install
 		touch .ok)
 clean::
 	(cd php && \
