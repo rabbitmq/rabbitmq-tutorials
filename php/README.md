@@ -1,11 +1,11 @@
-# PHP code for RabbitMQ tutorial #
+# PHP code for RabbitMQ tutorials
 
-Here you can find a PHP code examples from [RabbitMQ
+Here you can find PHP code examples from [RabbitMQ
 tutorials](http://www.rabbitmq.com/getstarted.html).
 
-## Requirements ##
+To successfully use the examples you will need a running RabbitMQ server.
 
-To run the examples you need a running RabbitMQ server.
+## Requirements
 
 Additionally you need `PHP 5.3` and `php-amqplib`. To get these
 dependencies on Ubuntu type:
