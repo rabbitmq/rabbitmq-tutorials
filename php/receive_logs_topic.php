@@ -1,10 +1,10 @@
 <?php
 
-require_once(__DIR__ . '/lib/php-amqplib/amqp.inc');
+require_once __DIR__ . '/vendor/autoload.php';
+use PhpAmqpLib\Connection\AMQPConnection;
 
 $connection = new AMQPConnection('localhost', 5672, 'guest', 'guest');
 $channel = $connection->channel();
-
 
 $channel->exchange_declare('topic_logs', 'topic', false, false, false);
 
@@ -16,8 +16,9 @@ if( empty($binding_keys )) {
 	exit(1);
 }
 
-foreach( $binding_keys as & $binding_key)
+foreach($binding_keys as $binding_key) {
 	$channel->queue_bind($queue_name, 'topic_logs', $binding_key);
+}
 
 echo ' [*] Waiting for logs. To exit press CTRL+C', "\n";
 
