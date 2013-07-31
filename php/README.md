@@ -39,6 +39,16 @@ inside this project folder:
     php receive_logs.php
     php emit_log.php
 
+[Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html)
+
+    php receive_logs_direct.php
+    php emit_log_direct.php
+
+[Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html)
+
+    php receive_logs_topic.php
+    php emit_log_topic.php
+
 [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html):
 
     php rpc_server.php
