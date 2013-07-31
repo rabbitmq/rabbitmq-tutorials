@@ -1,0 +1,13 @@
+language: ruby
+rvm: "1.9.3"
+before_install: ./bin/travisci/before_install.sh
+script: make test-travisci
+services:
+  - rabbitmq
+notifications:
+  email: michael@rabbitmq.com
+branches:
+  only:
+    - master
+env:
+  - RUBY=ruby GEM=gem SLOWNESS=4

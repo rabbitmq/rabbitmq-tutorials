@@ -1,19 +1,17 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-require "amqp"
+require "bunny"
 
-AMQP.start(:host => "localhost") do |connection|
-  channel  = AMQP::Channel.new(connection)
-  exchange = channel.fanout("logs")
-  message  = ARGV.empty? ? "info: Hello World!" : ARGV.join(" ")
+conn = Bunny.new(:automatically_recover => false)
+conn.start
 
-  exchange.publish(message)
-  puts " [x] Sent #{message}"
+ch   = conn.create_channel
+x    = ch.fanout("logs")
 
-  EM.add_timer(0.5) do
-    connection.close do
-      EM.stop { exit }
-    end
-  end
-end
+msg  = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
+
+x.publish(msg)
+puts " [x] Sent #{msg}"
+
+conn.close

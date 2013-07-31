@@ -1,30 +1,32 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-require "amqp"
+require "bunny"
 
-AMQP.start(:host => "localhost") do |connection|
-  channel  = AMQP::Channel.new(connection)
-  exchange = channel.direct("direct_logs")
-  queue    = channel.queue("", :exclusive => true)
+if ARGV.empty?
+  abort "Usage: #{$0} [info] [warning] [error]"
+end
 
-  if ARGV.empty?
-    abort "Usage: #{$0} [info] [warning] [error]"
+conn = Bunny.new(:automatically_recover => false)
+conn.start
+
+ch  = conn.create_channel
+x   = ch.direct("direct_logs")
+q   = ch.queue("", :exclusive => true)
+
+ARGV.each do |severity|
+  q.bind(x, :routing_key => severity)
+end
+
+puts " [*] Waiting for logs. To exit press CTRL+C"
+
+begin
+  q.subscribe(:block => true) do |delivery_info, properties, body|
+    puts " [x] #{delivery_info.routing_key}:#{body}"
   end
+rescue Interrupt => _
+  ch.close
+  conn.close
 
-  ARGV.each do |severity|
-    queue.bind(exchange, :routing_key => severity)
-  end
-
-  Signal.trap("INT") do
-    connection.close do
-      EM.stop { exit }
-    end
-  end
-
-  puts " [*] Waiting for logs. To exit press CTRL+C"
-
-  queue.subscribe do |header, body|
-    puts " [x] #{header.routing_key}:#{body}"
-  end
+  exit(0)
 end

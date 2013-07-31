@@ -50,17 +50,13 @@ def gen(prog, arg="", **kwargs):
         }
     return [
         ('python', './venv/bin/python %(prog)s.py %(arg)s' % ctx),
-        ('perl', 'perl %(prog)s.pl %(arg)s' % ctx),
         ('erlang', './%(prog)s.erl %(arg)s' % ctx),
         ('java', 'java -cp .:commons-io-1.2.jar:commons-cli-1.1.jar:'
              'rabbitmq-client.jar %(java)s %(arg)s' % ctx),
         ('dotnet', 'env MONO_PATH=lib/bin mono %(dotnet)s.exe %(arg)s' % ctx),
         ('ruby', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
              '%(ruby)s %(prog)s.rb %(arg)s' % ctx),
-        ('ruby-amqp', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
-             '%(ruby)s %(prog)s.rb %(arg)s' % ctx),
-        ('php', 'php %(prog)s.php %(arg)s' % ctx),
-        ('python-puka', './venv/bin/python %(prog)s.py %(arg)s' % ctx),
+        ('php', 'php %(prog)s.php %(arg)s' % ctx)
         ]
 
 def skip(cwd_cmd, to_skip):
@@ -71,19 +67,19 @@ tests = {
     'tut2': (gen('new_task', arg='%(arg)s'), gen('worker'), '%(arg)s'),
     'tut3': (gen('emit_log', arg='%(arg)s'), gen('receive_logs'), '%(arg)s'),
     'tut4': (skip(gen('emit_log_direct', arg='%(arg)s %(arg2)s'),
-                  ['php', 'ruby']),
+                  ['php']),
              skip(gen('receive_logs_direct', arg='%(arg)s'),
-                  ['php', 'ruby']),
+                  ['php']),
              '%(arg2)s'),
     'tut5': (skip(gen('emit_log_topic', arg='%(arg)s.foo %(arg2)s'),
-                  ['php', 'ruby']),
+                  ['php']),
              skip(gen('receive_logs_topic', arg='%(arg)s.*'),
-                  ['php', 'ruby']),
+                  ['php']),
              '%(arg2)s'),
     'tut6': (skip(gen('rpc_client', java='RPCClient', dotnet='RPCClient'),
-                  ['erlang', 'ruby']),
+                  ['erlang']),
              skip(gen('rpc_server', java='RPCServer', dotnet='RPCServer'),
-                  ['erlang', 'ruby']),
+                  ['erlang']),
              'fib[(]30[)]'),
     }
 

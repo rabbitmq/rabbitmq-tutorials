@@ -1,66 +1,58 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-# Note: This is just proof of concept. For
-# real-world usage, you are strongly advised
-# to use https://github.com/ruby-amqp/rpc
-# or some other RPC library.
+require "bunny"
 
-require "amqp"
+conn = Bunny.new(:automatically_recover => false)
+conn.start
 
-class FibonacciRpcClient
-  def initialize
-    subscribe_to_callback_queue
+ch   = conn.create_channel
+
+class FibonacciClient
+  attr_reader :reply_queue
+
+  def initialize(ch, server_queue)
+    @ch             = ch
+    @x              = ch.default_exchange
+
+    @server_queue   = server_queue
+    @reply_queue    = ch.queue("", :exclusive => true)
   end
 
-  def connection
-    @connection ||= AMQP.connect(:host => "localhost")
-  end
+  def call(n)
+    correlation_id = self.generate_uuid
 
-  def channel
-    @channel ||= AMQP::Channel.new(self.connection)
-  end
+    @x.publish(n.to_s,
+      :routing_key    => @server_queue,
+      :correlation_id => correlation_id,
+      :reply_to       => @reply_queue.name)
 
-  def callback_queue
-    @callback_queue ||= self.channel.queue("", :exclusive => true)
-  end
+    response = nil
+    @reply_queue.subscribe(:block => true) do |delivery_info, properties, payload|
+      if properties[:correlation_id] == correlation_id
+        response = payload.to_i
 
-  def requests
-    @requests ||= Hash.new
-  end
-
-  def call(n, &block)
-    corr_id = rand(10_000_000).to_s
-    self.requests[corr_id] = nil
-    self.callback_queue.append_callback(:declare) do
-      self.channel.default_exchange.publish(n.to_s, :routing_key => "rpc_queue", :reply_to => self.callback_queue.name, :correlation_id => corr_id)
-
-      EM.add_periodic_timer(0.1) do
-        # p self.requests
-        if result = self.requests[corr_id]
-          block.call(result.to_i)
-          EM.stop
-        end
+        delivery_info.consumer.cancel
       end
     end
+
+    response
   end
 
-  private
-  def subscribe_to_callback_queue
-    self.callback_queue.subscribe do |header, body|
-      corr_id = header.correlation_id
-      unless self.requests[corr_id]
-        self.requests[corr_id] = body
-      end
-    end
+  protected
+
+  def generate_uuid
+    # very naive but good enough for code
+    # examples
+    "#{rand}#{rand}#{rand}"
   end
 end
 
-EM.run do
-  fibonacci_rpc = FibonacciRpcClient.new()
 
-  puts " [x] Requesting fib(30)"
-  fibonacci_rpc.call(30) do |response|
-    puts " [.] Got #{response}"
-  end
-end
+client   = FibonacciClient.new(ch, "rpc_queue")
+puts " [x] Requesting fib(30)"
+response = client.call(30)
+puts " [.] Got #{response}"
+
+ch.close
+conn.close

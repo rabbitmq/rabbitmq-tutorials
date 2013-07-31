@@ -16,7 +16,7 @@ all:
 # least (as tested on debian 5.0):
 #
 #     apt-get install python-virtualenv git-core php5-cli \
-#         ruby1.8 ruby1.8-dev rdoc1.8 unzip mono-gmcs sun-java5-jdk \
+#         ruby1.9 ruby1.9-dev rdoc1.9 unzip mono-gmcs sun-java5-jdk \
 #         cpan perl
 #
 #
@@ -31,16 +31,26 @@ all:
 #     make
 #     make install
 #
-test: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok python-puka/.ok perl/.ok
-	RUBYVER=$(RUBYVER) python test.py
+setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok
 
-RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/?C=N;O=D;F=0;V=1" | grep -oE '([0-9\.]{5,})' | head -n 1)
+setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok php/.ok
+
+test: setup
+	RUBY=$(RUBY) python test.py
+
+test-travisci: setup-travisci
+		SLOWNESS=4 RUBY=ruby python travisci.py
+
+RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" | grep -oE '([0-9\.]{5,})' | tail -n 1)
 R=http://www.rabbitmq.com/releases
+
+# Default value assumes CI environment
+RUBY?=ruby1.9.1
 
 DVER=$(RABBITVER)
 dotnet/.ok:
 	(cd dotnet && \
-		mkdir lib && \
+		mkdir -p lib && \
 		cd lib && \
 		wget -qc $(R)/rabbitmq-dotnet-client/v$(DVER)/rabbitmq-dotnet-client-$(DVER)-dotnet-3.0.zip && \
 		unzip -q rabbitmq-dotnet-client-$(DVER)-dotnet-3.0.zip && \
@@ -92,28 +102,30 @@ clean::
 
 php/.ok:
 	(cd php && \
-		git clone http://github.com/tnc/php-amqplib.git lib/php-amqplib && \
+		mkdir -p ./bin && \
+		curl -sS https://getcomposer.org/installer | php -- --install-dir=bin && \
+		php ./bin/composer.phar install && \
 		touch .ok)
 clean::
 	(cd php && \
 		rm -rf .ok lib)
 
-RUBYVER:=1.8
-GEMSVER=1.8.5
+GEM?=gem1.9.1
 TOPDIR:=$(PWD)
-RVER="0.8.0"
 ruby/.ok:
 	(cd ruby && \
-		wget -qc http://production.cf.rubygems.org/rubygems/rubygems-$(GEMSVER).tgz && \
-		tar xzf rubygems-$(GEMSVER).tgz && \
-		cd rubygems-$(GEMSVER) && \
-		ruby$(RUBYVER) setup.rb --prefix=$(TOPDIR)/ruby/gems && \
-		cd .. && \
-		rm -r rubygems-$(GEMSVER).tgz rubygems-$(GEMSVER) && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib gems/bin/gem$(RUBYVER) install amqp --version $(RVER) && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib $(GEM) install bunny --version ">= 0.9.4" --no-ri --no-rdoc && \
 		touch .ok)
 clean::
 	(cd ruby && \
+		rm -rf .ok gems)
+
+ruby-amqp/.ok:
+	(cd ruby-amqp && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib $(GEM) install amqp --no-ri --no-rdoc && \
+		touch .ok)
+clean::
+	(cd ruby-amqp && \
 		rm -rf .ok gems)
 
 python-puka/.ok:
@@ -125,8 +137,8 @@ python-puka/.ok:
 
 perl/.ok:
 	(cd perl && \
-		cpan -i Net::RabbitFoot && \
-		cpan -i UUID::Tiny && \
+		PERL_MM_USE_DEFAULT=1 cpan -i -f Net::RabbitFoot && \
+		PERL_MM_USE_DEFAULT=1 cpan -i -f UUID::Tiny && \
 		touch .ok)
 
 clean::

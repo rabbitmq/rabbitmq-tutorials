@@ -1,34 +1,51 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-require "amqp"
+require "bunny"
 
-def fib(n)
-  return n if n == 0 || n == 1
-  return fib(n - 1) + fib(n - 2)
-end
+conn = Bunny.new(:automatically_recover => false)
+conn.start
 
-AMQP.start(:host => "localhost") do |connection|
-  channel = AMQP::Channel.new(connection)
-  queue   = channel.queue("rpc_queue")
+ch   = conn.create_channel
 
-  Signal.trap("INT") do
-    connection.close do
-      EM.stop { exit }
+class FibonacciServer
+
+  def initialize(ch)
+    @ch = ch
+  end
+
+  def start(queue_name)
+    @q = @ch.queue(queue_name)
+    @x = @ch.default_exchange
+
+    @q.subscribe(:block => true) do |delivery_info, properties, payload|
+      n = payload.to_i
+      r = self.class.fib(n)
+
+      puts " [.] fib(#{n})"
+
+      @x.publish(r.to_s, :routing_key => properties.reply_to, :correlation_id => properties.correlation_id)
     end
   end
 
-  channel.prefetch(1)
 
-  queue.subscribe(:ack => true) do |header, body|
-    n = body.to_i
-
-    puts " [.] fib(#{n})"
-    response = fib(n)
-
-    AMQP::Exchange.default.publish(response.to_s, :routing_key => header.reply_to, :correlation_id => header.correlation_id)
-    header.ack
+  def self.fib(n)
+    case n
+    when 0 then 0
+    when 1 then 1
+    else
+      fib(n - 1) + fib(n - 2)
+    end
   end
+end
 
-  puts " [x] Awaiting RPC requests"
+begin
+  server = FibonacciServer.new(ch)
+  " [x] Awaiting RPC requests"
+  server.start("rpc_queue")
+rescue Interrupt => _
+  ch.close
+  conn.close
+
+  exit(0)
 end

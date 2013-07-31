@@ -1,17 +1,21 @@
-# Ruby code for RabbitMQ tutorials
+# Ruby (amqp gem) code for RabbitMQ tutorials
 
 Here you can find Ruby code examples from
 [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
 
-To run this code you need [Bunny 0.9+](http://rubybunny.info).
+If you use Microsoft Windows, we highly recommend you to use [JRuby](http://jruby.org).
 
-You can install it via RubyGems:
+To run this code you need [amqp gem](http://rubyamqp.info).
 
-    gem install bunny --version ">= 0.9.1"
+You can install it via RubyGems. On Linux, Mac OS X and *BSD systems:
 
-Bunny supports Ruby 2.0, 1.9, JRuby, Rubinius 2.0, and Ruby 1.8.7.
+    gem install amqp --version ">= 1.0.2"
+
+On Windows:
+
+    jruby.exe --1.9 -S gem install amqp --version ">= 1.0.2"
 
 ## Code
 
@@ -45,4 +49,4 @@ Bunny supports Ruby 2.0, 1.9, JRuby, Rubinius 2.0, and Ruby 1.8.7.
     ruby rpc_server.rb
     ruby rpc_client.rb
 
-To learn more, visit [Bunny documentation](http://rubybunny.info) site.
+To learn more, visit [Ruby AMQP gem documentation](http://rubyamqp.info) site.

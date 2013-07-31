@@ -1,26 +1,25 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-require "amqp"
+require "bunny"
 
-AMQP.start(:host => "localhost") do |connection|
-  channel = AMQP::Channel.new(connection)
-  queue   = channel.queue("task_queue", :durable => true)
+conn = Bunny.new(:automatically_recover => false)
+conn.start
 
-  Signal.trap("INT") do
-    connection.close do
-      EM.stop { exit }
-    end
+ch   = conn.create_channel
+q    = ch.queue("task_queue", :durable => true)
+
+ch.prefetch(1)
+puts " [*] Waiting for messages. To exit press CTRL+C"
+
+begin
+  q.subscribe(:manual_ack => true, :block => true) do |delivery_info, properties, body|
+    puts " [x] Received '#{body}'"
+    # imitate some work
+    sleep 1.0
+    puts " [x] Done"
+    ch.ack(delivery_info.delivery_tag)
   end
-
-  puts " [*] Waiting for messages. To exit press CTRL+C"
-
-  channel.prefetch(1)
-  queue.subscribe(:ack => true) do |header, body|
-    puts " [x] Received #{body}"
-    EM.add_timer(body.count(".")) do
-      puts " [x] Done"
-      header.ack
-    end
-  end
+rescue Interrupt => _
+  conn.close
 end
