@@ -11,9 +11,10 @@
   [severity & args]
   (with-open [conn (lc/connect)]
     (let [ch      (lch/open conn)
-          payload (if (empty? args)
-                    "Hello, world!"
-                    (s/join " " args))]
+          severity (or severity "info")
+          payload  (if (empty? args)
+                     "Hello, world!"
+                     (s/join " " args))]
       (le/direct ch x :durable false :auto-delete false)
       (lb/publish ch x severity payload)
       (println (format " [x] Sent %s" payload)))))
