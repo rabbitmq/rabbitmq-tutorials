@@ -5,7 +5,6 @@
             [langohr.basic :as lb]
             [clojure.string :as s]))
 
-
 (defn -main
   [& args]
   (with-open [conn (lc/connect)]
