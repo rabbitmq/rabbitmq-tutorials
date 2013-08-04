@@ -31,9 +31,9 @@ all:
 #     make
 #     make install
 #
-setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok
+setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok clojure/.ok
 
-setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok php/.ok
+setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok php/.ok clojure/.ok
 
 test: setup
 	RUBY=$(RUBY) python test.py
@@ -144,3 +144,14 @@ perl/.ok:
 clean::
 	(cd python-puka && \
 		rm -rf .ok venv distribute*.tar.gz)
+
+clojure/.ok:
+	(cd clojure && \
+		mkdir -p bin && cd bin && \
+		wget -qc https://raw.github.com/technomancy/leiningen/stable/bin/lein && \
+		chmod +x ./lein && cd .. && \
+		./bin/lein deps && \
+		touch .ok)
+clean::
+	(cd clojure && \
+		rm -rf .ok bin/*)
