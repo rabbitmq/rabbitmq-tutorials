@@ -18,7 +18,13 @@ def run(cmd, **kwargs):
     out = p.stdout.read()
     err = p.stderr.read()
 
-    time.sleep(0.2 * multiplier)
+    # compensate for slow Clojure examples startup:
+    # lein trampoline run + clojure.core recompilation
+    if kwargs.get("cwd") == "clojure":
+        x = 3
+    else:
+        x = 1
+    time.sleep(0.2 * multiplier * x)
     return p.returncode, out + '\n' + err
 
 def spawn(cmd, **kwargs):
@@ -26,7 +32,11 @@ def spawn(cmd, **kwargs):
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
                          **kwargs)
-    time.sleep(0.5 * multiplier)
+    if kwargs.get("cwd") == "clojure":
+        x = 3
+    else:
+        x = 1
+    time.sleep(0.5 * multiplier * x)
     return p
 
 def wait(p, match):
@@ -43,6 +53,8 @@ def gen(prog, arg="", **kwargs):
     ctx = {
         'prog': prog,
         'Prog': Prog,
+        # clojure ns
+        'ns': prog.replace("_", "-"),
         'arg': arg,
         'java': kwargs.get('java', Prog),
         'dotnet': kwargs.get('dotnet', Prog),
@@ -54,6 +66,7 @@ def gen(prog, arg="", **kwargs):
         ('erlang', './%(prog)s.erl %(arg)s' % ctx),
         ('java', 'java -cp .:commons-io-1.2.jar:commons-cli-1.1.jar:'
              'rabbitmq-client.jar %(java)s %(arg)s' % ctx),
+        ('clojure', './bin/lein trampoline run -m rabbitmq.tutorials.%(ns)s %(arg)s' % ctx),
         ('dotnet', 'env MONO_PATH=lib/bin mono %(dotnet)s.exe %(arg)s' % ctx),
         ('ruby', 'env RUBYOPT=-rubygems GEM_HOME=gems/gems RUBYLIB=gems/lib '
              '%(ruby)s %(prog)s.rb %(arg)s' % ctx),
@@ -71,19 +84,19 @@ tests = {
     'tut2': (gen('new_task', arg='%(arg)s'), gen('worker'), '%(arg)s'),
     'tut3': (gen('emit_log', arg='%(arg)s'), gen('receive_logs'), '%(arg)s'),
     'tut4': (skip(gen('emit_log_direct', arg='%(arg)s %(arg2)s'),
-                  ['php', 'ruby']),
+                  ['php']),
              skip(gen('receive_logs_direct', arg='%(arg)s'),
-                  ['php', 'ruby']),
+                  ['php']),
              '%(arg2)s'),
     'tut5': (skip(gen('emit_log_topic', arg='%(arg)s.foo %(arg2)s'),
-                  ['php', 'ruby']),
+                  ['php']),
              skip(gen('receive_logs_topic', arg='%(arg)s.*'),
-                  ['php', 'ruby']),
+                  ['php']),
              '%(arg2)s'),
     'tut6': (skip(gen('rpc_client', java='RPCClient', dotnet='RPCClient'),
-                  ['erlang', 'ruby']),
+                  ['erlang', 'clojure']),
              skip(gen('rpc_server', java='RPCServer', dotnet='RPCServer'),
-                  ['erlang', 'ruby']),
+                  ['erlang', 'clojure']),
              'fib[(]30[)]'),
     }
 
