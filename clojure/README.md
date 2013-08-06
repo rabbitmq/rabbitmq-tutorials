@@ -17,32 +17,32 @@ Code examples are executed via `lein run`:
 
 [Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-java.html):
 
-    lein run -m "rabbitmq.tutorials.send"
-    lein run -m "rabbitmq.tutorials.receive"
+    lein run -m rabbitmq.tutorials.send
+    lein run -m rabbitmq.tutorials.receive
 
 [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-java.html):
 
-    lein run -m "rabbitmq.tutorials.new-task"
-    lein run -m "rabbitmq.tutorials.worker"
+    lein run -m rabbitmq.tutorials.new_task
+    lein run -m rabbitmq.tutorials.worker
 
 [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-java.html)
 
-    ruby receive_logs.rb
-    ruby emit_log.rb
+    lein run -m rabbitmq.tutorials.receive_logs
+    lein run -m rabbitmq.tutorials.emit_log
 
 [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-java.html)
 
-    ruby receive_logs_direct.rb
-    ruby emit_log_direct.rb
+    lein run -m rabbitmq.tutorials.receive_logs_direct
+    lein run -m rabbitmq.tutorials.emit_log_direct
 
 [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-java.html)
 
-    ruby receive_logs_topic.rb
-    ruby emit_log_topic.rb
+    lein run -m rabbitmq.tutorials.receive_logs_topic
+    lein run -m rabbitmq.tutorials.emit_log_topic
 
 [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-java.html)
 
-    ruby rpc_server.rb
-    ruby rpc_client.rb
+    lein run -m rabbitmq.tutorials.rpc_server
+    lein run -m rabbitmq.tutorials.rpc_client
 
 To learn more, visit [Langohr documentation](http://clojurerabbitmq.info) site.
