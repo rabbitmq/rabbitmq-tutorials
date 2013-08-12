@@ -7,7 +7,7 @@ import signal
 import sys
 import os
 
-multiplier = float(os.environ.get('SLOWNESS', 1))
+multiplier = float(os.environ.get('SLOWNESS', 6))
 
 def run(cmd, **kwargs):
     p = subprocess.Popen(cmd.split(),
