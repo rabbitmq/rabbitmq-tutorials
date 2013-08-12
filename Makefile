@@ -31,7 +31,7 @@ all:
 #     make
 #     make install
 #
-setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok clojure/.ok
+setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok clojure/.ok scala/.ok
 
 setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok php/.ok clojure/.ok
 
@@ -104,7 +104,7 @@ php/.ok:
 	(cd php && \
 		mkdir -p ./bin && \
 		curl -sS https://getcomposer.org/installer | php -- --install-dir=bin && \
-		php ./bin/composer.phar install && \
+		php ./bin/composer.phar install --prefer-source && \
 		touch .ok)
 clean::
 	(cd php && \
@@ -155,3 +155,12 @@ clojure/.ok:
 clean::
 	(cd clojure && \
 		rm -rf .ok bin/*)
+
+go/.ok:
+	(cd go && \
+		go get https://github.com/streadway/amqp && \
+		touch .ok)
+
+clean::
+	(cd go && \
+		rm -rf .ok)
