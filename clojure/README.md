@@ -1,6 +1,6 @@
 # Clojure code for RabbitMQ tutorials
 
-Here you can find Ruby code examples from
+Here you can find Clojure code examples from
 [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
