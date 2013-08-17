@@ -62,7 +62,7 @@ def gen(prog, arg="", **kwargs):
         }
     return [
         ('python', './venv/bin/python %(prog)s.py %(arg)s' % ctx),
-        ('perl', 'perl %(prog)s.pl %(arg)s' % ctx),
+        # ('perl', 'perl %(prog)s.pl %(arg)s' % ctx),
         ('erlang', './%(prog)s.erl %(arg)s' % ctx),
         ('java', 'java -cp .:commons-io-1.2.jar:commons-cli-1.1.jar:'
              'rabbitmq-client.jar %(java)s %(arg)s' % ctx),

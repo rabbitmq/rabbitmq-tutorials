@@ -1,6 +1,6 @@
 # Clojure code for RabbitMQ tutorials
 
-Here you can find Ruby code examples from
+Here you can find Clojure code examples from
 [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
@@ -22,27 +22,26 @@ Code examples are executed via `lein run`:
 
 [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-java.html):
 
-    lein run -m rabbitmq.tutorials.new_task
+    lein run -m rabbitmq.tutorials.new-task
     lein run -m rabbitmq.tutorials.worker
 
 [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-java.html)
 
-    lein run -m rabbitmq.tutorials.receive_logs
-    lein run -m rabbitmq.tutorials.emit_log
+    lein run -m rabbitmq.tutorials.receive-logs
+    lein run -m rabbitmq.tutorials.emit-log
 
 [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-java.html)
 
-    lein run -m rabbitmq.tutorials.receive_logs_direct
-    lein run -m rabbitmq.tutorials.emit_log_direct
+    lein run -m rabbitmq.tutorials.receive-logs-direct
+    lein run -m rabbitmq.tutorials.emit-log-direct
 
 [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-java.html)
 
-    lein run -m rabbitmq.tutorials.receive_logs_topic
-    lein run -m rabbitmq.tutorials.emit_log_topic
+    lein run -m rabbitmq.tutorials.receive-logs-topic
+    lein run -m rabbitmq.tutorials.emit-log-topic
 
 [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-java.html)
 
-    lein run -m rabbitmq.tutorials.rpc_server
-    lein run -m rabbitmq.tutorials.rpc_client
+    TBD
 
 To learn more, visit [Langohr documentation](http://clojurerabbitmq.info) site.

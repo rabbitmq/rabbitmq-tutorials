@@ -31,7 +31,7 @@ all:
 #     make
 #     make install
 #
-setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok perl/.ok clojure/.ok scala/.ok
+setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok clojure/.ok
 
 setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok php/.ok clojure/.ok
 
