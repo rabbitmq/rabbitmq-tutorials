@@ -14,11 +14,11 @@ class ReceiveLogs
             {
                 channel.ExchangeDeclare("logs", "fanout");
 
-                var queue_name = channel.QueueDeclare();
+                var queueName = channel.QueueDeclare();
 
-                channel.QueueBind(queue_name, "logs", "");
+                channel.QueueBind(queueName, "logs", "");
                 var consumer = new QueueingBasicConsumer(channel);
-                channel.BasicConsume(queue_name, true, consumer);
+                channel.BasicConsume(queueName, true, consumer);
 
                 Console.WriteLine(" [*] Waiting for logs." +
                                   "To exit press CTRL+C");
