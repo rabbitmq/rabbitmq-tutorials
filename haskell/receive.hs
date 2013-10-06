@@ -8,9 +8,9 @@ main = do
      conn <- openConnection "127.0.0.1" "/" "guest" "guest"
      ch   <- openChannel conn
 
-     declareQueue ch newQueue {queueName    = "hello",
-                               queuePassive = False,
-                               queueDurable = False}
+     declareQueue ch newQueue {queueName       = "hello",
+                               queueAutoDelete = False,
+                               queueDurable    = False}
 
      putStrLn " [*] Waiting for messages. to Exit press CTRL+C"
      consumeMsgs ch "hello" NoAck deliveryHandler
