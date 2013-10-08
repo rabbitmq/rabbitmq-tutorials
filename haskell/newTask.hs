@@ -2,19 +2,27 @@
 
 import Network.AMQP
 import qualified Data.ByteString.Lazy.Char8 as BL
+import System.Environment (getArgs)
+import Text.Printf
 
 main :: IO ()
 main = do
-     conn <- openConnection "127.0.0.1" "/" "guest" "guest"
-     ch   <- openChannel conn
+     args  <- getArgs
+     let body  = bodyFor args
+     conn  <- openConnection "127.0.0.1" "/" "guest" "guest"
+     ch    <- openChannel conn
 
      declareQueue ch newQueue {queueName       = "task_queue",
                                queueAutoDelete = False,
                                queueDurable    = True}
 
      publishMsg ch "" "task_queue"
-                (newMsg {msgBody         = (BL.pack "a.b.c.d.e"),
+                (newMsg {msgBody         = (BL.pack body),
                          msgDeliveryMode = Just Persistent})
 
-     putStrLn " [x] Sent 'a.b.c.d.e'"
+     putStrLn $ printf " [x] Sent '%s'" (body)
      closeConnection conn
+
+bodyFor :: [String] -> String
+bodyFor [] = "Hello, world!"
+bodyFor xs = unwords xs
