@@ -17,7 +17,7 @@ main = do
      qos ch 0 1
 
      putStrLn " [*] Waiting for messages. to Exit press CTRL+C"
-     consumeMsgs ch "task_queue" NoAck deliveryHandler
+     consumeMsgs ch "task_queue" Ack deliveryHandler
 
      -- waits for keypresses
      getLine
