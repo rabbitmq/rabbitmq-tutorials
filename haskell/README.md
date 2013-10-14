@@ -40,4 +40,4 @@ Code examples are executed via `runhaskell`:
 
     TBD
 
-To learn more, see [Network.AMQP]().
+To learn more, see [Network.AMQP](https://github.com/hreinhardt/amqp).
