@@ -12,10 +12,6 @@ main = do
      conn  <- openConnection "127.0.0.1" "/" "guest" "guest"
      ch    <- openChannel conn
 
-     declareQueue ch newQueue {queueName       = "task_queue",
-                               queueAutoDelete = False,
-                               queueDurable    = True}
-
      publishMsg ch "" "task_queue"
                 (newMsg {msgBody         = (BL.pack body),
                          msgDeliveryMode = Just Persistent})
