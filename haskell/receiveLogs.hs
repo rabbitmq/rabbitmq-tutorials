@@ -12,7 +12,9 @@ main = do
      conn <- openConnection "127.0.0.1" "/" "guest" "guest"
      ch   <- openChannel conn
 
-     declareExchange ch newExchange {exchangeName = logsExchange, exchangeType = "fanout", exchangeDurable = False}
+     declareExchange ch newExchange {exchangeName    = logsExchange,
+                                     exchangeType    = "fanout",
+                                     exchangeDurable = False}
      (q, _, _) <- declareQueue ch newQueue {queueName       = "",
                                             queueAutoDelete = True,
                                             queueDurable    = False}
