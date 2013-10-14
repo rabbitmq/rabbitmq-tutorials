@@ -1,6 +1,6 @@
 # Haskell code for RabbitMQ tutorials
 
-Here you can find Clojure code examples from
+Here you can find Haskell code examples from
 [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
@@ -40,4 +40,4 @@ Code examples are executed via `runhaskell`:
 
     TBD
 
-To learn more, visit [Langohr documentation](http://clojurerabbitmq.info) site.
+To learn more, see [Network.AMQP]().
