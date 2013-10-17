@@ -1,6 +1,6 @@
 # Go code for RabbitMQ tutorials
 
-Here you can find Haskell code examples from
+Here you can find Go code examples from
 [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
