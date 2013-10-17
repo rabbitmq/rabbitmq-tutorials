@@ -23,8 +23,8 @@ Code examples are executed via `go run`:
 
 [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
 
-    go run receive_logs.go hello world
-    go run emit_log.go
+    go run receive_logs.go
+    go run emit_log.go hello world
 
 [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html)
 
