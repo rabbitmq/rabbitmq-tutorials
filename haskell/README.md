@@ -18,23 +18,23 @@ Code examples are executed via `runhaskell`:
 
 [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html):
 
-    runhaskell newTask.hs
+    runhaskell newTask.hs hello world
     runhaskell worker.hs
 
 [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
 
     runhaskell receiveLogs.hs
-    runhaskell emitLog.hs
+    runhaskell emitLog.hs hello world
 
 [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html)
 
-    runhaskell receiveLogsDirect.hs
-    runhaskell emitLogDirect.hs
+    runhaskell receiveLogsDirect.hs info warn
+    runhaskell emitLogDirect.hs warn "a warning"
 
 [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html)
 
-    runhaskell receiveLogsTopic.hs
-    runhaskell emitLogTopic.hs
+    runhaskell receiveLogsTopic.hs info warn
+    runhaskell emitLogTopic.hs warn "a warning"
 
 [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html)
 
