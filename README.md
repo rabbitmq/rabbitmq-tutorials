@@ -1,6 +1,6 @@
 # RabbitMQ tutorials
 
-This project contains code snippets for [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
+This project contains code for [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
 
 ## Languages
 
