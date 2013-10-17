@@ -4,22 +4,23 @@ import (
 	"github.com/streadway/amqp"
 	"log"
 	"os"
+	"fmt"
 )
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+		panic(fmt.Sprintf("%s: %s", msg, err))
+	}
+}
 
 func main() {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	if err != nil {
-		log.Fatalf("Dial: %s", err)
-		return
-	}
+	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
 	ch, err := conn.Channel()
-	if err != nil {
-		log.Fatalf("Channel: %s", err)
-		return
-	}
-
+	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
 	err = ch.ExchangeDeclare(
@@ -31,18 +32,9 @@ func main() {
 		false,     // noWait
 		nil,       // arguments
 	)
-	if err != nil {
-		log.Fatalf("Exchange Declare: %s", err)
-		return
-	}
+	failOnError(err, "Failed to declare an exchange")
 
-	var body string
-	if os.Args[1] == "" {
-		body = "hello"
-	} else {
-		body = os.Args[1]
-		
-	}
+	body := bodyFrom(os.Args)
 	err = ch.Publish(
 		"logs", // exchange
 		"",     // routing key
@@ -53,11 +45,20 @@ func main() {
 			Body:            []byte(body),
 		})
 
-	if err != nil {
-		log.Fatalf("Exchange Publish: %s", err)
-		return
-	}
+	failOnError(err, "Failed to publish a message")
 	log.Printf(" [x] Sent %s", body)
 
 	os.Exit(0)
+}
+
+func bodyFrom(args []string) string {
+	var body string
+	if (len(args) < 1) || os.Args[1] == "" {
+		body = "hello"
+	} else {
+		body = os.Args[1]
+
+	}
+
+	return body
 }
