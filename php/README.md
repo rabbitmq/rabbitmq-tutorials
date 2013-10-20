@@ -21,35 +21,35 @@ inside this project folder:
 
 ## Code
 
-[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-python.html):
+[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-php.html):
 
     php send.php
     php receive.php
 
 
-[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html):
+[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-php.html):
 
     php new_task.php "A very hard task which takes two seconds.."
     php worker.php
 
 
-[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
+[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-php.html)
 
     php receive_logs.php
     php emit_log.php "info: This is the log message"
 
-[Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html):
+[Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-php.html):
 
     php receive_logs_direct.php info
     php emit_log_direct.php info "The message"
 
 
-[Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html):
+[Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-php.html):
 
     php receive_logs_topic.php "*.rabbit"
     php emit_log_topic.php red.rabbit Hello
 
-[Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html):
+[Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-php.html):
 
     php rpc_server.php
     php rpc_client.php
