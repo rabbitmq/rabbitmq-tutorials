@@ -68,10 +68,7 @@ func main() {
 	}()
 
 	log.Printf(" [*] Waiting for logs. To exit press CTRL+C")
-	select {
-	case <-done:
-		break
-	}
+	<-done
 	log.Printf("Done")
 
 	os.Exit(0)
