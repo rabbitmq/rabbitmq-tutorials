@@ -40,10 +40,9 @@ func main() {
 	failOnError(err, "Failed to register a consumer")
 
 	done := make(chan bool)
-	var d amqp.Delivery
 
 	go func() {
-		for d = range msgs {
+		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
 			d.Ack(false)
 			done <- true
@@ -51,10 +50,7 @@ func main() {
 	}()
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	select {
-	case <-done:
-		break
-	}
+	<-done
 	log.Printf("Done")
 
 	os.Exit(0)

@@ -43,8 +43,7 @@ func main() {
 	)
 	failOnError(err, "Failed to declare a queue")
 
-	var s string
-	for _, s = range os.Args {
+	for _, s := range os.Args {
 		log.Printf("Binding queue %s to exchange %s with routing key %s", q.Name, "logs_direct", s)
 		err = ch.QueueBind(
 			q.Name,        // queue name
@@ -58,20 +57,16 @@ func main() {
 	msgs, err := ch.Consume(q.Name, "", true, false, false, false, nil)
 
 	done := make(chan bool)
-	var d amqp.Delivery
 
 	go func() {
-		for d = range msgs {
+		for d := range msgs {
 			log.Printf(" [x] %s", d.Body)
 			done <- true
 		}
 	}()
 
 	log.Printf(" [*] Waiting for logs. To exit press CTRL+C")
-	select {
-	case <-done:
-		break
-	}
+	<-done
 	log.Printf("Done")
 
 	os.Exit(0)
