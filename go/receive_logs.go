@@ -43,20 +43,16 @@ func main() {
 	msgs, err := ch.Consume(q.Name, "", true, false, false, false, nil)
 
 	done := make(chan bool)
-	var d amqp.Delivery
 
 	go func() {
-		for d = range msgs {
+		for d := range msgs {
 			log.Printf(" [x] %s", d.Body)
 			done <- true
 		}
 	}()
 
 	log.Printf(" [*] Waiting for logs. To exit press CTRL+C")
-	select {
-	case <-done:
-		break
-	}
+	<-done
 	log.Printf("Done")
 
 	os.Exit(0)
