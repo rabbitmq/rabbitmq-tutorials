@@ -36,7 +36,7 @@ You need Mono and RabbitMQ dotnet client.
 
 ## Code
 
-#### [Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-python.html)
+#### [Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-java.html)
 
 ##### Windows
 
@@ -55,7 +55,7 @@ You need Mono and RabbitMQ dotnet client.
     MONO_PATH=lib/bin mono Receive.exe
 
 
-#### [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-python.html)
+#### [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-java.html)
 
 
 ##### Windows
@@ -74,7 +74,7 @@ You need Mono and RabbitMQ dotnet client.
     MONO_PATH=lib/bin mono NewTask.exe
     MONO_PATH=lib/bin mono Worker.exe
 
-#### [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-python.html)
+#### [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-java.html)
 
 ##### Windows
 
@@ -92,7 +92,7 @@ You need Mono and RabbitMQ dotnet client.
     MONO_PATH=lib/bin mono ReceiveLogs.exe
     MONO_PATH=lib/bin mono EmitLog.exe
 
-#### [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-python.html)
+#### [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-java.html)
 
 ##### Windows
 
@@ -110,7 +110,7 @@ You need Mono and RabbitMQ dotnet client.
     MONO_PATH=lib/bin mono ReceiveLogsDirect.exe
     MONO_PATH=lib/bin mono EmitLogDirect.exe
 
-#### [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html)
+#### [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-java.html)
 
 ##### Windows
 
@@ -128,7 +128,7 @@ You need Mono and RabbitMQ dotnet client.
     MONO_PATH=lib/bin mono ReceiveLogsTopic.exe
     MONO_PATH=lib/bin mono EmitLogTopic.exe
 
-#### [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html)
+#### [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-java.html)
 
 ##### Windows
 
