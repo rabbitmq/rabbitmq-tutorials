@@ -25,8 +25,8 @@ class NewTask
         }
     }
 
-  private static string GetMessage(string[] args)
-  {
-    return ((args.Length > 0) ? string.Join(" ", args) : "Hello World!");
-  }
+    private static string GetMessage(string[] args)
+    {
+      return ((args.Length > 0) ? string.Join(" ", args) : "Hello World!");
+    }
 }
