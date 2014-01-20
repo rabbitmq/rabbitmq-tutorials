@@ -13,8 +13,7 @@ class NewTask
             {
                 channel.QueueDeclare("task_queue", true, false, false, null);
 
-                var message = (args.Length > 0) ? string.Join(" ", args)
-                                                                   : "Hello World!";
+                var message = (args.Length > 0) ? string.Join(" ", args) : "Hello World!";
                 var body = Encoding.UTF8.GetBytes(message);
 
                 var properties = channel.CreateBasicProperties();
