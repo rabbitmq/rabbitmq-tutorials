@@ -18,7 +18,7 @@ class NewTask
                 var body = Encoding.UTF8.GetBytes(message);
 
                 var properties = channel.CreateBasicProperties();
-                properties.DeliveryMode = 2;
+                properties.SetPersistent(true);
 
                 channel.BasicPublish("", "task_queue", properties, body);
                 Console.WriteLine(" [x] Sent {0}", message);
