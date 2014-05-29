@@ -13,7 +13,7 @@ class ReceiveLogsDirect
             using (var channel = connection.CreateModel())
             {
                 channel.ExchangeDeclare("direct_logs", "direct");
-                var queueName = channel.QueueDeclare();
+                var queueName = channel.QueueDeclare().QueueName;
 
                 if (args.Length < 1)
                 {

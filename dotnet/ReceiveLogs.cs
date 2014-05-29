@@ -14,7 +14,7 @@ class ReceiveLogs
             {
                 channel.ExchangeDeclare("logs", "fanout");
 
-                var queueName = channel.QueueDeclare();
+                var queueName = channel.QueueDeclare().QueueName;
 
                 channel.QueueBind(queueName, "logs", "");
                 var consumer = new QueueingBasicConsumer(channel);

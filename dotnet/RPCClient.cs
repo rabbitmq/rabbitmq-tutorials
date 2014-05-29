@@ -15,7 +15,7 @@ class RPCClient
         var factory = new ConnectionFactory() { HostName = "localhost" };
         connection = factory.CreateConnection();
         channel = connection.CreateModel();
-        replyQueueName = channel.QueueDeclare();
+        replyQueueName = channel.QueueDeclare().QueueName;
         consumer = new QueueingBasicConsumer(channel);
         channel.BasicConsume(replyQueueName, true, consumer);
     }

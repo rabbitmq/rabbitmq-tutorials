@@ -13,7 +13,7 @@ class ReceiveLogsTopic
             using (var channel = connection.CreateModel())
             {
                 channel.ExchangeDeclare("topic_logs", "topic");
-                var queueName = channel.QueueDeclare();
+                var queueName = channel.QueueDeclare().QueueName;
 
                 if (args.Length < 1)
                 {
