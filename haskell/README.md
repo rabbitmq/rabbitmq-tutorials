@@ -5,7 +5,7 @@ Here you can find Haskell code examples from
 
 ## Requirements
 
-To run this code you need [Network.AMQP](http://hackage.haskell.org/package/amqp-0.6.0/docs/Network-AMQP.html).
+To run this code you need [Network.AMQP](http://hackage.haskell.org/package/amqp).
 
 ## Code
 
