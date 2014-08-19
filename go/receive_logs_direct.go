@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
+	"fmt"
 	"log"
 	"os"
-	"fmt"
+
+	"github.com/streadway/amqp"
 )
 
 func failOnError(err error, msg string) {
@@ -29,16 +30,17 @@ func main() {
 		true,          // durable
 		false,         // auto-deleted
 		false,         // internal
-		false,         // noWait
+		false,         // no-wait
 		nil,           // arguments
 	)
 	failOnError(err, "Failed to declare an exchange")
+
 	q, err := ch.QueueDeclare(
 		"",    // name
 		false, // durable
 		false, // delete when usused
-		false, // exclusive
-		false, // noWait
+		true,  // exclusive
+		false, // no-wait
 		nil,   // arguments
 	)
 	failOnError(err, "Failed to declare a queue")
@@ -50,24 +52,33 @@ func main() {
 			s,             // routing key
 			"logs_direct", // exchange
 			false,
-		        nil)
+			nil)
 		failOnError(err, "Failed to bind a queue")
 	}
 
-	msgs, err := ch.Consume(q.Name, "", true, false, false, false, nil)
+	msgs, err := ch.Consume(
+		q.Name, // queue
+		"",     // consumer
+		true,   // auto ack
+		false,  // exclusive
+		false,  // no local
+		false,  // no wait
+		nil,    // args
+	)
+	failOnError(err, "Failed to register a consumer")
 
 	done := make(chan bool)
 
 	go func() {
 		for d := range msgs {
 			log.Printf(" [x] %s", d.Body)
+
 			done <- true
 		}
 	}()
 
 	log.Printf(" [*] Waiting for logs. To exit press CTRL+C")
+
 	<-done
 	log.Printf("Done")
-
-	os.Exit(0)
 }
