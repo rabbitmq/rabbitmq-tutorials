@@ -1,11 +1,15 @@
 # Go code for RabbitMQ tutorials
 
-Here you can find Go code examples from
-[RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
+
+Here you can find Go code examples from [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
+
 
 ## Requirements
 
-To run this code you need [Go RabbitMQ client](https://github.com/streadway/amqp).
+To run this code you need [Go RabbitMQ client](https://github.com/streadway/amqp):
+
+    go get github.com/streadway/amqp
+
 
 ## Code
 
@@ -38,6 +42,7 @@ Code examples are executed via `go run`:
 
 [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html)
 
-    TBD
+    go run rpc_server.go
+    go run rpc_client.go 10
 
 To learn more, see [Go RabbitMQ client](https://github.com/streadway/amqp).

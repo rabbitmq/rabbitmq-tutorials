@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
-	"log"
-	"os"
 	"fmt"
+	"log"
 	"strings"
+
+	"github.com/streadway/amqp"
 )
 
 func failOnError(err error, msg string) {
@@ -30,24 +30,20 @@ func main() {
 		"task_queue", // routing key
 		false,        // mandatory
 		false,
-		amqp.Publishing {
-		        DeliveryMode:  amqp.Persistent,
-			ContentType:     "text/plain",
-			Body:            []byte(body),
+		amqp.Publishing{
+			DeliveryMode: amqp.Persistent,
+			ContentType:  "text/plain",
+			Body:         []byte(body),
 		})
 	failOnError(err, "Failed to publish a message")
-
-	os.Exit(0)
 }
 
 func bodyFrom(args []string) string {
 	var s string
-	if (len(args) < 2) || os.Args[2] == "" {
+	if (len(args) < 2) || os.Args[1] == "" {
 		s = "hello"
 	} else {
 		s = strings.Join(args[1:], " ")
-
 	}
-
 	return s
 }

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
-	"log"
-	"os"
 	"fmt"
+	"log"
+
+	"github.com/streadway/amqp"
 )
 
 func failOnError(err error, msg string) {
@@ -21,7 +21,6 @@ func main() {
 
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
-
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
@@ -29,26 +28,30 @@ func main() {
 		false,   // durable
 		false,   // delete when usused
 		false,   // exclusive
-		false,   // noWait
+		false,   // no-wait
 		nil,     // arguments
 	)
 	failOnError(err, "Failed to declare a queue")
 
-	msgs, err := ch.Consume(q.Name, "", true, false, false, false, nil)
+	msgs, err := ch.Consume(
+		q.Name, // queue
+		"",     // consumer
+		true,   // auto-ack
+		false,  // exclusive
+		false,  // no-local
+		false,  // no-wait
+		nil,    // args
+	)
 	failOnError(err, "Failed to register a consumer")
 
-	done := make(chan bool)
+	forever := make(chan bool)
 
 	go func() {
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
-			done <- true
 		}
 	}()
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	<-done
-	log.Printf("Done")
-
-	os.Exit(0)
+	<-forever
 }

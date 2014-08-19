@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
+	"fmt"
 	"log"
 	"os"
-	"fmt"
+
+	"github.com/streadway/amqp"
 )
 
 func failOnError(err error, msg string) {
@@ -24,13 +25,13 @@ func main() {
 	defer ch.Close()
 
 	err = ch.ExchangeDeclare(
-		"logs",    // name
-		"fanout",  // type
-		true,      // durable
-		false,     // auto-deleted
-		false,     // internal
-		false,     // noWait
-		nil,       // arguments
+		"logs",   // name
+		"fanout", // type
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
 	)
 	failOnError(err, "Failed to declare an exchange")
 
@@ -41,24 +42,20 @@ func main() {
 		false,  // mandatory
 		false,  // immediate
 		amqp.Publishing{
-			ContentType:     "text/plain",
-			Body:            []byte(body),
+			ContentType: "text/plain",
+			Body:        []byte(body),
 		})
-
 	failOnError(err, "Failed to publish a message")
-	log.Printf(" [x] Sent %s", body)
 
-	os.Exit(0)
+	log.Printf(" [x] Sent %s", body)
 }
 
 func bodyFrom(args []string) string {
 	var body string
-	if (len(args) < 1) || os.Args[1] == "" {
+	if (len(args) < 2) || os.Args[1] == "" {
 		body = "hello"
 	} else {
 		body = os.Args[1]
-
 	}
-
 	return body
 }
