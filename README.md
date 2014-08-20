@@ -19,3 +19,7 @@ The following ports are available:
  * [Python (with Puka)](./python-puka)
  * [Ruby (with Bunny)](./ruby)
  * [Ruby (with amqp gem)](./ruby-amqp)
+
+## License
+
+Released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt).
