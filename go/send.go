@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
-	"log"
-	"os"
 	"fmt"
+	"log"
+
+	"github.com/streadway/amqp"
 )
 
 func failOnError(err error, msg string) {
@@ -21,7 +21,6 @@ func main() {
 
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
-
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
@@ -29,22 +28,20 @@ func main() {
 		false,   // durable
 		false,   // delete when usused
 		false,   // exclusive
-		false,   // noWait
+		false,   // no-wait
 		nil,     // arguments
 	)
 	failOnError(err, "Failed to declare a queue")
 
 	body := "hello"
 	err = ch.Publish(
-		"",         // exchange
-		q.Name,     // routing key
-		false,      // mandatory
-		false,      // immediate
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
 		amqp.Publishing{
-			ContentType:     "text/plain",
-			Body:            []byte(body),
+			ContentType: "text/plain",
+			Body:        []byte(body),
 		})
 	failOnError(err, "Failed to publish a message")
-
-	os.Exit(0)
 }

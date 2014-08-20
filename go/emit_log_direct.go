@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
+	"fmt"
 	"log"
 	"os"
-	"fmt"
 	"strings"
+
+	"github.com/streadway/amqp"
 )
 
 func failOnError(err error, msg string) {
@@ -30,7 +31,7 @@ func main() {
 		true,          // durable
 		false,         // auto-deleted
 		false,         // internal
-		false,         // noWait
+		false,         // no-wait
 		nil,           // arguments
 	)
 	failOnError(err, "Failed to declare an exchange")
@@ -39,40 +40,33 @@ func main() {
 	err = ch.Publish(
 		"logs_direct",         // exchange
 		severityFrom(os.Args), // routing key
-		false,                 // mandatory
-		false,                 // immediate
+		false, // mandatory
+		false, // immediate
 		amqp.Publishing{
-			ContentType:     "text/plain",
-			Body:            []byte(body),
+			ContentType: "text/plain",
+			Body:        []byte(body),
 		})
-
 	failOnError(err, "Failed to publish a message")
-	log.Printf(" [x] Sent %s", body)
 
-	os.Exit(0)
+	log.Printf(" [x] Sent %s", body)
 }
 
 func bodyFrom(args []string) string {
 	var s string
-	if (len(args) < 2) || os.Args[2] == "" {
+	if (len(args) < 3) || os.Args[2] == "" {
 		s = "hello"
 	} else {
-		s = strings.Join(args[1:], " ")
-
+		s = strings.Join(args[2:], " ")
 	}
-
 	return s
 }
 
 func severityFrom(args []string) string {
 	var s string
-
-	if (len(args) < 1) || os.Args[1] == "" {
+	if (len(args) < 2) || os.Args[1] == "" {
 		s = "info"
 	} else {
 		s = os.Args[1]
-
 	}
-
 	return s
 }
