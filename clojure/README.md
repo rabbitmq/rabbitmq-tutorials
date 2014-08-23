@@ -5,11 +5,9 @@ Here you can find Clojure code examples from
 
 ## Requirements
 
-To run this code you need [Langohr](http://clojurerabbitmq.info).
+To run this code you need [Leiningen](http://leiningen.org).
 
-Dependencies are managed by [Leiningen](http://leiningen.org).
-
-These tutorials only require JDK 6 or 7 (Oracle or OpenJDK).
+These tutorials will work on JDK 6 through 8 (Oracle or OpenJDK).
 
 ## Code
 
