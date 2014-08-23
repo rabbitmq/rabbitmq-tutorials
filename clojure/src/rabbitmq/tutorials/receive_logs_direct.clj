@@ -18,9 +18,9 @@
   [& args]
   (with-open [conn (lc/connect)]
     (let [ch              (lch/open conn)
-          {:keys [queue]} (lq/declare ch "" :durable false :auto-delete false)]
-      (le/direct ch x :durable false :auto-delete false)
+          {:keys [queue]} (lq/declare ch "" {:durable false :auto-delete false})]
+      (le/direct ch x {:durable false :auto-delete false})
       (doseq [severity args]
-        (lq/bind ch queue x :routing-key severity))
+        (lq/bind ch queue x {:routing-key severity}))
       (println " [*] Waiting for logs. To exit press CTRL+C")
       (lcons/blocking-subscribe ch queue handle-delivery))))

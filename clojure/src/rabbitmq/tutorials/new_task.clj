@@ -12,6 +12,6 @@
           payload (if (empty? args)
                     "Hello, world!"
                     (s/join " " args))]
-      (lq/declare ch "task_queue" :durable true :auto-delete false)
-      (lb/publish ch "" "task_queue" payload :persistent true)
+      (lq/declare ch "task_queue" {:durable true :auto-delete false})
+      (lb/publish ch "" "task_queue" payload {:persistent true})
       (println (format " [x] Sent %s" payload)))))

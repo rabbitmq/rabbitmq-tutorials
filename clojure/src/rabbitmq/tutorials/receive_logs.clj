@@ -18,8 +18,8 @@
   [& args]
   (with-open [conn (lc/connect)]
     (let [ch              (lch/open conn)
-          {:keys [queue]} (lq/declare ch "" :durable true :auto-delete false)]
-      (le/fanout ch x :durable false :auto-delete false)
+          {:keys [queue]} (lq/declare ch "" {:durable true :auto-delete false})]
+      (le/fanout ch x {:durable false :auto-delete false})
       (lq/bind ch queue x)
       (println " [*] Waiting for logs. To exit press CTRL+C")
       (lcons/blocking-subscribe ch queue handle-delivery))))

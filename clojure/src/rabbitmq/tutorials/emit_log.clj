@@ -14,6 +14,6 @@
           payload (if (empty? args)
                     "Hello, world!"
                     (s/join " " args))]
-      (le/fanout ch x :durable false :auto-delete false)
+      (le/fanout ch x {:durable false :auto-delete false})
       (lb/publish ch x "" payload)
       (println (format " [x] Sent %s" payload)))))

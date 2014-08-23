@@ -28,7 +28,7 @@
   [& args]
   (with-open [conn (lc/connect)]
     (let [ch      (lch/open conn)]
-      (lq/declare ch q :durable true :auto-delete false)
+      (lq/declare ch q {:durable true :auto-delete false})
       (lb/qos ch 1)
       (println " [*] Waiting for messages. To exit press CTRL+C")
       (lcons/blocking-subscribe ch q handle-delivery))))

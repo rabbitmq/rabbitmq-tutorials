@@ -15,6 +15,6 @@
           payload  (if (empty? args)
                      "Hello, world!"
                      (s/join " " args))]
-      (le/direct ch x :durable false :auto-delete false)
+      (le/direct ch x {:durable false :auto-delete false})
       (lb/publish ch x severity payload)
       (println (format " [x] Sent %s" payload)))))

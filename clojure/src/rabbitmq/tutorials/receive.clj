@@ -13,6 +13,6 @@
   [& args]
   (with-open [conn (lc/connect)]
     (let [ch   (lch/open conn)]
-      (lq/declare ch "hello" :durable false :auto-delete false)
+      (lq/declare ch "hello" {:durable false :auto-delete false})
       (println " [*] Waiting for messages. To exit press CTRL+C")
-      (lcons/blocking-subscribe ch "hello" handle-delivery :auto-ack true))))
+      (lcons/blocking-subscribe ch "hello" handle-delivery {:auto-ack true}))))
