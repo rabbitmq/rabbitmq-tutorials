@@ -67,18 +67,14 @@ func main() {
 	)
 	failOnError(err, "Failed to register a consumer")
 
-	done := make(chan bool)
+	forever := make(chan bool)
 
 	go func() {
 		for d := range msgs {
 			log.Printf(" [x] %s", d.Body)
-
-			done <- true
 		}
 	}()
 
 	log.Printf(" [*] Waiting for logs. To exit press CTRL+C")
-
-	<-done
-	log.Printf("Done")
+	<-forever
 }
