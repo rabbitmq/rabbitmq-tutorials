@@ -37,8 +37,8 @@ Code examples are executed via `go run`:
 
 [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-python.html)
 
-    go run receive_logs_topic.go info warn
-    go run emit_log_topic.go warn "a warning"
+    go run receive_logs_topic.go "kern.*" "*.critical"
+    go run emit_log_topic.go kern.critical "A critical kernel error"
 
 [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html)
 
