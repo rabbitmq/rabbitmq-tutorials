@@ -57,6 +57,9 @@ func main() {
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
 			d.Ack(false)
+			dot_count := bytes.Count(d.Body, []byte("."))
+			t := time.Duration(dot_count)
+			time.Sleep(t * time.Second)
 		}
 	}()
 
