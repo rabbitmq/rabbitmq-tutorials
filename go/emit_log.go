@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/streadway/amqp"
 )
@@ -51,11 +52,11 @@ func main() {
 }
 
 func bodyFrom(args []string) string {
-	var body string
+	var s string
 	if (len(args) < 2) || os.Args[1] == "" {
-		body = "hello"
+		s = "hello"
 	} else {
-		body = os.Args[1]
+		s = strings.Join(args[1:], " ")
 	}
-	return body
+	return s
 }

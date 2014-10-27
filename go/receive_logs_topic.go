@@ -45,7 +45,11 @@ func main() {
 	)
 	failOnError(err, "Failed to declare a queue")
 
-	for _, s := range os.Args {
+	if len(os.Args) < 2 {
+		log.Printf("Usage: %s [binding_key]...", os.Args[0])
+		os.Exit(0)
+	}
+	for _, s := range os.Args[1:] {
 		log.Printf("Binding queue %s to exchange %s with routing key %s", q.Name, "logs_topic", s)
 		err = ch.QueueBind(
 			q.Name,       // queue name

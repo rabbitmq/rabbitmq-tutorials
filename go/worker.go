@@ -1,10 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"log"
-
 	"github.com/streadway/amqp"
+	"log"
+	"time"
 )
 
 func failOnError(err error, msg string) {
