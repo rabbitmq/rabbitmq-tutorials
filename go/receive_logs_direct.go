@@ -45,7 +45,11 @@ func main() {
 	)
 	failOnError(err, "Failed to declare a queue")
 
-	for _, s := range os.Args {
+	if len(os.Args) < 2 {
+		log.Printf("Usage: %s [info] [warning] [error]", os.Args[0])
+		os.Exit(0)
+	}
+	for _, s := range os.Args[1:] {
 		log.Printf("Binding queue %s to exchange %s with routing key %s", q.Name, "logs_direct", s)
 		err = ch.QueueBind(
 			q.Name,        // queue name
@@ -67,18 +71,14 @@ func main() {
 	)
 	failOnError(err, "Failed to register a consumer")
 
-	done := make(chan bool)
+	forever := make(chan bool)
 
 	go func() {
 		for d := range msgs {
 			log.Printf(" [x] %s", d.Body)
-
-			done <- true
 		}
 	}()
 
 	log.Printf(" [*] Waiting for logs. To exit press CTRL+C")
-
-	<-done
-	log.Printf("Done")
+	<-forever
 }
