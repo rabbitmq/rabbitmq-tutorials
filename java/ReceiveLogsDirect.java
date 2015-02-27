@@ -22,10 +22,6 @@ public class ReceiveLogsDirect {
       System.exit(1);
     }
     
-    for(String severity : argv){    
-      channel.queueBind(queueName, EXCHANGE_NAME, severity);
-    }
-    
     System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
     QueueingConsumer consumer = new QueueingConsumer(channel);
