@@ -11,12 +11,12 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 You need the RabbitMQ dotnet client.
 
-* Download [RabbitMQ .NET client for .NET 3.0+](http://www.rabbitmq.com/releases/rabbitmq-dotnet-client/v3.3.1/rabbitmq-dotnet-client-3.3.1-dotnet-3.0.zip)
+* Download [RabbitMQ .NET client](http://www.rabbitmq.com/releases/rabbitmq-dotnet-client/v3.4.4/rabbitmq-dotnet-client-3.4.4-dotnet-3.5.zip)
 * Extract it and copy "RabbitMQ.Client.dll" to your working folder.
 
 You also need to ensure your system can find the C# compiler `csc.exe`,
-you may need to add `;C:\WINDOWS\Microsoft.NET\Framework\v3.5` (change .NET version
-to fit your installation) to your Path.
+you may need to add `;C:\Windows\Microsoft.NET\Framework\v4.0.30319` (change .NET version
+to fit your installation) to your `PATH`.
 
 We're using the command line (start->run cmd.exe) to
 compile and run the code. Alternatively you could use Visual Studio, but
@@ -29,8 +29,8 @@ You need Mono and RabbitMQ dotnet client.
     sudo apt-get install mono-devel
     mkdir lib
     cd lib
-    wget http://www.rabbitmq.com/releases/rabbitmq-dotnet-client/v3.3.1/rabbitmq-dotnet-client-3.3.1-dotnet-3.0.zip
-    unzip rabbitmq-dotnet-client-3.2.2-dotnet-3.0.zip
+    wget http://www.rabbitmq.com/releases/rabbitmq-dotnet-client/v3.4.4/rabbitmq-dotnet-client-3.4.4-dotnet-3.5.zip
+    unzip rabbitmq-dotnet-client-3.4.4-dotnet-3.5.zip
     cd ..
 
 
