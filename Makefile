@@ -114,7 +114,7 @@ GEM?=gem1.9.1
 TOPDIR:=$(PWD)
 ruby/.ok:
 	(cd ruby && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib $(GEM) install bunny --version ">= 1.6.3" --no-ri --no-rdoc && \
+		GEM_HOME=gems/gems RUBYLIB=gems/lib $(GEM) install bunny --version ">= 1.7.0" --no-ri --no-rdoc && \
 		touch .ok)
 clean::
 	(cd ruby && \
