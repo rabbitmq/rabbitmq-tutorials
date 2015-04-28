@@ -7,6 +7,7 @@ This project contains code for [RabbitMQ tutorials](http://www.rabbitmq.com/gets
 The following ports are available:
 
  * [C#](./dotnet)
+ * [C# (with Visual Studio)](./dotnet-visual-studio)
  * [Clojure](./clojure)
  * [Erlang](./erlang)
  * [Go](./go)
