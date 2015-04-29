@@ -18,7 +18,6 @@ The following ports are available:
  * [Python (with Pika)](./python)
  * [Python (with Puka)](./python-puka)
  * [Ruby (with Bunny)](./ruby)
- * [Ruby (with amqp gem)](./ruby-amqp)
 
 ## License
 
