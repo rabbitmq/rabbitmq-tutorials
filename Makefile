@@ -52,8 +52,8 @@ dotnet/.ok:
 	(cd dotnet && \
 		mkdir -p lib && \
 		cd lib && \
-		wget -qc $(R)/rabbitmq-dotnet-client/v$(DVER)/rabbitmq-dotnet-client-$(DVER)-dotnet-3.0.zip && \
-		unzip -q rabbitmq-dotnet-client-$(DVER)-dotnet-3.0.zip && \
+		wget -qc $(R)/rabbitmq-dotnet-client/v$(DVER)/rabbitmq-dotnet-client-$(DVER)-dotnet-4.0.zip && \
+		unzip -q rabbitmq-dotnet-client-$(DVER)-dotnet-4.0.zip && \
 		cd .. && \
 		for f in *.cs; do \
 			gmcs -r:lib/bin/RabbitMQ.Client.dll $$f; \
