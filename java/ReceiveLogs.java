@@ -17,7 +17,7 @@ public class ReceiveLogs {
     channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
     String queueName = channel.queueDeclare().getQueue();
     channel.queueBind(queueName, EXCHANGE_NAME, "");
-    
+
     System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
     QueueingConsumer consumer = new QueueingConsumer(channel);
@@ -25,9 +25,9 @@ public class ReceiveLogs {
 
     while (true) {
       QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-      String message = new String(delivery.getBody());
+      String message = new String(delivery.getBody(),"UTF-8");
 
-      System.out.println(" [x] Received '" + message + "'");   
+      System.out.println(" [x] Received '" + message + "'");
     }
   }
 }

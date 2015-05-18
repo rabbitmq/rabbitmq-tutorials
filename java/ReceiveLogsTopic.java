@@ -13,22 +13,22 @@ public class ReceiveLogsTopic {
     try {
       ConnectionFactory factory = new ConnectionFactory();
       factory.setHost("localhost");
-  
+
       connection = factory.newConnection();
       channel = connection.createChannel();
 
       channel.exchangeDeclare(EXCHANGE_NAME, "topic");
       String queueName = channel.queueDeclare().getQueue();
- 
+
       if (argv.length < 1){
         System.err.println("Usage: ReceiveLogsTopic [binding_key]...");
         System.exit(1);
       }
-    
-      for(String bindingKey : argv){    
+
+      for(String bindingKey : argv){
         channel.queueBind(queueName, EXCHANGE_NAME, bindingKey);
       }
-    
+
       System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
       QueueingConsumer consumer = new QueueingConsumer(channel);
@@ -36,10 +36,10 @@ public class ReceiveLogsTopic {
 
       while (true) {
         QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-        String message = new String(delivery.getBody());
+        String message = new String(delivery.getBody(),"UTF-8");
         String routingKey = delivery.getEnvelope().getRoutingKey();
 
-        System.out.println(" [x] Received '" + routingKey + "':'" + message + "'");   
+        System.out.println(" [x] Received '" + routingKey + "':'" + message + "'");
       }
     }
     catch  (Exception e) {
