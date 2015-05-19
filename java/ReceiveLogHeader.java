@@ -17,10 +17,10 @@ public class ReceiveLogHeader {
         System.err.println("Usage: ReceiveLogsHeader queueName [headers]...");
         System.exit(1);
       }
-    
+
       ConnectionFactory factory = new ConnectionFactory();
       factory.setHost("localhost");
-  
+
       connection = factory.newConnection();
       channel = connection.createChannel();
 
@@ -30,14 +30,14 @@ public class ReceiveLogHeader {
       // value of the routing key is not used in the routing. You can receive information
       // from the sender here as the routing key is still available in the received message.
       String routingKeyFromUser = "ourTestRoutingKey";
- 
+
       // Argument processing: the first arg is the local queue name, the rest are
       // key value pairs for headers.
       String queueInputName = argv[0];
 
       // The map for the headers.
       Map<String, Object> headers = new HashMap<String, Object>();
- 
+
       // The rest of the arguments are key value header pairs.  For the purpose of this
       // example, we are assuming they are all strings, but that is not required by RabbitMQ
       // Note that when you run this code you should include the x-match header on the command
@@ -51,7 +51,7 @@ public class ReceiveLogHeader {
 
       String queueName = channel.queueDeclare(queueInputName, true, false, false, null).getQueue();
       channel.queueBind(queueName, EXCHANGE_NAME, routingKeyFromUser, headers);
-    
+
       System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
       QueueingConsumer consumer = new QueueingConsumer(channel);
@@ -59,10 +59,10 @@ public class ReceiveLogHeader {
 
       while (true) {
         QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-        String message = new String(delivery.getBody());
+        String message = new String(delivery.getBody(),"UTF-8");
         String routingKeyFromSender = delivery.getEnvelope().getRoutingKey();
 
-        System.out.println(" [x] Received '" + routingKeyFromSender + "':'" + message + "'");   
+        System.out.println(" [x] Received '" + routingKeyFromSender + "':'" + message + "'");
       }
     }
     catch  (Exception e) {

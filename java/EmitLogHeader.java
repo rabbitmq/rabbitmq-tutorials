@@ -15,7 +15,7 @@ public class EmitLogHeader {
     Connection connection = null;
     Channel channel = null;
     try {
-    
+
       if (argv.length < 1){
         System.err.println("Usage: EmitLogHeader message queueName [headers]...");
         System.exit(1);
@@ -43,7 +43,7 @@ public class EmitLogHeader {
 
       ConnectionFactory factory = new ConnectionFactory();
       factory.setHost("localhost");
-  
+
       connection = factory.newConnection();
       channel = connection.createChannel();
 
@@ -51,10 +51,10 @@ public class EmitLogHeader {
 
       AMQP.BasicProperties.Builder builder = new AMQP.BasicProperties.Builder();
 
-      // MessageProperties.PERSISTENT_TEXT_PLAIN is a static instance of AMQP.BasicProperties 
+      // MessageProperties.PERSISTENT_TEXT_PLAIN is a static instance of AMQP.BasicProperties
       // that contains a delivery mode and a priority. So we pass them to the builder.
-      builder.deliveryMode(MessageProperties.PERSISTENT_TEXT_PLAIN.getDeliveryMode());    
-      builder.priority(MessageProperties.PERSISTENT_TEXT_PLAIN.getPriority());    
+      builder.deliveryMode(MessageProperties.PERSISTENT_TEXT_PLAIN.getDeliveryMode());
+      builder.priority(MessageProperties.PERSISTENT_TEXT_PLAIN.getPriority());
 
       // Add the headers to the builder.
       builder.headers(headers);
@@ -63,7 +63,7 @@ public class EmitLogHeader {
       AMQP.BasicProperties theProps = builder.build();
 
       // Now we add the headers.  This example only uses string headers, but they can also be integers
-      channel.basicPublish(EXCHANGE_NAME, routingKey, theProps, message.getBytes());
+      channel.basicPublish(EXCHANGE_NAME, routingKey, theProps, message.getBytes("UTF-8"));
       System.out.println(" [x] Sent message: '" + message + "'");
 
     }

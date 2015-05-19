@@ -17,19 +17,19 @@ public class EmitLog {
 
     String message = getMessage(argv);
 
-    channel.basicPublish(EXCHANGE_NAME, "", null, message.getBytes());
+    channel.basicPublish(EXCHANGE_NAME, "", null, message.getBytes("UTF-8"));
     System.out.println(" [x] Sent '" + message + "'");
 
     channel.close();
     connection.close();
   }
-  
+
   private static String getMessage(String[] strings){
     if (strings.length < 1)
     	    return "info: Hello World!";
     return joinStrings(strings, " ");
   }
-  
+
   private static String joinStrings(String[] strings, String delimiter) {
     int length = strings.length;
     if (length == 0) return "";
