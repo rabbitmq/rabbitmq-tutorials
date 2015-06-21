@@ -32,14 +32,13 @@ try{
 
 
 //Read from stdin
-$data = implode(' ', array_slice($argv,1));
-if(empty($data)) 
-	$data = "Hello World!";
+$message = implode(' ', array_slice($argv,1));
+if(empty($message)) 
+	$message = "Hello World!";
 
 $exchange = new AMQPExchange($channel);
-$exchange->publish($data, $routing_key);
+$exchange->publish($message, $routing_key);
 
 echo " [x] Sent {$data}", PHP_EOL;
 
 $connection->disconnect();
-
