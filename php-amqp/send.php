@@ -30,6 +30,8 @@ try{
 
 	$message = 'howdy-do';
 	$exchange->publish($message, $routing_key);
+
+	$connection->disconnect();
 }catch(Exception $ex){
 	print_r($ex);
 }

@@ -17,14 +17,6 @@ $channel = new AMQPChannel($connection);
 //AMQPC Exchange is the publishing mechanism
 $exchange = new AMQPExchange($channel);
 
-$routing_key = 'hello';
-$queue = new AMQPQueue($channel);
-$queue->setName($routing_key);
-$queue->setFlags(AMQP_NOPARAM);
-$queue->declareQueue();
-
-
-echo ' [*] Waiting for messages. To exit press CTRL+C ', PHP_EOL;
 
 $callback_func = function(AMQPEnvelope $message, AMQPQueue $q) use (&$max_consume) {
 	echo PHP_EOL, "------------", PHP_EOL;
@@ -36,6 +28,14 @@ $callback_func = function(AMQPEnvelope $message, AMQPQueue $q) use (&$max_consum
 };
 
 try{
+	$routing_key = 'hello';
+	
+	$queue = new AMQPQueue($channel);
+	$queue->setName($routing_key);
+	$queue->setFlags(AMQP_NOPARAM);
+	$queue->declareQueue();
+
+	echo ' [*] Waiting for messages. To exit press CTRL+C ', PHP_EOL;
 	$queue->consume($callback_func);
 }catch(AMQPQueueException $ex){
 	print_r($ex);
