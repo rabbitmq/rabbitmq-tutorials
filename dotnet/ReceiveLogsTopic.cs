@@ -5,44 +5,41 @@ using System.Text;
 
 class ReceiveLogsTopic
 {
-    public static void Main(string[] args)
+    public static void Main( string[] args )
     {
         var factory = new ConnectionFactory() { HostName = "localhost" };
-        using (var connection = factory.CreateConnection())
+        using( var connection = factory.CreateConnection() )
+        using( var channel = connection.CreateModel() )
         {
-            using (var channel = connection.CreateModel())
+            channel.ExchangeDeclare( exchange: "topic_logs", type: "topic" );
+            var queueName = channel.QueueDeclare().QueueName;
+
+            if( args.Length < 1 )
             {
-                channel.ExchangeDeclare("topic_logs", "topic");
-                var queueName = channel.QueueDeclare().QueueName;
+                Console.Error.WriteLine( "Usage: {0} [binding_key...]", Environment.GetCommandLineArgs()[0] );
+                Console.WriteLine( " Press [enter] to exit." );
+                Console.ReadLine();
+                Environment.ExitCode = 1;
+                return;
+            }
 
-                if (args.Length < 1)
-                {
-                    Console.Error.WriteLine("Usage: {0} [binding_key...]",
-                                            Environment.GetCommandLineArgs()[0]);
-                    Environment.ExitCode = 1;
-                    return;
-                }
+            foreach( var bindingKey in args )
+            {
+                channel.QueueBind( queue: queueName, exchange: "topic_logs", routingKey: bindingKey );
+            }
 
-                foreach (var bindingKey in args)
-                {
-                    channel.QueueBind(queueName, "topic_logs", bindingKey);
-                }
+            Console.WriteLine( " [*] Waiting for messages. To exit press CTRL+C" );
 
-                Console.WriteLine(" [*] Waiting for messages. " +
-                                  "To exit press CTRL+C");
+            var consumer = new QueueingBasicConsumer( channel );
+            channel.BasicConsume( queue: queueName, noAck: true, consumer: consumer );
 
-                var consumer = new QueueingBasicConsumer(channel);
-                channel.BasicConsume(queueName, true, consumer);
-
-                while (true)
-                {
-                    var ea = (BasicDeliverEventArgs)consumer.Queue.Dequeue();
-                    var body = ea.Body;
-                    var message = Encoding.UTF8.GetString(body);
-                    var routingKey = ea.RoutingKey;
-                    Console.WriteLine(" [x] Received '{0}':'{1}'",
-                                      routingKey, message);
-                }
+            while( true )
+            {
+                var ea = (BasicDeliverEventArgs)consumer.Queue.Dequeue();
+                var body = ea.Body;
+                var message = Encoding.UTF8.GetString( body );
+                var routingKey = ea.RoutingKey;
+                Console.WriteLine( " [x] Received '{0}':'{1}'", routingKey, message );
             }
         }
     }
