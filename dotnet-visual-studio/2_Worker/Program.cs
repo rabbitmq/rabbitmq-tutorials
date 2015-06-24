@@ -12,11 +12,11 @@ class Program
         using( var connection = factory.CreateConnection() )
         using( var channel = connection.CreateModel() )
         {
-            channel.QueueDeclare( "task_queue", true, false, false, null );
+            channel.QueueDeclare( queue: "task_queue", durable: true, exclusive: false, autoDelete: false, arguments: null );
 
-            channel.BasicQos( 0, 1, false );
+            channel.BasicQos( prefetchSize: 0, prefetchCount: 1, global: false );
             var consumer = new QueueingBasicConsumer( channel );
-            channel.BasicConsume( "task_queue", false, consumer );
+            channel.BasicConsume( queue: "task_queue", noAck: false, consumer: consumer );
 
             Console.WriteLine( " [*] Waiting for messages. To exit press CTRL+C" );
             while( true )
@@ -32,7 +32,7 @@ class Program
 
                 Console.WriteLine( " [x] Done" );
 
-                channel.BasicAck( ea.DeliveryTag, false );
+                channel.BasicAck( deliveryTag: ea.DeliveryTag, multiple: false );
             }
         }
     }

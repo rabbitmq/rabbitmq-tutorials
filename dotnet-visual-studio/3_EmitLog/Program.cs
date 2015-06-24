@@ -10,11 +10,11 @@ class Program
         using( var connection = factory.CreateConnection() )
         using( var channel = connection.CreateModel() )
         {
-            channel.ExchangeDeclare( "logs", "fanout" );
+            channel.ExchangeDeclare( exchange: "logs", type: "fanout" );
 
             var message = GetMessage( args );
             var body = Encoding.UTF8.GetBytes( message );
-            channel.BasicPublish( "logs", "", null, body );
+            channel.BasicPublish( exchange: "logs", routingKey: "", basicProperties: null, body: body );
             Console.WriteLine( " [x] Sent {0}", message );
         }
 

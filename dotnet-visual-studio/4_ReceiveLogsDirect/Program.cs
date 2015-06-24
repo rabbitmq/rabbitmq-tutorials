@@ -11,7 +11,7 @@ class Program
         using( var connection = factory.CreateConnection() )
         using( var channel = connection.CreateModel() )
         {
-            channel.ExchangeDeclare( "direct_logs", "direct" );
+            channel.ExchangeDeclare( exchange: "direct_logs", type: "direct" );
             var queueName = channel.QueueDeclare().QueueName;
 
             if( args.Length < 1 )
@@ -25,13 +25,13 @@ class Program
 
             foreach( var severity in args )
             {
-                channel.QueueBind( queueName, "direct_logs", severity );
+                channel.QueueBind( queue: queueName, exchange: "direct_logs", routingKey: severity );
             }
 
             Console.WriteLine( " [*] Waiting for messages. To exit press CTRL+C" );
 
             var consumer = new QueueingBasicConsumer( channel );
-            channel.BasicConsume( queueName, true, consumer );
+            channel.BasicConsume( queue: queueName, noAck: true, consumer: consumer );
 
             while( true )
             {

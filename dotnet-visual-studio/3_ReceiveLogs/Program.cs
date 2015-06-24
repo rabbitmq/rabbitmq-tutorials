@@ -11,13 +11,13 @@ class Program
         using( var connection = factory.CreateConnection() )
         using( var channel = connection.CreateModel() )
         {
-            channel.ExchangeDeclare( "logs", "fanout" );
+            channel.ExchangeDeclare( exchange: "logs", type: "fanout" );
 
             var queueName = channel.QueueDeclare().QueueName;
 
-            channel.QueueBind( queueName, "logs", "" );
+            channel.QueueBind( queue: queueName, exchange: "logs", routingKey: "" );
             var consumer = new QueueingBasicConsumer( channel );
-            channel.BasicConsume( queueName, true, consumer );
+            channel.BasicConsume( queue: queueName, noAck: true, consumer: consumer );
 
             Console.WriteLine( " [*] Waiting for logs. To exit press CTRL+C" );
             while( true )

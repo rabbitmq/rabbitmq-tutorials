@@ -10,7 +10,7 @@ class Program
         using( var connection = factory.CreateConnection() )
         using( var channel = connection.CreateModel() )
         {
-            channel.QueueDeclare( "task_queue", true, false, false, null );
+            channel.QueueDeclare( queue: "task_queue", durable: true, exclusive: false, autoDelete: false, arguments: null );
 
             var message = GetMessage( args );
             var body = Encoding.UTF8.GetBytes( message );
@@ -18,7 +18,7 @@ class Program
             var properties = channel.CreateBasicProperties();
             properties.SetPersistent( true );
 
-            channel.BasicPublish( "", "task_queue", properties, body );
+            channel.BasicPublish(exchange: "", routingKey: "task_queue", basicProperties: properties, body: body );
             Console.WriteLine( " [x] Sent {0}", message );
         }
 
