@@ -20,7 +20,7 @@ class RPCClient
         channel = connection.CreateModel();
         replyQueueName = channel.QueueDeclare().QueueName;
         consumer = new QueueingBasicConsumer( channel );
-        channel.BasicConsume( replyQueueName, true, consumer );
+        channel.BasicConsume( queue: replyQueueName, noAck: true, consumer: consumer );
     }
 
     public string Call( string message )
@@ -31,7 +31,7 @@ class RPCClient
         props.CorrelationId = corrId;
 
         var messageBytes = Encoding.UTF8.GetBytes( message );
-        channel.BasicPublish( "", "rpc_queue", props, messageBytes );
+        channel.BasicPublish( exchange: "", routingKey: "rpc_queue", basicProperties: props, body: messageBytes );
 
         while( true )
         {

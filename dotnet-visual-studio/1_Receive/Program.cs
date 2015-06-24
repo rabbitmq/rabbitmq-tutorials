@@ -11,10 +11,10 @@ class Program
         using( var connection = factory.CreateConnection() )
         using( var channel = connection.CreateModel() )
         {
-            channel.QueueDeclare( "hello", false, false, false, null );
+            channel.QueueDeclare( queue: "hello", durable: false, exclusive: false, autoDelete: false, arguments: null);
 
             var consumer = new QueueingBasicConsumer( channel );
-            channel.BasicConsume( "hello", true, consumer );
+            channel.BasicConsume( queue: "hello", noAck: true, consumer: consumer );
 
             Console.WriteLine( " [*] Waiting for messages. To exit press CTRL+C" );
             while( true )

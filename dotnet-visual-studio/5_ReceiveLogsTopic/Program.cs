@@ -11,7 +11,7 @@ class Program
         using( var connection = factory.CreateConnection() )
         using( var channel = connection.CreateModel() )
         {
-            channel.ExchangeDeclare( "topic_logs", "topic" );
+            channel.ExchangeDeclare( exchange: "topic_logs", type: "topic" );
             var queueName = channel.QueueDeclare().QueueName;
 
             if( args.Length < 1 )
@@ -25,13 +25,13 @@ class Program
 
             foreach( var bindingKey in args )
             {
-                channel.QueueBind( queueName, "topic_logs", bindingKey );
+                channel.QueueBind( queue: queueName, exchange: "topic_logs", routingKey: bindingKey );
             }
 
             Console.WriteLine( " [*] Waiting for messages. To exit press CTRL+C" );
 
             var consumer = new QueueingBasicConsumer( channel );
-            channel.BasicConsume( queueName, true, consumer );
+            channel.BasicConsume( queue: queueName, noAck: true, consumer: consumer );
 
             while( true )
             {

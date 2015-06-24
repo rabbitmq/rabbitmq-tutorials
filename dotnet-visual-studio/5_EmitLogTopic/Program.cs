@@ -11,7 +11,7 @@ class Program
         using( var connection = factory.CreateConnection() )
         using( var channel = connection.CreateModel() )
         {
-            channel.ExchangeDeclare( "topic_logs", "topic" );
+            channel.ExchangeDeclare( exchange: "topic_logs", type: "topic" );
 
             var routingKey = ( args.Length > 0 ) ? args[0] : "anonymous.info";
             var message = ( args.Length > 1 ) ? string.Join( " ", args.Skip( 1 ).ToArray() ) : "Hello World!";
