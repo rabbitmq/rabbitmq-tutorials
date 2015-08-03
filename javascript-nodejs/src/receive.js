@@ -2,20 +2,24 @@
 
 var amqp = require('amqplib');
 
-amqp.connect('amqp://localhost').then(function(conn) {
+var conn = amqp.connect('amqp://localhost');
+conn.then(createChannel).then(null, console.warn);
+
+function createChannel(conn) {
   process.once('SIGINT', function() { conn.close(); });
-  return conn.createChannel().then(function(ch) {
+  return conn.createChannel().then(consume);
+}
 
-    var ok = ch.assertQueue('hello', {durable: false});
+function consume(ch) {
+  var ok = ch.assertQueue('hello', {durable: false});
 
-    ok = ok.then(function(_qok) {
-      return ch.consume('hello', function(msg) {
-        console.log(" [x] Received '%s'", msg.content.toString());
-      }, {noAck: true});
-    });
-
-    return ok.then(function(_consumeOk) {
-      console.log(' [*] Waiting for messages. To exit press CTRL+C');
-    });
+  ok = ok.then(function(_ignore) {
+    return ch.consume('hello', function(msg) {
+      console.log(" [x] Received '%s'", msg.content.toString());
+    }, {noAck: true});
   });
-}).then(null, console.warn);
+
+  return ok.then(function(_consumeOk) {
+    console.log(' [*] Waiting for messages. To exit press CTRL+C');
+  });
+}
