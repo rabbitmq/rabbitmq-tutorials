@@ -4,7 +4,7 @@ var amqp = require('amqplib');
 var when = require('when');
 
 var conn = amqp.connect('amqp://localhost');
-var ch = conn.then(createChannel).then(null, console.warn);
+conn.then(createChannel).then(null, console.warn);
 
 function createChannel(conn) {
   return when(
