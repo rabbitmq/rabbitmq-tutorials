@@ -1,17 +1,16 @@
 #!/usr/bin/env node
 
 var amqp = require('amqplib');
-
 var conn = amqp.connect('amqp://localhost')
-
 var ch = conn.then(createChannel).then(null, console.warn);
 
 ch.then(function(ch) {
-  var ok = ch.assertExchange('logs', 'fanout', {durable: false});
-  ok = ok.then(function() {
+  var x = ch.assertExchange('logs', 'fanout', {durable: false});
+  var q = x.then(function() {
     return ch.assertQueue('', {exclusive: true});
   });
-  ok = ok.then(function(qok) {
+
+  ok = q.then(function(qok) {
     return ch.bindQueue(qok.queue, 'logs', '').then(function() {
       return qok.queue;
     });
