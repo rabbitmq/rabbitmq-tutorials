@@ -14,10 +14,11 @@ The following ports are available:
  * [Haskell](./haskell)
  * [JavaScript (with Node and amqp-node)](https://github.com/squaremo/amqp.node/tree/master/examples/tutorials)
  * [Java](./java)
- * [PHP](./php)
+ * [Java (with IntelliJ IDEA)](./java-idea)
+ * [PHP (with php-amqplib)](./php)
+ * [PHP (with php-amqp)](./php-amqp)
  * [Perl](./perl)
  * [Python (with Pika)](./python)
- * [Python (with Puka)](./python-puka)
  * [Ruby (with Bunny)](./ruby)
 
 ## License
