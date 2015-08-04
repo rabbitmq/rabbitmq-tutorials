@@ -13,9 +13,10 @@ function createChannel(conn) {
 function logMessage(ch) {
   var ex = 'logs';
   var ok = ch.assertExchange(ex, 'fanout', {durable: false})
-  var msg = process.argv.slice(2).join(' ') || 'Hello World!';
 
   return ok.then(function() {
+    var msg = process.argv.slice(2).join(' ') || 'Hello World!';
+
     ch.publish(ex, '', new Buffer(msg));
     console.log(" [x] Sent '%s'", msg);
     return ch.close();
