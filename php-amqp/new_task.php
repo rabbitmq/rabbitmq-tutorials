@@ -1,8 +1,4 @@
-#!/usr/bin/env php
 <?php
-/**
- @author Chimdi Azubuike <me@chimdi.com>
-*/
 
 //Establish connection to AMQP
 $connection = new AMQPConnection();

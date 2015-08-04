@@ -1,9 +1,5 @@
-#!/usr/bin/env php
 <?php
-/**
- rpc_client.php 
- @author: Chimdi Azubuike <me@chimdi.com>
- */
+
 
 class FibonacciRpcClient {
 	private $connection;

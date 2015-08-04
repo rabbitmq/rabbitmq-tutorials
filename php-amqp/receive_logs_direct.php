@@ -1,9 +1,4 @@
-#!/usr/bin/env php
 <?php
-/**
- receive_logs_direct.php 
- @author: Chimdi Azubuike <me@chimdi.com>
- */
 
 //Establish Connection
 $connection = new AMQPConnection();

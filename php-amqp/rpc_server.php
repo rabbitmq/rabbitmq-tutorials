@@ -1,9 +1,5 @@
-#!/usr/bin/env php
 <?php
-/**
- rpc_server.php 
- @author: Chimdi Azubuike <me@chimdi.com>
- */
+
 
 function fib($n) {
 	if($n == 0)
