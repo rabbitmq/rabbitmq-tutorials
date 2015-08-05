@@ -1,25 +1,15 @@
 #!/usr/bin/env node
 
-var amqp = require('amqplib');
+var amqp = require('amqplib/callback_api');
 
-var conn = amqp.connect('amqp://localhost');
-conn.then(createChannel).then(null, console.warn);
+amqp.connect('amqp://localhost', function(err, conn) {
+  conn.createChannel(function(err, ch) {
+    var q = 'hello';
 
-function createChannel(conn) {
-  process.once('SIGINT', function() { conn.close(); });
-  return conn.createChannel().then(consume);
-}
-
-function consume(ch) {
-  var ok = ch.assertQueue('hello', {durable: false});
-
-  ok = ok.then(function(_ignore) {
-    return ch.consume('hello', function(msg) {
-      console.log(" [x] Received '%s'", msg.content.toString());
-    }, {noAck: true});
+    ch.assertQueue(q, {durable: false});
+    console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
+    ch.consume(q, function(msg) {
+        console.log(" [x] Received %s", msg.content.toString());
+      }, {noAck: true});
   });
-
-  return ok.then(function(_consumeOk) {
-    console.log(' [*] Waiting for messages. To exit press CTRL+C');
-  });
-}
+});
