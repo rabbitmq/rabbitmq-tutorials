@@ -1,45 +1,34 @@
 #!/usr/bin/env node
 
-var amqp = require('amqplib');
-var when = require('when');
 
-var conn = amqp.connect('amqp://localhost')
-conn.then(createChannel).then(null, console.warn);
+var amqp = require('amqplib/callback_api');
 
-function createChannel(conn) {
-  return when(conn.createChannel().then(requestFib)).ensure(function() { conn.close(); });
+var args = process.argv.slice(2);
+
+if (args.length == 0) {
+  console.log("Usage: rpc_client.js num");
+  process.exit(1);
 }
 
-function requestFib(ch) {
-  var answer = when.defer();
-  var correlationId = generateUuid();
+amqp.connect('amqp://localhost', function(err, conn) {
+  conn.createChannel(function(err, ch) {
+    ch.assertQueue('', {exclusive: true}, function(err, q) {
+      var corr = generateUuid();
+      var num = parseInt(args[0]);
 
-  function maybeAnswer(msg) {
-    if (msg.properties.correlationId === correlationId) {
-      answer.resolve(msg.content.toString());
-    }
-  }
+      console.log(' [x] Requesting fib(%d)', num);
 
-  var ok = ch.assertQueue('', {exclusive: true})
-    .then(function(qok) { return qok.queue; });
+      ch.consume(q.queue, function(msg) {
+        console.log(' [.] Got %s', msg.content.toString());
+        setTimeout(function() { conn.close(); process.exit(0) }, 500);
+      }, {noAck: true});
 
-  ok = ok.then(function(queue) {
-    return ch.consume(queue, maybeAnswer, {noAck: true})
-      .then(function() { return queue; });
-  });
-
-  ok = ok.then(function(queue) {
-    console.log(' [x] Requesting fib(30)');
-    ch.sendToQueue('rpc_queue', new Buffer('30'), {
-      correlationId: correlationId, replyTo: queue
+      ch.sendToQueue('rpc_queue',
+        new Buffer(num.toString()),
+        { correlationId: corr, replyTo: q.queue });
     });
-    return answer.promise;
   });
-
-  return ok.then(function(fibN) {
-    console.log(' [.] Got %d', fibN);
-  });
-}
+});
 
 function generateUuid() {
   return Math.random().toString() + Math.random().toString() + Math.random().toString();
