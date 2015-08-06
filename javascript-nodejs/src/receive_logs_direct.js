@@ -18,7 +18,7 @@ amqp.connect('amqp://localhost', function(err, conn) {
     ch.assertQueue('', {exclusive: true}, function(err, q) {
       console.log(' [*] Waiting for logs. To exit press CTRL+C');
 
-      args.map(function(severity) {
+      args.forEach(function(severity) {
         ch.bindQueue(q.queue, ex, severity);
       });
 
