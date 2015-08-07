@@ -9,7 +9,7 @@ amqp.connect('amqp://localhost', function(err, conn) {
     ch.assertQueue(q, {durable: false});
     console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
     ch.consume(q, function(msg) {
-        console.log(" [x] Received %s", msg.content.toString());
-      }, {noAck: true});
+      console.log(" [x] Received %s", msg.content.toString());
+    }, {noAck: true});
   });
 });
