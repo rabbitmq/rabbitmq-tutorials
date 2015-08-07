@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "RabbitMQ amqp.node tutorial ",
   "dependencies": {
-    "amqplib": "^0.3.2",
-    "when": "^3.6.4"
+    "amqplib": "^0.3.2"
   }
 }
