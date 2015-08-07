@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-
 var amqp = require('amqplib/callback_api');
 
 var args = process.argv.slice(2);
@@ -33,5 +32,7 @@ amqp.connect('amqp://localhost', function(err, conn) {
 });
 
 function generateUuid() {
-  return Math.random().toString() + Math.random().toString() + Math.random().toString();
+  return Math.random().toString() +
+         Math.random().toString() +
+         Math.random().toString();
 }
