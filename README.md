@@ -12,7 +12,7 @@ The following ports are available:
  * [Erlang](./erlang)
  * [Go](./go)
  * [Haskell](./haskell)
- * [JavaScript (with Node and amqp-node)](https://github.com/squaremo/amqp.node/tree/master/examples/tutorials)
+ * [JavaScript (with Node and amqp-node)](./javascript-nodejs)
  * [Java](./java)
  * [Java (with IntelliJ IDEA)](./java-idea)
  * [PHP (with php-amqplib)](./php)
