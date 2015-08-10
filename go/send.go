@@ -43,5 +43,6 @@ func main() {
 			ContentType: "text/plain",
 			Body:        []byte(body),
 		})
+  log.Printf(" [x] Sent %s", body)
 	failOnError(err, "Failed to publish a message")
 }
