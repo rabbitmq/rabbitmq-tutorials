@@ -15,3 +15,5 @@ python-puka/venv
 ruby*/gems/
 venv/*
 ruby*/rubygems*
+
+java-idea/.idea/workspace.xml
