@@ -19,8 +19,8 @@ you may need to add `;C:\Windows\Microsoft.NET\Framework\v4.0.30319` (change .NE
 to fit your installation) to your `PATH`.
 
 We're using the command line (start->run cmd.exe) to
-compile and run the code. Alternatively you could use Visual Studio, but
-due to the nature of examples we prefer the command line.
+compile and run the code. Alternatively you could [use Visual Studio](https://github.com/rabbitmq/rabbitmq-tutorials/tree/master/dotnet-visual-studio) and [NuGet package](https://www.nuget.org/packages/RabbitMQ.Client/), but
+this set of tutorials assumes the command line.
 
 ### Requirements on Linux
 
