@@ -7,9 +7,9 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 ## Requirements
 
-To run this code you need `pika` library version 0.9.5. To install it run
+To run this code you need `pika` library version 0.10.0 To install it run
 
-    pip install pika==0.9.5
+    pip install pika==0.10.0
 
 You may first need to run
 
