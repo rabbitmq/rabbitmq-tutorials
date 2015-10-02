@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/vendor/autoload.php';
-use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class FibonacciRpcClient {
@@ -12,7 +12,7 @@ class FibonacciRpcClient {
 	private $corr_id;
 
 	public function __construct() {
-		$this->connection = new AMQPConnection(
+		$this->connection = new AMQPStreamConnection(
 			'localhost', 5672, 'guest', 'guest');
 		$this->channel = $this->connection->channel();
 		list($this->callback_queue, ,) = $this->channel->queue_declare(
