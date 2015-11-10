@@ -40,6 +40,7 @@ Code examples are executed via `lein run`:
 
 [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-java.html)
 
-    TBD
+    lein run -m rabbitmq.tutorials.rpc-server
+    lein run -m rabbitmq.tutorials.rpc-client
 
 To learn more, visit [Langohr documentation](http://clojurerabbitmq.info) site.
