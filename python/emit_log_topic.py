@@ -14,5 +14,5 @@ message = ' '.join(sys.argv[2:]) or 'Hello World!'
 channel.basic_publish(exchange='topic_logs',
                       routing_key=routing_key,
                       body=message)
-print " [x] Sent %r:%r" % (routing_key, message)
+print(" [x] Sent %r:%r" % (routing_key, message))
 connection.close()
