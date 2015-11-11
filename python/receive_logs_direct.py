@@ -14,7 +14,7 @@ queue_name = result.method.queue
 
 severities = sys.argv[1:]
 if not severities:
-    print >> sys.stderr, "Usage: %s [info] [warning] [error]" % (sys.argv[0],)
+    sys.stderr.write("Usage: %s [info] [warning] [error]\n" % sys.argv[0])
     sys.exit(1)
 
 for severity in severities:
@@ -22,10 +22,10 @@ for severity in severities:
                        queue=queue_name,
                        routing_key=severity)
 
-print ' [*] Waiting for logs. To exit press CTRL+C'
+print(' [*] Waiting for logs. To exit press CTRL+C')
 
 def callback(ch, method, properties, body):
-    print " [x] %r:%r" % (method.routing_key, body,)
+    print(" [x] %r:%r" % (method.routing_key, body))
 
 channel.basic_consume(callback,
                       queue=queue_name,
