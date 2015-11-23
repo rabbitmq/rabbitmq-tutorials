@@ -31,7 +31,7 @@ all:
 #     make
 #     make install
 #
-setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok python-puka/.ok clojure/.ok
+setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok clojure/.ok
 
 setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok php/.ok clojure/.ok
 
@@ -127,13 +127,6 @@ ruby-amqp/.ok:
 clean::
 	(cd ruby-amqp && \
 		rm -rf .ok gems)
-
-python-puka/.ok:
-	(cd python-puka && \
-		virtualenv venv && \
-		./venv/bin/easy_install pip && \
-		./venv/bin/pip install puka && \
-		touch .ok)
 
 perl/.ok:
 	(cd perl && \
