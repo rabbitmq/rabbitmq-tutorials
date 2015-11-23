@@ -31,7 +31,7 @@ all:
 #     make
 #     make install
 #
-setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby-amqp/.ok ruby/.ok clojure/.ok
+setup: dotnet/.ok erlang/.ok java/.ok python/.ok php/.ok ruby/.ok clojure/.ok
 
 setup-travisci: dotnet/.ok erlang/.ok java/.ok python/.ok ruby/.ok php/.ok clojure/.ok
 
@@ -120,10 +120,6 @@ clean::
 	(cd ruby && \
 		rm -rf .ok gems)
 
-ruby-amqp/.ok:
-	(cd ruby-amqp && \
-		GEM_HOME=gems/gems RUBYLIB=gems/lib $(GEM) install amqp --no-ri --no-rdoc && \
-		touch .ok)
 clean::
 	(cd ruby-amqp && \
 		rm -rf .ok gems)
