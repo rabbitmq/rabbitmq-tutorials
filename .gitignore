@@ -16,4 +16,5 @@ ruby*/gems/
 venv/*
 ruby*/rubygems*
 
-java-idea/.idea/workspace.xml
+java*/.idea/workspace.xml
+java*/.idea/encodings.xml
