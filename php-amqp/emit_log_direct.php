@@ -12,8 +12,7 @@ $connection->connect();
 $channel = new AMQPChannel($connection);
 
 
-$routing_key = $severity = $argv[1];
-if(empty($severity)) $severity = 'info';
+$routing_key = $severity = isset($argv[1]) && !empty($argv[1]) ? $argv[1] : 'info';
 
 $message = implode(' ',array_slice($argv, 2));
 if(empty($message)) $message = 'Hello World!';
