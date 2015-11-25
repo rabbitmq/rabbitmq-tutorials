@@ -15,7 +15,7 @@ $routing_key = 'task_queue';
 
 $callback_func = function(AMQPEnvelope $message, AMQPQueue $q) use (&$max_jobs) {
 	echo " [x] Received: ", $message->getBody(), PHP_EOL;
-	sleep(1);
+	sleep(sleep(substr_count($message->getBody(), '.')));
 	echo " [X] Done", PHP_EOL;
 	$q->ack($message->getDeliveryTag());
 };

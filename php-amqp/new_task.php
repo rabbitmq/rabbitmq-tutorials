@@ -35,6 +35,6 @@ if(empty($message))
 $exchange = new AMQPExchange($channel);
 $exchange->publish($message, $routing_key);
 
-echo " [x] Sent {$data}", PHP_EOL;
+echo " [x] Sent {$message}", PHP_EOL;
 
 $connection->disconnect();
