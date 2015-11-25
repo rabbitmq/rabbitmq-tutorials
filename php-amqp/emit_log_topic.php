@@ -12,7 +12,7 @@ $connection->connect();
 $channel = new AMQPChannel($connection);
 
 
-$routing_key = (isset($argv[1]))? $argv[1] : 'anonymous.info';
+$routing_key = isset($argv[1]) && !empty($argv[1]) ? $argv[1] : 'anonymous.info';
 
 $message = implode(' ',array_slice($argv, 2));
 if(empty($message)) $message = "Hello World!";
@@ -28,6 +28,6 @@ try {
 
 	$exchange->publish($message, $routing_key);
 	echo " [x] Sent {$routing_key}:{$message}", PHP_EOL;
-} catch(Exception $ex) { 
+} catch(Exception $ex) {
 	print_r($ex);
 }
