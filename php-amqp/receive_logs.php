@@ -40,7 +40,7 @@ try {
 	print_r($ex);
 } catch(AMQPExchangeException $ex) {
 	print_r($ex);
-} catch(AMQPChanncelException $ex) {
+} catch(AMQPChannelException $ex) {
 	print_r($ex);
 } catch(AMQPConnectionException $ex) {
 	print_r($ex);
