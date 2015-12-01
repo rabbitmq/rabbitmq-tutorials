@@ -10,42 +10,34 @@ To successfully use the examples you will need a running RabbitMQ server.
 We're using the [Github Atom](atom.io) or [Visual Studio Code](code.visualstudio.com)
 Download and install one of them on your computer.
 
-Additionally, if you install **ionide* packages**
+Install **ionide* packages**:
+Note that you can use Ctrl+Shift+P and `FSI: Send File` instead of working with console
 
-- You'll don't need to donwload the .NET RabbitMQ.Client manually
-- You can use Ctrl+Shift+P and FSI: Send File instead of working with console
-
-Therefore open the Command Palette in you editor with Ctrl+Shift+P or Cmd+Shift+P and execute following commands:
+Open the Command Palette in you editor with Ctrl+Shift+P or Cmd+Shift+P and execute following commands:
 
     Paket: Init
     Paket: Install
 
 See more about F# [Paket Manager](http://fsprojects.github.io/Paket)
 
-
-
 ### Requirements on Windows
 
-
-You need the RabbitMQ dotnet client. Skip it if using [Paket](http://fsprojects.github.io/Paket)
-
-* Download [RabbitMQ .NET client](https://github.com/rabbitmq/rabbitmq-server/releases/download/rabbitmq_v3_5_4/rabbitmq-dotnet-client-3.5.4-dotnet-4.0.zip)
-* Extract it and copy "RabbitMQ.Client.dll" to your working folder.
-
-You also need to ensure your system can find the F# Interactive `fsi.exe`,
+You need to ensure your system can find the F# Interactive `fsi.exe`,
 you may need to add `c:\Program Files (x86)\Microsoft SDKs\F#\<version>\Framework\<version>\` (change .NET version
 to fit your installation) to your `PATH`.
 
 ### Requirements on Linux
 
-You need Mono and RabbitMQ dotnet client. Skip it if using [Paket](http://fsprojects.github.io/Paket)
+    sudo apt-get install mono-complete
 
-    sudo apt-get install mono-devel
-    mkdir lib
-    cd lib
-    wget https://github.com/rabbitmq/rabbitmq-server/releases/download/rabbitmq_v3_5_4/rabbitmq-dotnet-client-3.5.4-dotnet-4.0.zip
-    unzip rabbitmq-dotnet-client-3.5.4-dotnet-4.0.zip
-    cd ..
+### Mac OS X
+
+If you use [Homebrew](http://brew.sh):
+
+    brew update
+    brew install mono
+    
+Otherwise download mono from [here](http://www.mono-project.com/download/) and follow installation instructions.
 
 ## Code
 
@@ -56,20 +48,19 @@ You need Mono and RabbitMQ dotnet client. Skip it if using [Paket](http://fsproj
     fsi 1_Send.fsx
     fsi 1_Receive.fsx
 
-##### Linux
+##### Linux/Mas OS
 
     fsharpi 1_Send.fsx
     fsharpi 1_Receive.fsx
 
 #### [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-dotnet.html)
 
-
 ##### Windows
 
     fsi 2_NewTask.fsx
     fsi 2_Worker.fsx
 
-##### Linux
+##### Linux/Mas OS
 
     fsharpi 2_NewTask.fsx
     fsharpi 2_Worker.fsx
@@ -81,7 +72,7 @@ You need Mono and RabbitMQ dotnet client. Skip it if using [Paket](http://fsproj
     fsi 3_ReceiveLogs.fsx
     fsi 3_EmitLog.fsx
 
-##### Linux
+##### Linux/Mas OS
 
     fsharpi 3_ReceiveLogs.fsx
     fsharpi 3_EmitLog.fsx
@@ -93,7 +84,7 @@ You need Mono and RabbitMQ dotnet client. Skip it if using [Paket](http://fsproj
     fsi 4_ReceiveLogsDirect.fsx
     fsi 4_EmitLogDirect.fsx
 
-##### Linux
+##### Linux/Mas OS
 
     fsharpi 4_ReceiveLogsDirect.fsx
     fsharpi 4_EmitLogDirect.fsx
@@ -105,7 +96,7 @@ You need Mono and RabbitMQ dotnet client. Skip it if using [Paket](http://fsproj
     fsi 5_ReceiveLogsTopic.fsx
     fsi 5_EmitLogTopic.fsx
 
-##### Linux
+##### Linux/Mas OS
 
     fsharpi 5_ReceiveLogsTopic.fsx
     fsharpi 5_EmitLogTopic.fsx
@@ -117,7 +108,7 @@ You need Mono and RabbitMQ dotnet client. Skip it if using [Paket](http://fsproj
     fsi 6_RPCServer.exe
     fsi 6_RPCClient.exe
 
-##### Linux
+##### Linux/Mas OS
 
     fsharpi 6_RPCServer.exe
     fsharpi 6_RPCClient.exe

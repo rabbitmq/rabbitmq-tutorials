@@ -10,6 +10,7 @@ The following ports are available:
  * [C# (with Visual Studio)](./dotnet-visual-studio)
  * [Clojure](./clojure)
  * [Erlang](./erlang)
+ * [F#](./fsharp)
  * [Go](./go)
  * [Haskell](./haskell)
  * [JavaScript (with Node and amqp-node)](./javascript-nodejs) (using callbacks)
