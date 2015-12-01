@@ -30,7 +30,7 @@ to fit your installation) to your `PATH`.
 
     sudo apt-get install mono-complete
 
-### Mac OS X
+### Requirements on Mac OS X
 
 If you use [Homebrew](http://brew.sh):
 
