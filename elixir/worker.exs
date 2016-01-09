@@ -22,7 +22,7 @@ end
 AMQP.Queue.declare(channel, "task_queue", durable: true)
 AMQP.Basic.qos(channel, prefetch_count: 1)
 
-AMQP.Basic.consume(channel, "hello")
+AMQP.Basic.consume(channel, "task_queue")
 IO.puts " [*] Waiting for messages. To exit press CTRL+C, CTRL+C"
 
 Worker.wait_for_messages(channel)
