@@ -26,17 +26,27 @@ sub fibonacci_rpc($) {
     my $result = $channel->declare_queue(exclusive => 1);
     my $callback_queue = $result->{method_frame}->{queue};
 
-    sub on_response {
-        my $var = shift;
-        my $body = $var->{body}->{payload};
-        if ($corr_id eq $var->{header}->{correlation_id}) {
-            $cv->send($body);
-        }
+    sub on_response_cb {
+        my %a   = (
+            condvar         => undef,
+            correlation_id  => undef,
+            @_
+        );
+        return  sub {
+            my $var = shift;
+            my $body = $var->{body}->{payload};
+            if ($a{correlation_id} eq $var->{header}->{correlation_id}) {
+                $a{condvar}->send($body);
+            }
+        };
     }
 
     $channel->consume(
         no_ack => 1,
-        on_consume => \&on_response,
+        on_consume => on_response_cb(
+            condvar         => $cv,
+            correlation_id  => $corr_id,
+        ),
     );
 
     $channel->publish(
@@ -55,3 +65,6 @@ print " [x] Requesting fib(30)\n";
 my $response = fibonacci_rpc(30);
 print " [.] Got $response\n";
 
+print " [x] Requesting fib(32)\n";
+$response = fibonacci_rpc(32);
+print " [.] Got $response\n";
