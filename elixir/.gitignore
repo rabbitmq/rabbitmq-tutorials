@@ -1,0 +1,4 @@
+.mix_tasks
+mix.lock
+/_build
+/deps
