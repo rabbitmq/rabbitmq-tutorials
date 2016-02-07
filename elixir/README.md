@@ -11,6 +11,11 @@ which should include [Mix, the Elixir build tool](http://elixir-lang.org/docs/st
 These tutorials use [Elixir AMQP 0-9-1 client](https://github.com/pma/amqp) built
 on top of the official [RabbitMQ Erlang client](https://www.rabbitmq.com/erlang-client-user-guide.html).
 
+To install dependencies with Mix, run
+
+    mix deps.get
+    mix deps.compile
+
 ## Code
 
 To run the examples, use `mix run`.
