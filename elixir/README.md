@@ -27,23 +27,23 @@ Tutorial one: "Hello World!":
 
 Tutorial two: Work Queues
 
-   mix run worker.exs
-   mix run new_task.exs
+    mix run worker.exs
+    mix run new_task.exs
 
 Tutorial three: Publish/Subscribe
 
-   mix run receive_logs.exs
-   mix run emit_log.exs
+    mix run receive_logs.exs
+    mix run emit_log.exs
 
 Tutorial four: Routing
 
-   mix run receive_logs_direct.exs --info --warning
-   mix run emit_log_direct.exs --info "A message"
+    mix run receive_logs_direct.exs --info --warning
+    mix run emit_log_direct.exs --info "A message"
 
 Tutorial five: Topics
 
-   mix run receive_logs_topic.exs "info.*" "warn.*"
-   mix run emit_log_topic.exs "info.connections" "Connected"
+    mix run receive_logs_topic.exs "info.*" "warn.*"
+    mix run emit_log_topic.exs "info.connections" "Connected"
 
 Tutorial six: RPC (Request/Response)
 
