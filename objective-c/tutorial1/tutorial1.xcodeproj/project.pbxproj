@@ -13,8 +13,8 @@
 		AE40C7391CB2719500CC7B97 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE40C7371CB2719500CC7B97 /* Main.storyboard */; };
 		AE40C73B1CB2719500CC7B97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE40C73A1CB2719500CC7B97 /* Assets.xcassets */; };
 		AE40C73E1CB2719500CC7B97 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE40C73C1CB2719500CC7B97 /* LaunchScreen.storyboard */; };
-		AE40C7531CB275AA00CC7B97 /* RMQClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE40C7521CB275AA00CC7B97 /* RMQClient.framework */; };
-		AE40C7541CB276B100CC7B97 /* RMQClient.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AE40C7521CB275AA00CC7B97 /* RMQClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AE40C7931CB504BF00CC7B97 /* RMQClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE40C7921CB504BF00CC7B97 /* RMQClient.framework */; };
+		AE40C7941CB504C700CC7B97 /* RMQClient.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AE40C7921CB504BF00CC7B97 /* RMQClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +24,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				AE40C7541CB276B100CC7B97 /* RMQClient.framework in CopyFiles */,
+				AE40C7941CB504C700CC7B97 /* RMQClient.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,7 +41,7 @@
 		AE40C73A1CB2719500CC7B97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AE40C73D1CB2719500CC7B97 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AE40C73F1CB2719500CC7B97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AE40C7521CB275AA00CC7B97 /* RMQClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RMQClient.framework; path = Carthage/Build/iOS/RMQClient.framework; sourceTree = "<group>"; };
+		AE40C7921CB504BF00CC7B97 /* RMQClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RMQClient.framework; path = Carthage/Build/iOS/RMQClient.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AE40C7531CB275AA00CC7B97 /* RMQClient.framework in Frameworks */,
+				AE40C7931CB504BF00CC7B97 /* RMQClient.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +59,7 @@
 		AE40C7221CB2719500CC7B97 = {
 			isa = PBXGroup;
 			children = (
-				AE40C7521CB275AA00CC7B97 /* RMQClient.framework */,
+				AE40C7921CB504BF00CC7B97 /* RMQClient.framework */,
 				AE40C72D1CB2719500CC7B97 /* tutorial1 */,
 				AE40C72C1CB2719500CC7B97 /* Products */,
 			);
@@ -329,6 +329,7 @@
 				AE40C7441CB2719500CC7B97 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
