@@ -13,10 +13,8 @@
 }
 
 - (void)send {
-    RMQConnection *conn = [RMQConnection new];
-
     NSLog(@"Attempting to connect to local RabbitMQ broker");
-
+    RMQConnection *conn = [RMQConnection new];
     NSError *error = NULL;
     [conn startWithError:&error];
     if (error) {
@@ -38,6 +36,7 @@
 }
 
 - (void)receive {
+    NSLog(@"Attempting to connect to local RabbitMQ broker");
     RMQConnection *conn = [RMQConnection new];
     NSError *error = NULL;
     [conn startWithError:&error];
@@ -55,11 +54,14 @@
 
     RMQQueue *q = [ch queue:@"hello"];
     NSLog(@"Waiting for messages.");
-    [q subscribe:^(id<RMQMessage> _Nonnull m) {
-        NSLog(@"Received %@", m.content);
-        [conn close];
-        exit(0);
+    [q subscribeWithError:&error handler:^(id<RMQMessage>  _Nonnull message) {
+        NSLog(@"Received %@", message.content);
     }];
+    if (error) {
+        NSLog(@"Error subscribing: %@", error);
+        [conn close];
+        exit(1);
+    }
 }
 
 @end
