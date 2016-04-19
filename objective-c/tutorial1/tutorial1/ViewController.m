@@ -8,60 +8,38 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self send];
     [self receive];
+    sleep(1);
+    [self send];
 }
 
 - (void)send {
     NSLog(@"Attempting to connect to local RabbitMQ broker");
-    RMQConnection *conn = [RMQConnection new];
-    NSError *error = NULL;
-    [conn startWithError:&error];
-    if (error) {
-        NSLog(@"Couldn't connect to local RabbitMQ broker: %@", error);
-        exit(1);
-    }
+    RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
+    [conn start];
 
-    id<RMQChannel> ch = [conn createChannelWithError:&error];
-    if (error) {
-        NSLog(@"Error creating channel: %@", error);
-        [conn close];
-        exit(1);
-    }
+    id<RMQChannel> ch = [conn createChannel];
 
     RMQQueue *q = [ch queue:@"hello"];
+
     [q publish:@"Hello World!"];
     NSLog(@"Sent 'Hello World!'");
+
     [conn close];
 }
 
 - (void)receive {
     NSLog(@"Attempting to connect to local RabbitMQ broker");
-    RMQConnection *conn = [RMQConnection new];
-    NSError *error = NULL;
-    [conn startWithError:&error];
-    if (error) {
-        NSLog(@"Couldn't connect to local RabbitMQ broker: %@", error);
-        exit(1);
-    }
+    RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
+    [conn start];
 
-    id<RMQChannel> ch = [conn createChannelWithError:&error];
-    if (error) {
-        NSLog(@"Error creating channel: %@", error);
-        [conn close];
-        exit(1);
-    }
+    id<RMQChannel> ch = [conn createChannel];
 
     RMQQueue *q = [ch queue:@"hello"];
     NSLog(@"Waiting for messages.");
-    [q subscribeWithError:&error handler:^(id<RMQMessage>  _Nonnull message) {
+    [q subscribe:^(id<RMQMessage>  _Nonnull message) {
         NSLog(@"Received %@", message.content);
     }];
-    if (error) {
-        NSLog(@"Error subscribing: %@", error);
-        [conn close];
-        exit(1);
-    }
 }
 
 @end
