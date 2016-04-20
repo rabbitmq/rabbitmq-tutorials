@@ -8,9 +8,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self receive];
-    sleep(1);
     [self send];
+    [self receive];
 }
 
 - (void)send {
