@@ -26,33 +26,13 @@
 
     RMQQueue *q = [ch queue:@"task_queue" options:RMQQueueDeclareDurable];
 
-    [ch.defaultExchange publish:msg routingKey:q.name];
+    [ch.defaultExchange publish:msg routingKey:q.name persistent:YES];
     NSLog(@"Sent %@", msg);
 
     [conn close];
 }
 
 - (void)workerNamed:(NSString *)name {
-    RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
-    [conn start];
-
-    id<RMQChannel> ch = [conn createChannel];
-
-    RMQQueue *q = [ch queue:@"task_queue" options:RMQQueueDeclareDurable];
-
-    [ch basicQos:@1 global:NO];
-    NSLog(@"%@: Waiting for messages", name);
-
-    [q subscribe:^(id<RMQMessage>  _Nonnull message) {
-        NSLog(@"%@: Received %@", name, message.content);
-        // imitate some work
-        unsigned int sleepTime = (unsigned int)[message.content componentsSeparatedByString:@"."].count - 1;
-        NSLog(@"%@: Sleeping for %u seconds", name, sleepTime);
-        sleep(sleepTime);
-    }];
-}
-
-- (void)workerWithManualAckNamed:(NSString *)name {
     RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
     [conn start];
 
