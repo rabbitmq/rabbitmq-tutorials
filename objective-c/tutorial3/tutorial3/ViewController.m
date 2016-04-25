@@ -1,11 +1,3 @@
-//
-//  ViewController.m
-//  tutorial3
-//
-//  Created by Pivotal on 25/04/2016.
-//  Copyright © 2016 RabbitMQ. All rights reserved.
-//
-
 #import "ViewController.h"
 @import RMQClient;
 
@@ -17,12 +9,42 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    [self receiveLogs];
+    [self receiveLogs];
+    sleep(1);
+    [self emitLog];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)emitLog {
+    RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
+    [conn start];
+
+    id<RMQChannel> ch = [conn createChannel];
+    RMQExchange *x = [ch fanout:@"logs" options:RMQExchangeDeclareNoOptions];
+
+    NSString *msg = @"Hello World!";
+
+    [x publish:msg];
+    NSLog(@"Sent %@", msg);
+
+    [conn close];
+}
+
+- (void)receiveLogs {
+    RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
+    [conn start];
+
+    id<RMQChannel> ch = [conn createChannel];
+    RMQExchange *x = [ch fanout:@"logs" options:RMQExchangeDeclareNoOptions];
+    RMQQueue *q = [ch queue:@"" options:RMQQueueDeclareExclusive];
+
+    [q bind:x];
+
+    NSLog(@"Waiting for logs.");
+
+    [q subscribe:^(RMQMessage * _Nonnull message) {
+        NSLog(@"Received %@", message);
+    }];
 }
 
 @end
