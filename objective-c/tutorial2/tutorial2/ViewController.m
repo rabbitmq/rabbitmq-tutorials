@@ -26,7 +26,7 @@
 
     RMQQueue *q = [ch queue:@"task_queue" options:RMQQueueDeclareDurable];
 
-    [q publish:msg];
+    [ch.defaultExchange publish:msg routingKey:q.name];
     NSLog(@"Sent %@", msg);
 
     [conn close];
