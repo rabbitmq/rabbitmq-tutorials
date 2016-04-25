@@ -21,7 +21,7 @@
 
     RMQQueue *q = [ch queue:@"hello"];
 
-    [q publish:@"Hello World!"];
+    [ch.defaultExchange publish:@"Hello World!" routingKey:q.name];
     NSLog(@"Sent 'Hello World!'");
 
     [conn close];
