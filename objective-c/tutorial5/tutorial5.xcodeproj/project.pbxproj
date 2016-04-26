@@ -13,7 +13,22 @@
 		AE929C671CCF6FAF001A6524 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE929C651CCF6FAF001A6524 /* Main.storyboard */; };
 		AE929C691CCF6FAF001A6524 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE929C681CCF6FAF001A6524 /* Assets.xcassets */; };
 		AE929C6C1CCF6FAF001A6524 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE929C6A1CCF6FAF001A6524 /* LaunchScreen.storyboard */; };
+		AE929C741CCF70A5001A6524 /* RMQClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE929C731CCF70A5001A6524 /* RMQClient.framework */; };
+		AE929C761CCF70C0001A6524 /* RMQClient.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AE929C731CCF70A5001A6524 /* RMQClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AE929C751CCF70B8001A6524 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				AE929C761CCF70C0001A6524 /* RMQClient.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		AE929C591CCF6FAF001A6524 /* tutorial5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tutorial5.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -26,6 +41,7 @@
 		AE929C681CCF6FAF001A6524 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AE929C6B1CCF6FAF001A6524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AE929C6D1CCF6FAF001A6524 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AE929C731CCF70A5001A6524 /* RMQClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RMQClient.framework; path = Carthage/Build/iOS/RMQClient.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE929C741CCF70A5001A6524 /* RMQClient.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +59,7 @@
 		AE929C501CCF6FAF001A6524 = {
 			isa = PBXGroup;
 			children = (
+				AE929C731CCF70A5001A6524 /* RMQClient.framework */,
 				AE929C5B1CCF6FAF001A6524 /* tutorial5 */,
 				AE929C5A1CCF6FAF001A6524 /* Products */,
 			);
@@ -89,6 +107,7 @@
 				AE929C551CCF6FAF001A6524 /* Sources */,
 				AE929C561CCF6FAF001A6524 /* Frameworks */,
 				AE929C571CCF6FAF001A6524 /* Resources */,
+				AE929C751CCF70B8001A6524 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -265,6 +284,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = tutorial5/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.rabbitmq.tutorial5;
@@ -276,6 +299,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = tutorial5/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.rabbitmq.tutorial5;
