@@ -44,7 +44,7 @@
     NSLog(@"%@: Waiting for messages", name);
 
     RMQBasicConsumeOptions manualAck = RMQBasicConsumeNoOptions;
-    [q subscribe:manualAck handler:^(id<RMQMessage>  _Nonnull message) {
+    [q subscribe:manualAck handler:^(RMQDeliveryInfo * _Nonnull deliveryInfo, RMQMessage * _Nonnull message) {
         NSLog(@"%@: Received %@", name, message.content);
         // imitate some work
         unsigned int sleepTime = (unsigned int)[message.content componentsSeparatedByString:@"."].count - 1;
