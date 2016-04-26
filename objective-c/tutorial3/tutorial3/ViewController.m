@@ -42,7 +42,7 @@
 
     NSLog(@"Waiting for logs.");
 
-    [q subscribe:^(RMQMessage * _Nonnull message) {
+    [q subscribe:^(RMQDeliveryInfo * _Nonnull deliveryInfo, RMQMessage * _Nonnull message) {
         NSLog(@"Received %@", message);
     }];
 }

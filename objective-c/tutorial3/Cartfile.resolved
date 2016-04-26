@@ -1,3 +1,3 @@
 github "robbiehanson/CocoaAsyncSocket" "562bae6af6dbd7e1891293dae20b9f79a2fd7228"
 github "Mantle/Mantle" "a16d18f635b3ba1ffb01d27d4393ee97cadf4f34"
-github "rabbitmq/rabbitmq-objc-client" "de0f201af7d3fd94f62ef29568c83ab88b2b35fb"
+github "rabbitmq/rabbitmq-objc-client" "2a9ac4ab13bb7b68871bc350f8e0fc4c60ca56bf"
