@@ -20,7 +20,7 @@
     [conn start];
 
     id<RMQChannel> ch = [conn createChannel];
-    RMQExchange *x = [ch fanout:@"logs" options:RMQExchangeDeclareNoOptions];
+    RMQExchange *x = [ch fanout:@"logs"];
 
     NSString *msg = @"Hello World!";
 
@@ -35,7 +35,7 @@
     [conn start];
 
     id<RMQChannel> ch = [conn createChannel];
-    RMQExchange *x = [ch fanout:@"logs" options:RMQExchangeDeclareNoOptions];
+    RMQExchange *x = [ch fanout:@"logs"];
     RMQQueue *q = [ch queue:@"" options:RMQQueueDeclareExclusive];
 
     [q bind:x];
