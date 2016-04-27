@@ -1,1 +1,2 @@
-github "rabbitmq/rabbitmq-objc-client" "master"
+#github "rabbitmq/rabbitmq-objc-client" "master"
+git "/Users/pivotal/workspace/rabbitmq-objc-client" "master"
