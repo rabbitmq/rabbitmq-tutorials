@@ -1,1 +1,1 @@
-github "rabbitmq/rabbitmq-objc-client" "master"
+github "rabbitmq/rabbitmq-objc-client" "v0.5.0"
