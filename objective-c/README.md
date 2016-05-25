@@ -34,3 +34,19 @@ NSLogged.
 
 See [ViewController.m](tutorial1/tutorial1/ViewController.m) for the
 implementation (each tutorial has its own `ViewController.m`).
+
+## Running the tutorials on master
+
+If you're QAing a change, or just want to run these tutorials on the master version of the client, follow these steps.
+
+### Edit `Cartfile`
+
+Change the version number to the word "master"
+
+### Clear Carthage cache and update
+
+`rm -rf ~/Library/Caches/org.carthage.CarthageKit && carthage update --platform iOS`
+
+### Rebuild the project in Xcode
+
+If there have been breaking changes, you might now need to make changes to the tutorial.
