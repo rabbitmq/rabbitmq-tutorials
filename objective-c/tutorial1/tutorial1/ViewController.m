@@ -36,7 +36,7 @@
 
     RMQQueue *q = [ch queue:@"hello"];
     NSLog(@"Waiting for messages.");
-    [q subscribe:^(RMQDeliveryInfo * _Nonnull deliveryInfo, RMQMessage * _Nonnull message) {
+    [q subscribe:^(RMQMessage * _Nonnull message) {
         NSLog(@"Received %@", message.content);
     }];
 }

@@ -9,19 +9,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    [self receiveLogsTopic:@[@"kern.*", @"*.critical"]];
-    sleep(1);
-    [self emitLogTopic:@"Hello World!" routingKey:@"kern.info"];
-    [self emitLogTopic:@"A critical kernel error" routingKey:@"kern.critical"];
-    [self emitLogTopic:@"Critical module error" routingKey:@"somemod.critical"];
-    [self emitLogTopic:@"Just some module info. You won't get this." routingKey:@"somemod.info"];
-}
-
-- (void)receiveLogsTopic:(NSArray *)routingKeys {
     RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
     [conn start];
 
+    [self receiveLogsTopic:conn routingKeys:@[@"kern.*", @"*.critical"]];
+    sleep(2);
+    [self emitLogTopic:conn message:@"Hello World!" routingKey:@"kern.info"];
+    [self emitLogTopic:conn message:@"A critical kernel error" routingKey:@"kern.critical"];
+    [self emitLogTopic:conn message:@"Critical module error" routingKey:@"somemod.critical"];
+    [self emitLogTopic:conn message:@"Just some module info. You won't get this." routingKey:@"somemod.info"];
+}
+
+- (void)receiveLogsTopic:(RMQConnection *)conn routingKeys:(NSArray *)routingKeys {
     id<RMQChannel> ch = [conn createChannel];
     RMQExchange *x    = [ch topic:@"topic_logs"];
     RMQQueue *q       = [ch queue:@"" options:RMQQueueDeclareExclusive];
@@ -32,22 +31,17 @@
 
     NSLog(@"Waiting for logs.");
 
-    [q subscribe:^(RMQDeliveryInfo * _Nonnull deliveryInfo, RMQMessage * _Nonnull message) {
-        NSLog(@"%@:%@", deliveryInfo.routingKey, message.content);
+    [q subscribe:^(RMQMessage * _Nonnull message) {
+        NSLog(@"%@:%@", message.routingKey, message.content);
     }];
 }
 
-- (void)emitLogTopic:(NSString *)msg routingKey:(NSString *)routingKey {
-    RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
-    [conn start];
-
+- (void)emitLogTopic:(RMQConnection *)conn message:(NSString *)msg routingKey:(NSString *)routingKey {
     id<RMQChannel> ch = [conn createChannel];
     RMQExchange *x    = [ch topic:@"topic_logs"];
 
     [x publish:msg routingKey:routingKey];
     NSLog(@"Sent '%@'", msg);
-
-    [conn close];
 }
 
 @end

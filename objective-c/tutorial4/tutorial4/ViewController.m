@@ -9,17 +9,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self receiveLogsDirect];
-    sleep(1);
-    [self emitLogDirect:@"Hello World!" severity:@"info"];
-    [self emitLogDirect:@"Missile button pressed" severity:@"warning"];
-    [self emitLogDirect:@"Launch mechanism jammed" severity:@"error"];
-}
-
-- (void)receiveLogsDirect {
     RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
     [conn start];
 
+    [self receiveLogsDirect:conn];
+    sleep(2);
+    [self emitLogDirect:conn message:@"Hello World!" severity:@"info"];
+    [self emitLogDirect:conn message:@"Missile button pressed" severity:@"warning"];
+    [self emitLogDirect:conn message:@"Launch mechanism jammed" severity:@"error"];
+}
+
+- (void)receiveLogsDirect:(RMQConnection *)conn {
     id<RMQChannel> ch = [conn createChannel];
     RMQExchange *x    = [ch direct:@"direct_logs"];
     RMQQueue *q       = [ch queue:@"" options:RMQQueueDeclareExclusive];
@@ -31,22 +31,17 @@
 
     NSLog(@"Waiting for logs.");
 
-    [q subscribe:^(RMQDeliveryInfo * _Nonnull deliveryInfo, RMQMessage * _Nonnull message) {
-        NSLog(@"%@:%@", deliveryInfo.routingKey, message.content);
+    [q subscribe:^(RMQMessage * _Nonnull message) {
+        NSLog(@"%@:%@", message.routingKey, message.content);
     }];
 }
 
-- (void)emitLogDirect:(NSString *)msg severity:(NSString *)severity {
-    RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
-    [conn start];
-
+- (void)emitLogDirect:(RMQConnection *)conn message:(NSString *)msg severity:(NSString *)severity {
     id<RMQChannel> ch = [conn createChannel];
     RMQExchange *x    = [ch direct:@"direct_logs"];
 
     [x publish:msg routingKey:severity];
     NSLog(@"Sent '%@'", msg);
-
-    [conn close];
 }
 
 @end
