@@ -46,6 +46,8 @@
 
     [x publish:msg routingKey:routingKey];
     NSLog(@"Sent '%@'", msg);
+
+    [conn close];
 }
 
 @end
