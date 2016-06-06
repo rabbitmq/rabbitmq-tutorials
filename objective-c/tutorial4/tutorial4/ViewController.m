@@ -9,17 +9,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [self receiveLogsDirect];
+    sleep(2);
+    [self emitLogDirect:@"Hello World!" severity:@"info"];
+    [self emitLogDirect:@"Missile button pressed" severity:@"warning"];
+    [self emitLogDirect:@"Launch mechanism jammed" severity:@"error"];
+}
+
+- (void)receiveLogsDirect {
     RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
     [conn start];
 
-    [self receiveLogsDirect:conn];
-    sleep(2);
-    [self emitLogDirect:conn message:@"Hello World!" severity:@"info"];
-    [self emitLogDirect:conn message:@"Missile button pressed" severity:@"warning"];
-    [self emitLogDirect:conn message:@"Launch mechanism jammed" severity:@"error"];
-}
-
-- (void)receiveLogsDirect:(RMQConnection *)conn {
     id<RMQChannel> ch = [conn createChannel];
     RMQExchange *x    = [ch direct:@"direct_logs"];
     RMQQueue *q       = [ch queue:@"" options:RMQQueueDeclareExclusive];
@@ -36,7 +37,10 @@
     }];
 }
 
-- (void)emitLogDirect:(RMQConnection *)conn message:(NSString *)msg severity:(NSString *)severity {
+- (void)emitLogDirect:(NSString *)msg severity:(NSString *)severity {
+    RMQConnection *conn = [[RMQConnection alloc] initWithDelegate:[RMQConnectionDelegateLogger new]];
+    [conn start];
+
     id<RMQChannel> ch = [conn createChannel];
     RMQExchange *x    = [ch direct:@"direct_logs"];
 
