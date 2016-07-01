@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -12,7 +11,6 @@ import (
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)
-		panic(fmt.Sprintf("%s: %s", msg, err))
 	}
 }
 
@@ -37,9 +35,9 @@ func main() {
 
 	body := bodyFrom(os.Args)
 	err = ch.Publish(
-		"",           // exchange
-		q.Name,       // routing key
-		false,        // mandatory
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
 		false,
 		amqp.Publishing{
 			DeliveryMode: amqp.Persistent,
