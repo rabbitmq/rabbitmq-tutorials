@@ -24,7 +24,7 @@
 
     NSString *msg = @"Hello World!";
 
-    [x publish:msg];
+    [x publish:[msg dataUsingEncoding:NSUTF8StringEncoding]];
     NSLog(@"Sent %@", msg);
 
     [conn close];
@@ -43,7 +43,7 @@
     NSLog(@"Waiting for logs.");
 
     [q subscribe:^(RMQMessage * _Nonnull message) {
-        NSLog(@"Received %@", message);
+        NSLog(@"Received %@", [[NSString alloc] initWithData:message.body encoding:NSUTF8StringEncoding]);
     }];
 }
 

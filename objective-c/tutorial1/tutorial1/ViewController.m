@@ -21,7 +21,7 @@
 
     RMQQueue *q = [ch queue:@"hello"];
 
-    [ch.defaultExchange publish:@"Hello World!" routingKey:q.name];
+    [ch.defaultExchange publish:[@"Hello World!" dataUsingEncoding:NSUTF8StringEncoding] routingKey:q.name];
     NSLog(@"Sent 'Hello World!'");
 
     [conn close];
@@ -37,7 +37,7 @@
     RMQQueue *q = [ch queue:@"hello"];
     NSLog(@"Waiting for messages.");
     [q subscribe:^(RMQMessage * _Nonnull message) {
-        NSLog(@"Received %@", message.content);
+        NSLog(@"Received %@", [[NSString alloc] initWithData:message.body encoding:NSUTF8StringEncoding]);
     }];
 }
 

@@ -26,7 +26,8 @@
 
     RMQQueue *q = [ch queue:@"task_queue" options:RMQQueueDeclareDurable];
 
-    [ch.defaultExchange publish:msg routingKey:q.name persistent:YES];
+    NSData *msgData = [msg dataUsingEncoding:NSUTF8StringEncoding];
+    [ch.defaultExchange publish:msgData routingKey:q.name persistent:YES];
     NSLog(@"Sent %@", msg);
 
     [conn close];
@@ -45,9 +46,10 @@
 
     RMQBasicConsumeOptions manualAck = RMQBasicConsumeNoOptions;
     [q subscribe:manualAck handler:^(RMQMessage * _Nonnull message) {
-        NSLog(@"%@: Received %@", name, message.content);
+        NSString *messageText = [[NSString alloc] initWithData:message.body encoding:NSUTF8StringEncoding];
+        NSLog(@"%@: Received %@", name, messageText);
         // imitate some work
-        unsigned int sleepTime = (unsigned int)[message.content componentsSeparatedByString:@"."].count - 1;
+        unsigned int sleepTime = (unsigned int)[messageText componentsSeparatedByString:@"."].count - 1;
         NSLog(@"%@: Sleeping for %u seconds", name, sleepTime);
         sleep(sleepTime);
 
