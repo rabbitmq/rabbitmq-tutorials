@@ -8,6 +8,7 @@ amqp.connect('amqp://localhost', function(err, conn) {
     var msg = 'Hello World!';
 
     ch.assertQueue(q, {durable: false});
+    // Note: on Node 6 Buffer.from(msg) should be used
     ch.sendToQueue(q, new Buffer(msg));
     console.log(" [x] Sent %s", msg);
   });
