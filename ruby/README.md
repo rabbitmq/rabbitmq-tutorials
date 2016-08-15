@@ -9,9 +9,9 @@ To run this code you need [Bunny](http://rubybunny.info).
 
 You can install it via RubyGems:
 
-    gem install bunny --version ">= 2.2.2"
+    gem install bunny --version ">= 2.5.1"
 
-Bunny supports Ruby 2.0 through 2.2.
+Bunny supports Ruby 2.0 and later versions.
 
 ## Code
 
