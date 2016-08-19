@@ -1,5 +1,5 @@
 #!/bin/sh
 
-for f in *.cs; do \
-    mcs -r:lib/bin/RabbitMQ.Client.dll $f; \
+for f in */; do \
+    dotnet build $f
 done
