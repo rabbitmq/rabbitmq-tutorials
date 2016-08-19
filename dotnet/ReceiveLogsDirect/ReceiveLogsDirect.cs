@@ -3,32 +3,31 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-class ReceiveLogsTopic
+class ReceiveLogsDirect
 {
-    public static void Main(string[] args)
+    public static int Main(string[] args)
     {
         var factory = new ConnectionFactory() { HostName = "localhost" };
         using(var connection = factory.CreateConnection())
         using(var channel = connection.CreateModel())
         {
-            channel.ExchangeDeclare(exchange: "topic_logs", type: "topic");
+            channel.ExchangeDeclare(exchange: "direct_logs", type: "direct");
             var queueName = channel.QueueDeclare().QueueName;
 
             if(args.Length < 1)
             {
-                Console.Error.WriteLine("Usage: {0} [binding_key...]", Environment.GetCommandLineArgs()[0]);
+                Console.Error.WriteLine("Usage: {0} [info] [warning] [error]", Environment.GetCommandLineArgs()[0]);
                 Console.WriteLine(" Press [enter] to exit.");
                 Console.ReadLine();
-                Environment.ExitCode = 1;
-                return;
+                return 1;
             }
 
-            foreach(var bindingKey in args)
+            foreach(var severity in args)
             {
-                channel.QueueBind(queue: queueName, exchange: "topic_logs", routingKey: bindingKey);
+                channel.QueueBind(queue: queueName, exchange: "direct_logs", routingKey: severity);
             }
 
-            Console.WriteLine(" [*] Waiting for messages. To exit press CTRL+C");
+            Console.WriteLine(" [*] Waiting for messages.");
 
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
@@ -42,6 +41,7 @@ class ReceiveLogsTopic
 
             Console.WriteLine(" Press [enter] to exit.");
             Console.ReadLine();
+            return 0;
         }
     }
 }
