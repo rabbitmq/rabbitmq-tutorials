@@ -1,3 +1,3 @@
 github "robbiehanson/CocoaAsyncSocket" "7.5.0"
 github "jeffh/JKVValue" "v1.3.1"
-github "rabbitmq/rabbitmq-objc-client" "v0.9.0"
+github "rabbitmq/rabbitmq-objc-client" "v0.10.0"
