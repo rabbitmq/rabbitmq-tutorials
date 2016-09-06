@@ -7,7 +7,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
 channel = connection.channel()
 
 channel.exchange_declare(exchange='topic_logs',
-                         type='topic')
+                         exchange_type='topic')
 
 result = channel.queue_declare(exclusive=True)
 queue_name = result.method.queue

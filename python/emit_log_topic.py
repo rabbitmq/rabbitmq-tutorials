@@ -7,7 +7,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
 channel = connection.channel()
 
 channel.exchange_declare(exchange='topic_logs',
-                         type='topic')
+                         exchange_type='topic')
 
 routing_key = sys.argv[1] if len(sys.argv) > 1 else 'anonymous.info'
 message = ' '.join(sys.argv[2:]) or 'Hello World!'
