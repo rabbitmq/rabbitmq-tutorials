@@ -20,7 +20,7 @@ class RPCClient
         channel = connection.CreateModel();
         replyQueueName = channel.QueueDeclare().QueueName;
         consumer = new QueueingBasicConsumer(channel);
-        channel.BasicConsume(queue: replyQueueName, noAck: true, consumer: consumer);
+        channel.BasicConsume(queue: replyQueueName, autoAck: true, consumer: consumer);
     }
 
     public string Call(string message)
