@@ -21,8 +21,12 @@ the command line.
 
 ## Code
 
-Each command is best run -p in a separate console/terminal instance run from the root
+Each command is best run in a separate console/terminal instance run from the root
 of the tutorial directory.
+
+First run the `recompile.sh` script. This will run `dotnet restore` and build
+each project which is required before they can be run. Alternatively or if you are
+on windows cd into each project and run `dotnet restore` manually.
 
 #### [Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-dotnet.html)
 
