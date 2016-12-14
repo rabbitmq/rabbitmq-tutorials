@@ -40,7 +40,7 @@ class ViewController: UIViewController {
         q.bind(x)
         print("Waiting for logs.")
         q.subscribe({(_ message: RMQMessage) -> Void in
-            print("Received \(String(data: message.body, encoding: String.Encoding.utf8))")
+            print("Received \(String(data: message.body, encoding: String.Encoding.utf8)!)")
         })
     }
 }
