@@ -44,7 +44,7 @@ class ViewController: UIViewController {
         let manualAck = RMQBasicConsumeOptions()
         q.subscribe(manualAck, handler: {(_ message: RMQMessage) -> Void in
             let messageText = String(data: message.body, encoding: .utf8)
-            print("\(name): Received \(messageText)")
+            print("\(name): Received \(messageText!)")
             // imitate some work
             let sleepTime = UInt32(messageText!.components(separatedBy: ".").count) - 1
             print("\(name): Sleeping for \(sleepTime) seconds")
