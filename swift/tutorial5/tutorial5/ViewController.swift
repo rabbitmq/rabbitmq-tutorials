@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         }
         print("Waiting for logs.")
         q.subscribe({(_ message: RMQMessage) -> Void in
-            print("\(message.routingKey):\(String(data: message.body, encoding: .utf8))")
+            print("\(message.routingKey!):\(String(data: message.body, encoding: .utf8)!)")
         })
     }
 
