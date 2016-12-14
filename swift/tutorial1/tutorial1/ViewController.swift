@@ -36,7 +36,7 @@ class ViewController: UIViewController {
         let q = ch.queue("hello")
         print("Waiting for messages.")
         q.subscribe({(_ message: RMQMessage) -> Void in
-            print("Received \(String(data: message.body, encoding: String.Encoding.utf8))")
+            print("Received \(String(data: message.body, encoding: String.Encoding.utf8)!)")
         })
     }
 }
