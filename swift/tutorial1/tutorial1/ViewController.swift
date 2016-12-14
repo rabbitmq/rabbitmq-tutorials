@@ -2,7 +2,6 @@
 //  ViewController.swift
 //  tutorial1
 //
-//  Created by Pivotal on 25/04/2016.
 //  Copyright © 2016 RabbitMQ. All rights reserved.
 //
 import UIKit
