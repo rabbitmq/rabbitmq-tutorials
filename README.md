@@ -1,6 +1,7 @@
 # RabbitMQ tutorials
 
-This project contains code for [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
+This project contains code for [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html)
+their ports to various languages.
 
 ## Languages
 
@@ -23,6 +24,7 @@ The following ports are available:
  * [Perl](./perl)
  * [Python (with Pika)](./python)
  * [Ruby (with Bunny)](./ruby)
+ * [Swift](./swift)
 
 ## License
 
