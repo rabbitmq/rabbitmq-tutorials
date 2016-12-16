@@ -1,7 +1,14 @@
-{-# OPTIONS -XOverloadedStrings #-}
+#!/usr/bin/env stack
+{- stack --install-ghc
+    runghc
+    --package amqp
+-}
+{-# LANGUAGE OverloadedStrings #-}
 
 import Network.AMQP
+
 import qualified Data.ByteString.Lazy.Char8 as BL
+import           Data.Monoid ((<>))
 
 main :: IO ()
 main = do
@@ -12,7 +19,7 @@ main = do
                                queueAutoDelete = False,
                                queueDurable    = False}
 
-     putStrLn " [*] Waiting for messages. to Exit press CTRL+C"
+     putStrLn " [*] Waiting for messages. To exit press CTRL+C"
      consumeMsgs ch "hello" NoAck deliveryHandler
 
      -- waits for keypresses
@@ -20,5 +27,5 @@ main = do
      closeConnection conn
 
 deliveryHandler :: (Message, Envelope) -> IO ()
-deliveryHandler (msg, metadata) = do
-  putStrLn $ " [x] Received " ++ (BL.unpack $ msgBody msg)
+deliveryHandler (msg, metadata) =
+  BL.putStrLn $ " [x] Received " <> msgBody msg

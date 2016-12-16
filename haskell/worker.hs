@@ -1,9 +1,16 @@
-{-# OPTIONS -XOverloadedStrings #-}
+#!/usr/bin/env stack
+{- stack --install-ghc
+    runghc
+    --package amqp
+    --package bytestring
+-}
+{-# LANGUAGE OverloadedStrings #-}
 
 import Network.AMQP
-import qualified Data.ByteString.Lazy.Char8 as BL
 
-import Control.Concurrent (threadDelay)
+import           Control.Concurrent (threadDelay)
+import qualified Data.ByteString.Lazy.Char8 as BL
+import           Data.Monoid ((<>))
 
 main :: IO ()
 main = do
@@ -14,9 +21,9 @@ main = do
                                queueAutoDelete = False,
                                queueDurable    = True}
 
-     qos ch 0 1
+     qos ch 0 1 False
 
-     putStrLn " [*] Waiting for messages. to Exit press CTRL+C"
+     BL.putStrLn " [*] Waiting for messages. To exit press CTRL+C"
      consumeMsgs ch "task_queue" Ack deliveryHandler
 
      -- waits for keypresses
@@ -25,15 +32,13 @@ main = do
 
 deliveryHandler :: (Message, Envelope) -> IO ()
 deliveryHandler (msg, metadata) = do
-  putStrLn $ " [x] Received " ++ body
-  -- threadDelay (1000 * n)
-  putStrLn $ " [x] Done"
+  BL.putStrLn $ " [x] Received " <> body
+  threadDelay (1000000 * n)
+  BL.putStrLn " [x] Done"
   ackEnv metadata
   where
-    body = (BL.unpack $ msgBody msg)
+    body = msgBody msg
     n    = countDots body
 
-
-
-countDots :: [Char] -> Int
-countDots s = length $ filter (\c -> c == '.') s
+countDots :: BL.ByteString -> Int
+countDots = fromIntegral . BL.count '.'

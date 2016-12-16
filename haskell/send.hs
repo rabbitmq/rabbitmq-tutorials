@@ -1,6 +1,13 @@
-{-# OPTIONS -XOverloadedStrings #-}
+#!/usr/bin/env stack
+{- stack --install-ghc
+    runghc
+    --package amqp
+    --package bytestring
+-}
+{-# LANGUAGE OverloadedStrings #-}
 
 import Network.AMQP
+
 import qualified Data.ByteString.Lazy.Char8 as BL
 
 main :: IO ()
@@ -13,8 +20,8 @@ main = do
                                queueDurable    = False}
 
      publishMsg ch "" "hello"
-                (newMsg {msgBody         = (BL.pack "Hello World!"),
+                (newMsg {msgBody         = "Hello World!",
                          msgDeliveryMode = Just NonPersistent})
 
-     putStrLn " [x] Sent 'Hello World!'"
+     BL.putStrLn " [x] Sent 'Hello World!'"
      closeConnection conn
