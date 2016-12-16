@@ -7,6 +7,11 @@ Here you can find Haskell code examples from
 
 To run this code you need [Network.AMQP](http://hackage.haskell.org/package/amqp).
 
+### Running the examples with `stack`
+
+1. Install [`stack`](https://docs.haskellstack.org/en/stable/README/).
+2. Run the scripts via ```stack FILE ARGS``` instead of `runhaskell FILE ARGS`. (This installs `ghc`, plus `amqp` and other required packages for you.)
+
 ## Code
 
 Code examples are executed via `runhaskell`:

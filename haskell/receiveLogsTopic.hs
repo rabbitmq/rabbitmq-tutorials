@@ -1,11 +1,20 @@
-{-# OPTIONS -XOverloadedStrings #-}
+#!/usr/bin/env stack
+{- stack --install-ghc
+    runghc
+    --package amqp
+    --package bytestring
+    --package text
+-}
+{-# LANGUAGE OverloadedStrings #-}
 
 import Network.AMQP
+
+import           Control.Monad (forM_)
 import qualified Data.ByteString.Lazy.Char8 as BL
+import           Data.Monoid ((<>))
 import qualified Data.Text as DT
-import System.Environment (getArgs)
-import Text.Printf (printf)
-import Control.Monad (forM)
+import qualified Data.Text.Encoding as DT
+import           System.Environment (getArgs)
 
 logsExchange = "topic_logs"
 
@@ -21,9 +30,9 @@ main = do
      (q, _, _) <- declareQueue ch newQueue {queueName       = "",
                                             queueAutoDelete = True,
                                             queueDurable    = False}
-     forM severities (\s -> bindQueue ch q logsExchange (DT.pack s))
+     forM_ severities (bindQueue ch q logsExchange . DT.pack)
 
-     putStrLn " [*] Waiting for messages. to Exit press CTRL+C"
+     BL.putStrLn " [*] Waiting for messages. To exit press CTRL+C"
      consumeMsgs ch q Ack deliveryHandler
 
      -- waits for keypresses
@@ -32,8 +41,9 @@ main = do
 
 deliveryHandler :: (Message, Envelope) -> IO ()
 deliveryHandler (msg, metadata) = do
-  putStrLn $ printf " [x] %s:%s" (DT.unpack $ envRoutingKey metadata) body
-  putStrLn $ " [x] Done"
+  BL.putStrLn $ " [x] " <> key <> ":" <> body
+  BL.putStrLn " [x] Done"
   ackEnv metadata
   where
-    body = (BL.unpack $ msgBody msg)
+    body = msgBody msg
+    key  = BL.fromStrict . DT.encodeUtf8 $ envRoutingKey metadata
