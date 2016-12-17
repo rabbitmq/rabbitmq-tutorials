@@ -23,3 +23,7 @@ java*/.idea/encodings.xml
 .vscode/
 obj/
 bin/
+target/
+.DS_Store
+*.iml
+.idea/
