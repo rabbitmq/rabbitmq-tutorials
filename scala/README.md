@@ -1,46 +1,57 @@
-# Compile the code
+# RabbitMQ Tutorials in Scala
+
+This is a minimalistic Scala port of the RabbitMQ tutorials in Java.
+The port is admittedly quite close to Java in terms of code style.
+This is primarily to the fact that RabbitMQ Java client still supports
+JDK 6 and doesn't have a lambda-friendly API.
+
+
+## Compiling the Code
 
     mvn compile
 
-## Hello World
 
-Execute the following command to send a hello world.
+## Running Examples
+
+### Hello World
+
+Execute the following command to receive a hello world:
+
+    mvn exec:java -Dexec.mainClass="Recv"
+
+Execute the following in a separate shell to send a hello world:
 
     mvn exec:java -Dexec.mainClass="Send"
 
-Execute the following command to send a hello world.
+### Work Queues
 
-    mvn exec:java -Dexec.mainClass="Send"
-
-## Work Queues
-
-Send a message which will be finshed immediately
+Send a message which will be finshed immediately:
 
     mvn exec:java -Dexec.mainClass="NewTask"
 
-Send a message which need some second to execute each . is one second
+Send a message which need some second to execute each . is one second.
 
     mvn exec:java -Dexec.mainClass="NewTask" -Dexec.args="rabbit1 ...."
 
-Open worker. Add more workers to process, message will be handled in round robin way.
+To start a worker (run in a separate shell):
 
     mvn exec:java -Dexec.mainClass="Worker"
 
-Kill a worker which is processing message. The message will be still in the queue and will be received by another worker.
+Add more workers to the same queue, message will be distributed in the
+round robin manner.
 
-## Publish and Subscriber
+### Publish and Subscriber
 
     mvn exec:java -Dexec.mainClass="EmitLog" -Dexec.args="rabbit1 msg1"
 
     mvn exec:java -Dexec.mainClass="ReceiveLogs"
 
-## RPC
+### RPC
 
-Open a shell and execute for the `RPCServer`. `rabbit1` is the host for RabbitMQ, without any execute parameters means to localhost.
+In one shell:
 
     mvn exec:java -Dexec.mainClass="RPCServer"
 
-
-Open another shell and execute for the `RPCClient`.
+In another shell:
 
     mvn exec:java -Dexec.mainClass="RPCClient"
