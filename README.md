@@ -24,6 +24,7 @@ The following ports are available:
  * [Perl](./perl)
  * [Python (with Pika)](./python)
  * [Ruby (with Bunny)](./ruby)
+ * [Scala](./scala)
  * [Swift](./swift)
 
 ## License
