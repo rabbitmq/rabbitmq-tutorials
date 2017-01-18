@@ -1,6 +1,6 @@
-# RabbitMQ tutorials
+# RabbitMQ Tutorials
 
-This project contains code for [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html)
+This project contains code for [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html) with
 their ports to various languages.
 
 ## Languages
@@ -16,7 +16,7 @@ The following ports are available:
  * [Go](./go)
  * [Haskell](./haskell)
  * [JavaScript (with Node and amqp-node)](./javascript-nodejs) (using callbacks)
- * [Javascript (with Node and amqp-node)](https://github.com/squaremo/amqp.node/tree/master/examples) (using promises/futures)
+ * [JavaScript (with Node and amqp-node)](https://github.com/squaremo/amqp.node/tree/master/examples) (using promises/futures)
  * [Java](./java)
  * [Java (with IntelliJ IDEA)](./java-idea)
  * [PHP (with php-amqplib)](./php)
