@@ -1,9 +1,12 @@
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.GetResponse;
+
+import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 public class RPCClient {
 
@@ -11,35 +14,33 @@ public class RPCClient {
   private Channel channel;
   private String requestQueueName = "rpc_queue";
   private String replyQueueName;
-  private QueueingConsumer consumer;
 
-  public RPCClient() throws Exception {
+  public RPCClient() throws IOException, TimeoutException {
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost("localhost");
+
     connection = factory.newConnection();
     channel = connection.createChannel();
 
     replyQueueName = channel.queueDeclare().getQueue();
-    consumer = new QueueingConsumer(channel);
-    channel.basicConsume(replyQueueName, true, consumer);
   }
 
-  public String call(String message) throws Exception {
+  public String call(String message) throws IOException {
     String response = null;
     String corrId = UUID.randomUUID().toString();
 
-    BasicProperties props = new BasicProperties
-                                .Builder()
-                                .correlationId(corrId)
-                                .replyTo(replyQueueName)
-                                .build();
+    AMQP.BasicProperties props = new AMQP.BasicProperties
+            .Builder()
+            .correlationId(corrId)
+            .replyTo(replyQueueName)
+            .build();
 
     channel.basicPublish("", requestQueueName, props, message.getBytes("UTF-8"));
 
     while (true) {
-      QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-      if (delivery.getProperties().getCorrelationId().equals(corrId)) {
-        response = new String(delivery.getBody(),"UTF-8");
+      GetResponse delivery = channel.basicGet(replyQueueName, true);
+      if (delivery != null && delivery.getProps().getCorrelationId().equals(corrId)) {
+        response = new String(delivery.getBody());
         break;
       }
     }
@@ -47,7 +48,7 @@ public class RPCClient {
     return response;
   }
 
-  public void close() throws Exception {
+  public void close() throws IOException {
     connection.close();
   }
 
@@ -61,7 +62,7 @@ public class RPCClient {
       response = fibonacciRpc.call("30");
       System.out.println(" [.] Got '" + response + "'");
     }
-    catch  (Exception e) {
+    catch  (IOException | TimeoutException e) {
       e.printStackTrace();
     }
     finally {
@@ -69,7 +70,7 @@ public class RPCClient {
         try {
           fibonacciRpc.close();
         }
-        catch (Exception ignore) {}
+        catch (IOException _ignore) {}
       }
     }
   }
