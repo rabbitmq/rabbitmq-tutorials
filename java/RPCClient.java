@@ -1,11 +1,14 @@
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.GetResponse;
+import com.rabbitmq.client.Envelope;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
 public class RPCClient {
@@ -25,8 +28,7 @@ public class RPCClient {
     replyQueueName = channel.queueDeclare().getQueue();
   }
 
-  public String call(String message) throws IOException {
-    String response = null;
+  public String call(String message) throws IOException, InterruptedException {
     String corrId = UUID.randomUUID().toString();
 
     AMQP.BasicProperties props = new AMQP.BasicProperties
@@ -37,15 +39,16 @@ public class RPCClient {
 
     channel.basicPublish("", requestQueueName, props, message.getBytes("UTF-8"));
 
-    while (true) {
-      GetResponse delivery = channel.basicGet(replyQueueName, true);
-      if (delivery != null && delivery.getProps().getCorrelationId().equals(corrId)) {
-        response = new String(delivery.getBody());
-        break;
-      }
-    }
+    final BlockingQueue<String> response = new ArrayBlockingQueue<String>(1);
 
-    return response;
+    channel.basicConsume(replyQueueName, true, new DefaultConsumer(channel) {
+      @Override
+      public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        response.offer(new String(body, "UTF-8"));
+      }
+    });
+
+    return response.take();
   }
 
   public void close() throws IOException {
@@ -62,7 +65,7 @@ public class RPCClient {
       response = fibonacciRpc.call("30");
       System.out.println(" [.] Got '" + response + "'");
     }
-    catch  (IOException | TimeoutException e) {
+    catch  (IOException | TimeoutException | InterruptedException e) {
       e.printStackTrace();
     }
     finally {
