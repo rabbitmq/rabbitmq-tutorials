@@ -44,7 +44,9 @@ public class RPCClient {
     channel.basicConsume(replyQueueName, true, new DefaultConsumer(channel) {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-        response.offer(new String(body, "UTF-8"));
+        if (properties.getCorrelationId().equals(corrId)) {
+          response.offer(new String(body, "UTF-8"));
+        }
       }
     });
 
