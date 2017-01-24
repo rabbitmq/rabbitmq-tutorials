@@ -7,16 +7,16 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 ## Requirements
 
-You'll need to download the RabbitMQ
-[java client library package](http://www.rabbitmq.com/java-client.html),
-and check its signature as described there.
-Unzip it into your working directory and ensure the JAR files from the
-unzipped directory are placed in your working directory:
+You'll need to download the following JAR files
+from Maven Central:
+    
+ * [RabbitMQ Java Client](http://central.maven.org/maven2/com/rabbitmq/amqp-client/4.0.2/amqp-client-4.0.2.jar)
+ * [SLF4J API](http://central.maven.org/maven2/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar)
+ * [SLF4J Simple](http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.22/slf4j-simple-1.7.22.jar)
 
-    $ unzip rabbitmq-java-client-bin-*.zip
-    $ cp rabbitmq-java-client-bin-*/*.jar ./
+Copy those files in your working directory, along the tutorials Java files.
 
-To compile you only need the Rabbitmq java client jar on the classpath.
+To compile you only need the Rabbitmq Java Client jar on the classpath.
 
 To run them you'll need all the dependencies, see examples below.
 
@@ -25,33 +25,33 @@ use a semicolon instead of a colon to separate items in the classpath.
 
 > You can set an environment variable for the jar files on the classpath e.g.
 >
->      $ export CP=.:commons-io-1.2.jar:commons-cli-1.1.jar:rabbitmq-client.jar
+>      $ export CP=.:amqp-client-4.0.2.jar:slf4j-api-1.7.21.jar:slf4j-simple-1.7.22.jar
 >      $ java -cp $CP Send
 >
 > or on Windows:
 >
->      > set CP=.;commons-io-1.2.jar;commons-cli-1.1.jar;rabbitmq-client.jar
+>      > set CP=.;amqp-client-4.0.2.jar;slf4j-api-1.7.21.jar;slf4j-simple-1.7.22.jar
 >      > java -cp %CP% Send
 
 ## Code
 
 [Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-java.html):
 
-    $ javac -cp rabbitmq-client.jar Send.java Recv.java
+    $ javac -cp amqp-client-4.0.2.jar Send.java Recv.java
 
-    $ java -cp .:commons-io-1.2.jar:commons-cli-1.1.jar:rabbitmq-client.jar Send
-    $ java -cp .:commons-io-1.2.jar:commons-cli-1.1.jar:rabbitmq-client.jar Recv
+    $ java -cp .:amqp-client-4.0.2.jar:slf4j-api-1.7.21.jar:slf4j-simple-1.7.22.jar Send
+    $ java -cp .:amqp-client-4.0.2.jar:slf4j-api-1.7.21.jar:slf4j-simple-1.7.22.jar Recv
 
 [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-java.html):
 
-    $ javac -cp rabbitmq-client.jar NewTask.java Worker.java
+    $ javac -cp amqp-client-4.0.2.jar NewTask.java Worker.java
 
     $ java -cp $CP NewTask
     $ java -cp $CP Worker
 
 [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-java.html)
 
-    $ javac -cp rabbitmq-client.jar EmitLog.java ReceiveLogs.java
+    $ javac -cp amqp-client-4.0.2.jar EmitLog.java ReceiveLogs.java
 
     $ java -cp $CP ReceiveLogs
     $ java -cp $CP EmitLog
