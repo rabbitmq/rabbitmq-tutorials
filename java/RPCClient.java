@@ -1,9 +1,15 @@
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Envelope;
+
+import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeoutException;
 
 public class RPCClient {
 
@@ -11,43 +17,41 @@ public class RPCClient {
   private Channel channel;
   private String requestQueueName = "rpc_queue";
   private String replyQueueName;
-  private QueueingConsumer consumer;
 
-  public RPCClient() throws Exception {
+  public RPCClient() throws IOException, TimeoutException {
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost("localhost");
+
     connection = factory.newConnection();
     channel = connection.createChannel();
 
     replyQueueName = channel.queueDeclare().getQueue();
-    consumer = new QueueingConsumer(channel);
-    channel.basicConsume(replyQueueName, true, consumer);
   }
 
-  public String call(String message) throws Exception {
-    String response = null;
+  public String call(String message) throws IOException, InterruptedException {
     String corrId = UUID.randomUUID().toString();
 
-    BasicProperties props = new BasicProperties
-                                .Builder()
-                                .correlationId(corrId)
-                                .replyTo(replyQueueName)
-                                .build();
+    AMQP.BasicProperties props = new AMQP.BasicProperties
+            .Builder()
+            .correlationId(corrId)
+            .replyTo(replyQueueName)
+            .build();
 
     channel.basicPublish("", requestQueueName, props, message.getBytes("UTF-8"));
 
-    while (true) {
-      QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-      if (delivery.getProperties().getCorrelationId().equals(corrId)) {
-        response = new String(delivery.getBody(),"UTF-8");
-        break;
-      }
-    }
+    final BlockingQueue<String> response = new ArrayBlockingQueue<String>(1);
 
-    return response;
+    channel.basicConsume(replyQueueName, true, new DefaultConsumer(channel) {
+      @Override
+      public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        response.offer(new String(body, "UTF-8"));
+      }
+    });
+
+    return response.take();
   }
 
-  public void close() throws Exception {
+  public void close() throws IOException {
     connection.close();
   }
 
@@ -61,7 +65,7 @@ public class RPCClient {
       response = fibonacciRpc.call("30");
       System.out.println(" [.] Got '" + response + "'");
     }
-    catch  (Exception e) {
+    catch  (IOException | TimeoutException | InterruptedException e) {
       e.printStackTrace();
     }
     finally {
@@ -69,7 +73,7 @@ public class RPCClient {
         try {
           fibonacciRpc.close();
         }
-        catch (Exception ignore) {}
+        catch (IOException _ignore) {}
       }
     }
   }
