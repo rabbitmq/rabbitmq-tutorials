@@ -13,6 +13,7 @@ The following ports are available:
  * [Common Lisp](./common-lisp)
  * [Elixir](./elixir) 
  * [Erlang](./erlang)
+ * [F#](./fsharp)
  * [Go](./go)
  * [Haskell](./haskell)
  * [JavaScript (with Node and amqp-node)](./javascript-nodejs) (using callbacks)
