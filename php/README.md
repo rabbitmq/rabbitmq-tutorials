@@ -7,10 +7,20 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 ## Requirements
 
-Additionally you need `PHP 5.3` and `php-amqplib`. To get these
+### PHP 5.3+
+
+You need `PHP 5.3` and `php-amqplib`. To get these
 dependencies on Ubuntu type:
 
     sudo apt-get install git-core php5-cli
+
+
+### Composer
+
+Then [install Composer](https://getcomposer.org/download/) per instructions on their site.
+
+
+### Client Library
 
 Then you can install `php-amqplib` using [Composer](http://getcomposer.org).
 
@@ -21,35 +31,35 @@ inside this project folder:
 
 ## Code
 
-[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-php.html):
+[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorials/tutorial-one-php.html):
 
     php send.php
     php receive.php
 
 
-[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-php.html):
+[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorials/tutorial-two-php.html):
 
     php new_task.php "A very hard task which takes two seconds.."
     php worker.php
 
 
-[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-php.html)
+[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorials/tutorial-three-php.html)
 
     php receive_logs.php
     php emit_log.php "info: This is the log message"
 
-[Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-php.html):
+[Tutorial four: Routing](http://www.rabbitmq.com/tutorials/tutorial-four-php.html):
 
     php receive_logs_direct.php info
     php emit_log_direct.php info "The message"
 
 
-[Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-php.html):
+[Tutorial five: Topics](http://www.rabbitmq.com/tutorials/tutorial-five-php.html):
 
     php receive_logs_topic.php "*.rabbit"
     php emit_log_topic.php red.rabbit Hello
 
-[Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-php.html):
+[Tutorial six: RPC](http://www.rabbitmq.com/tutorials/tutorial-six-php.html):
 
     php rpc_server.php
     php rpc_client.php
