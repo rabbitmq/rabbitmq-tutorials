@@ -12,7 +12,7 @@ public class ReceiveLogsTopic {
     Connection connection = factory.newConnection();
     Channel channel = connection.createChannel();
 
-    channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+    channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
     String queueName = channel.queueDeclare().getQueue();
 
     if (argv.length < 1) {

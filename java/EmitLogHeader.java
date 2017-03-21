@@ -38,7 +38,7 @@ public class EmitLogHeader {
     Connection connection = factory.newConnection();
     Channel channel = connection.createChannel();
 
-    channel.exchangeDeclare(EXCHANGE_NAME, "headers");
+    channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.HEADERS);
 
     AMQP.BasicProperties.Builder builder = new AMQP.BasicProperties.Builder();
 

@@ -18,7 +18,7 @@ public class ReceiveLogHeader {
     Connection connection = factory.newConnection();
     Channel channel = connection.createChannel();
 
-    channel.exchangeDeclare(EXCHANGE_NAME, "headers");
+    channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.HEADERS);
 
     // The API requires a routing key, but in fact if you are using a header exchange the
     // value of the routing key is not used in the routing. You can receive information
