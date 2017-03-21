@@ -1,3 +1,4 @@
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -16,7 +17,7 @@ public class EmitLogTopic {
       connection = factory.newConnection();
       channel = connection.createChannel();
 
-      channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+      channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
 
       String routingKey = getRouting(argv);
       String message = getMessage(argv);

@@ -1,3 +1,4 @@
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -13,7 +14,7 @@ public class EmitLogDirect {
     Connection connection = factory.newConnection();
     Channel channel = connection.createChannel();
 
-    channel.exchangeDeclare(EXCHANGE_NAME, "direct");
+    channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
 
     String severity = getSeverity(argv);
     String message = getMessage(argv);

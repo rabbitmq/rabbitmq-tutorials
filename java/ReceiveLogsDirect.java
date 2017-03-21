@@ -12,7 +12,7 @@ public class ReceiveLogsDirect {
     Connection connection = factory.newConnection();
     Channel channel = connection.createChannel();
 
-    channel.exchangeDeclare(EXCHANGE_NAME, "direct");
+    channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
     String queueName = channel.queueDeclare().getQueue();
 
     if (argv.length < 1){
