@@ -7,7 +7,7 @@ defmodule RabbitmqTutorials.Mixfile do
      elixir: "~> 1.1",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps()]
   end
 
   # Configuration for the OTP application
@@ -28,7 +28,7 @@ defmodule RabbitmqTutorials.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:amqp, "~> 0.1.4"},
+      {:amqp, "~> 0.2.0-pre.2"},
     ]
   end
 end
