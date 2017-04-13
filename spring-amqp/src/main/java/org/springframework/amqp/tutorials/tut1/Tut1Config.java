@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Profile;
 /**
  * @author Gary Russell
  * @author Scott Deeg
- *
+ * @author Wayne Lund
  */
 @Profile({"tut1","hello-world"})
 @Configuration
@@ -31,7 +31,7 @@ public class Tut1Config {
 
 	@Bean
 	public Queue hello() {
-		return new Queue("tut.hello");
+		return new Queue("hello");
 	}
 
 	@Profile("receiver")

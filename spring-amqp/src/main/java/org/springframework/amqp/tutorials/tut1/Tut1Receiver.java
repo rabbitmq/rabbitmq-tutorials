@@ -21,8 +21,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 /**
  * @author Gary Russell
  * @author Scott Deeg
+ * @author Wayne Lund
  */
-@RabbitListener(queues = "tut.hello")
+@RabbitListener(queues = "hello")
 public class Tut1Receiver {
 
 	@RabbitHandler
