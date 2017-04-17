@@ -1,0 +1,18 @@
+#{tut1|hello-world},{sender|receiver}
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=hello-world,receiver
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=hello-world,sender
+#{tut2|work-queues},{sender|receiver}
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=work-queues,receiver
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=work-queues,sender
+#{tut3|pub-sub|publish-subscribe},{sender|receiver}
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=pub-sub,receiver
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=pub-sub,sender
+#{tut4|routing},{sender|receiver}
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=routing,receiver
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=routing,sender
+#{tut5|topics},{sender|receiver}
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=topics,receiver
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=topics,sender
+#{tut6|rpc},{client|server}
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=rpc,server
+java -jar target/rabbit-tutorials-1.6.6.RELEASE.jar --spring.profiles.active=rpc,client

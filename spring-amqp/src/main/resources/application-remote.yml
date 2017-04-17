@@ -1,0 +1,5 @@
+spring:
+  rabbitmq:
+    host: rabbitserver
+    username: tutorial
+    password: tutorial
