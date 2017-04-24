@@ -24,7 +24,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @author Gary Russell
  * @author Scott Deeg
  */
-public class RabbitMQTutorialsRunner implements CommandLineRunner {
+public class RabbitAmqpTutorialsRunner implements CommandLineRunner {
 
 	@Value("${tutorial.client.duration:0}")
 	private int duration;
