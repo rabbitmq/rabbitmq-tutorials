@@ -29,7 +29,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @EnableScheduling
-public class RabbitMQTutorialsApplication {
+public class RabbitAmqpTutorialsApplication {
 
 	@Profile("usage_message")
 	@Bean
@@ -61,11 +61,11 @@ public class RabbitMQTutorialsApplication {
 	@Profile("!usage_message")
 	@Bean
 	public CommandLineRunner tutorial() {
-		return new RabbitMQTutorialsRunner();
+		return new RabbitAmqpTutorialsRunner();
 	}
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(RabbitMQTutorialsApplication.class, args);
+        SpringApplication.run(RabbitAmqpTutorialsApplication.class, args);
     }
 
 }
