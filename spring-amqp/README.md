@@ -1,4 +1,4 @@
-#RabbitMQ Tutorial Sample Application
+# RabbitMQ Tutorial Using Spring AMQP
 
 This project implements each of the [6 RabbitMQ Tutorials][1] using Spring AMQP.
 
@@ -14,8 +14,12 @@ a different host, port or credentials, connections settings would require adjust
 
 ##Usage
 
+These tutorials use Maven. To build them run
+```
+mvn package
+```
 The app uses Spring Profiles to control what tutorial it's running, and if it's a
-Sender or Receiver.  Choose which tutorial to run by using these profiles:
+Sender or Receiver. Choose which tutorial to run by using these profiles:
 
 - {tut1|hello-world},{sender|receiver}
 - {tut2|work-queues},{sender|receiver}
@@ -27,15 +31,26 @@ Sender or Receiver.  Choose which tutorial to run by using these profiles:
 After building with maven, run the app however you like to run boot apps.
 
 For example:
+
 ```
-java -jar rabbitmq-tutorials.jar --spring.profiles.active=work-queues,sender
+java -jar target/rabbit-tutorials-*.jar --spring.profiles.active=work-queues,sender
 ```
 
-For tutorials 1-5, run the Receiver followed by the Sender.
+will run the publisher part of tutorial 2 (Work Queues).
+
+For tutorials 1-5, run the consumer (receiver) followed by the publisher (sender):
+
+```
+# shell 1
+java -jar target/rabbit-tutorials-*.jar --spring.profiles.active=work-queues,receiver
+
+# shell 2
+java -jar target/rabbit-tutorials-*.jar --spring.profiles.active=work-queues,sender
+```
 
 For tutorial 6, run the Server followed by the Client.
 
-##Configuration
+##C onfiguration
 
 When running receivers/servers it's useful to set the duration the app runs to a longer time.  Do this by setting
 the `tutorial.client.duration` property.
@@ -60,5 +75,6 @@ spring:
 ```
 
 To use this at runtime create a file called `application-remote.yml` (or properties) and set the properties in there.  Then set the
-remote profile as in the example above.  See the Spring Boot and Spring AMQP documentation for more information on setting application
+remote profile as in the example above.  See the [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+and [Spring AMQP documentation](http://docs.spring.io/spring-amqp/reference/html/) for more information on setting application
 properties and AMQP properties specifically.
