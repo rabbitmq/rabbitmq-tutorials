@@ -26,7 +26,7 @@ The following ports are available:
  * [Ruby (with Bunny)](./ruby)
  * [Scala](./scala)
  * [Swift](./swift)
- * [Spring Amqp](./spring-amqp)
+ * [Spring AMQP](./spring-amqp)
  
 ## License
 
