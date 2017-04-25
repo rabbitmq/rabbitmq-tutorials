@@ -7,14 +7,15 @@ sender, receiver, and configuration.
 
 [1]: https://www.rabbitmq.com/getstarted.html
 
-##Prerequisites
-These tutorials assume RabbitMQ is <a href="http://rabbitmq.com/download.html">installed</a> and running
-on <code>localhost</code> on standard port (<code>5672</code>). In case you use
+## Prerequisites
+These tutorials assume RabbitMQ is [installed](http://rabbitmq.com/download.html) and running
+on `localhost` using the standard port (`5672`). In case you use
 a different host, port or credentials, connections settings would require adjusting.
 
-##Usage
+## Usage
 
 These tutorials use Maven. To build them run
+
 ```
 mvn package
 ```
@@ -59,10 +60,11 @@ the `tutorial.client.duration` property.
 java -jar rabbitmq-tutorials.jar --spring.profiles.active=tut2,receiver,remote --tutorial.client.duration=60000
 ```
 
-By default, Spring AMQP uses localhost to connect to RabbitMQ.  In the sample, the `remote` profile
-causes Spring to load the properties in `application-remote.yml` that are used for testing with a
-non-local server.  Set your own properties in the one in the project, or provide your own on the
-command line when you run it.
+By default, Spring AMQP uses localhost to connect to RabbitMQ.  In the
+sample, the `remote` profile causes Spring to load the properties in
+`application-remote.yml` that are used for testing with a non-local
+server.  Set your own properties in the one in the project, or provide
+your own on the command line when you run it.
 
 To use to a remote RabbitMQ installation set the following properties:
 
