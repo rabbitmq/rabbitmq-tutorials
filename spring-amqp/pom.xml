@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.0.RELEASE</version>
+		<version>1.5.2.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -42,7 +42,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>org.springframework.amqp.tutorials.RabbitMQTutorialsApplication</mainClass>
+					<mainClass>org.springframework.amqp.tutorials.RabbitAmqpTutorialsApplication</mainClass>
 					<layout>ZIP</layout>
 				</configuration>
 			</plugin>

@@ -7,6 +7,11 @@ sender, receiver, and configuration.
 
 [1]: https://www.rabbitmq.com/getstarted.html
 
+##Prerequisites
+These tutorials assume RabbitMQ is <a href="http://rabbitmq.com/download.html">installed</a> and running
+on <code>localhost</code> on standard port (<code>5672</code>). In case you use
+a different host, port or credentials, connections settings would require adjusting.
+
 ##Usage
 
 The app uses Spring Profiles to control what tutorial it's running, and if it's a
