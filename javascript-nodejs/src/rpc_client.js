@@ -4,7 +4,7 @@ var amqp = require('amqplib/callback_api');
 
 var args = process.argv.slice(2);
 
-if (args.length == 0) {
+if (args.length === 0) {
   console.log("Usage: rpc_client.js num");
   process.exit(1);
 }
