@@ -4,7 +4,7 @@ var amqp = require('amqplib/callback_api');
 
 var args = process.argv.slice(2);
 
-if (args.length == 0) {
+if (args.length === 0) {
   console.log("Usage: rpc_client.js num");
   process.exit(1);
 }
@@ -18,7 +18,7 @@ amqp.connect('amqp://localhost', function(err, conn) {
       console.log(' [x] Requesting fib(%d)', num);
 
       ch.consume(q.queue, function(msg) {
-        if (msg.properties.correlationId == corr) {
+        if (msg.properties.correlationId === corr) {
           console.log(' [.] Got %s', msg.content.toString());
           setTimeout(function() { conn.close(); process.exit(0) }, 500);
         }
