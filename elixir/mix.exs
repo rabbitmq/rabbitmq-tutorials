@@ -28,7 +28,7 @@ defmodule RabbitmqTutorials.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:amqp, "~> 0.2.0-pre.2"},
+      {:amqp, "~> 0.2.1"},
     ]
   end
 end

@@ -1,3 +1,4 @@
 tutorial?/Carthage/Build
 tutorial?/Carthage/Checkouts
 *xcuserdata*
+.DS_Store
