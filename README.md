@@ -19,6 +19,7 @@ The following ports are available:
  * [JavaScript (with Node and amqp-node)](https://github.com/squaremo/amqp.node/tree/master/examples) (using promises/futures)
  * [Java](./java)
  * [Java (with IntelliJ IDEA)](./java-idea)
+ * [Objective-C](./objective-c)
  * [PHP (with php-amqplib)](./php)
  * [PHP (with php-amqp)](./php-amqp)
  * [Perl](./perl)
