@@ -38,7 +38,7 @@ class Program
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine(" [x] Received '{0}':'{1}'", routingKey, message);
             };
-            channel.BasicConsume(queue: queueName, noAck: true, consumer: consumer);
+            channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
 
             Console.WriteLine(" Press [enter] to exit.");
             Console.ReadLine();
