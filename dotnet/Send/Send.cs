@@ -1,25 +1,30 @@
 using System;
 using RabbitMQ.Client;
+using RabbitMQ.Client;
 using System.Text;
+using RabbitMQ.Client.Framing;
 
 class Send
 {
     public static void Main()
     {
-        var factory = new ConnectionFactory() { HostName = "localhost" };
-        using(var connection = factory.CreateConnection())
-        using(var channel = connection.CreateModel())
-        {
-            channel.QueueDeclare(queue: "hello", durable: false, exclusive: false, autoDelete: false, arguments: null);
-
-            string message = "Hello World!";
-            var body = Encoding.UTF8.GetBytes(message);
-
-            channel.BasicPublish(exchange: "", routingKey: "hello", basicProperties: null, body: body);
-            Console.WriteLine(" [x] Sent {0}", message);
-        }
-
-        Console.WriteLine(" Press [enter] to exit.");
-        Console.ReadLine();
+        var hostName = "localhost";
+        ConnectionFactory factory = new ConnectionFactory();
+        //
+        // The next six lines are optional:
+        factory.UserName = ConnectionFactory.DefaultUser;
+        factory.Password = ConnectionFactory.DefaultPass;
+        factory.VirtualHost = ConnectionFactory.DefaultVHost;
+        factory.HostName = hostName;
+        factory.Port     = AmqpTcpEndpoint.UseDefaultPort;
+        //
+        IConnection conn = factory.CreateConnection();
+        //
+        IModel ch = conn.CreateModel();
+        //
+        // ... use ch's IModel methods ...
+        //
+        ch.Close(Constants.ReplySuccess, "Closing the channel");
+        conn.Close(Constants.ReplySuccess, "Closing the connection");;
     }
 }
