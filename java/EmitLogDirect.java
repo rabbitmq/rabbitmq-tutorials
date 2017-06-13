@@ -26,15 +26,17 @@ public class EmitLogDirect {
     connection.close();
   }
 
-  private static String getSeverity(String[] strings){
-    if (strings.length < 1)
-    	    return "info";
+  private static String getSeverity(String[] strings) {
+    if (strings.length < 2) {
+        return "info";
+    }
     return strings[0];
   }
 
-  private static String getMessage(String[] strings){
-    if (strings.length < 2)
-    	    return "Hello World!";
+  private static String getMessage(String[] strings) {
+    if (strings.length < 2) {
+        return "Hello World!";
+    }
     return joinStrings(strings, " ", 1);
   }
 
@@ -49,4 +51,3 @@ public class EmitLogDirect {
     return words.toString();
   }
 }
-
