@@ -12,7 +12,7 @@
           "type": "platform",
           "version": "1.0.0"
         },
-        "RabbitMQ.Client": "4.0.*"
+        "RabbitMQ.Client": "5.0.*"
       },
       "imports": "dnxcore50"
     }

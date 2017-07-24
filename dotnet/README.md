@@ -30,30 +30,30 @@ on windows cd into each project and run `dotnet restore` manually.
 
 #### [Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-dotnet.html)
 
-    dotnet run -p Receive
-    dotnet run -p Send
+    dotnet run -p Receive/Receive.csproj
+    dotnet run -p Send/Send.csproj
 
 #### [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-dotnet.html)
 
-    dotnet run -p Worker
-    dotnet run -p NewTask
+    dotnet run -p Worker/Worker.csproj
+    dotnet run -p NewTask/NewTask/csproj
 
 #### [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-dotnet.html)
 
-    dotnet run -p ReceiveLogs
-    dotnet run -p EmitLog
+    dotnet run -p ReceiveLogs/ReceiveLogs.csproj
+    dotnet run -p EmitLog/EmitLog.csproj
 
 #### [Tutorial four: Routing](http://www.rabbitmq.com/tutorial-four-dotnet.html)
 
-    dotnet run -p ReceiveLogsDirect info
-    dotnet run -p EmitLogDirect
+    dotnet run -p ReceiveLogsDirect/ReceiveLogsDirect.csproj info
+    dotnet run -p EmitLogDirect/EmitLogDirect.csproj
 
 #### [Tutorial five: Topics](http://www.rabbitmq.com/tutorial-five-dotnet.html)
 
-    dotnet run -p ReceiveLogsTopic anonymous.info
-    dotnet run -p EmitLogTopic
+    dotnet run -p ReceiveLogsTopic/ReceiveLogsTopic.csproj anonymous.info
+    dotnet run -p EmitLogTopic/EmitLogTopic.csproj
 
 #### [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-dotnet.html)
 
-    dotnet run -p RPCServer
-    dotnet run -p RPCClient
+    dotnet run -p RPCServer/RPCServer.csproj
+    dotnet run -p RPCClient/RPCClient.csproj
