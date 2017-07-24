@@ -17,7 +17,7 @@ class ReceiveLogs
             channel.QueueBind(queue: queueName, exchange: "logs", routingKey: "");
 
             Console.WriteLine(" [*] Waiting for logs.");
-            
+
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
             {
@@ -25,7 +25,7 @@ class ReceiveLogs
                 var message = Encoding.UTF8.GetString(body);
                 Console.WriteLine(" [x] {0}", message);
             };
-            channel.BasicConsume(queue: queueName, noAck: true, consumer: consumer);
+            channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
 
             Console.WriteLine(" Press [enter] to exit.");
             Console.ReadLine();

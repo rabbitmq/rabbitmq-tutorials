@@ -31,7 +31,7 @@ class Program
             Console.WriteLine(" [*] Waiting for messages. To exit press CTRL+C");
 
             var consumer = new QueueingBasicConsumer(channel);
-            channel.BasicConsume(queue: queueName, noAck: true, consumer: consumer);
+            channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
 
             while(true)
             {

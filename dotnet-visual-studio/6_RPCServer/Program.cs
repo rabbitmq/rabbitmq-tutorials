@@ -14,7 +14,7 @@ class Program
             channel.QueueDeclare(queue: "rpc_queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
             channel.BasicQos(0, 1, false);
             var consumer = new EventingBasicConsumer(channel);
-            channel.BasicConsume(queue: "rpc_queue", noAck: false, consumer: consumer);
+            channel.BasicConsume(queue: "rpc_queue", autoAck: false, consumer: consumer);
             Console.WriteLine(" [x] Awaiting RPC requests");
 
             consumer.Received += (model, ea) =>
