@@ -195,6 +195,6 @@ receiveLogs:
 killrabbit:
 	-docker kill `cat rabbitCID`
 
-rmrabbit:
+rmrabbit: killrabbit
 	-docker rm `cat rabbitCID`
 	-@rm rabbitCID
