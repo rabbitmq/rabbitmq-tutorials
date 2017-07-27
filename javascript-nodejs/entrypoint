@@ -1,0 +1,9 @@
+#!/bin/sh
+
+find . -iname '*.js'|xargs -n1 -I{} sed -i "s/localhost/$AMQ_HOST/gi" {}
+#find . -iname '*.js'|xargs -n1 -I{} sed -i "s/'hello'/'$AMQ_Q'/gi" {}
+#find . -iname '*.js'|xargs -n1 -I{} sed -i "s/'Hello World!'/'$AMQ_MSG'/gi" {}
+#find . -iname '*.js'|xargs -n1 -I{} sed -i "s/'task_queue'/'$AMQ_Q_task'/gi" {}
+#find . -iname '*.js'|xargs -n1 -I{} sed -i "s/'rpc_queue'/'$AMQ_Q_rpc'/gi" {}
+
+node src/$1.js $2
