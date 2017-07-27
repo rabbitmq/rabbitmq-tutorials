@@ -16,6 +16,11 @@ rabbitCID:
 		--hostname rabbit \
 	  --cidfile="rabbitCID" \
 		-t rabbitmq:3
+	@echo -n Let Rabbit Settle.
+	@sleep 1; echo -n '.'
+	@sleep 2; echo -n '.'
+	@sleep 3; echo -n '.'
+	@sleep 2; echo '!'
 
 send: rabbitCID receiveCID
 	@echo Send
