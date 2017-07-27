@@ -1,4 +1,6 @@
-all:  send rpc_client new_task emit_log
+all: build clean targets
+
+targets: send new_task emit_log emit_log_direct emit_log_topic rpc_client
 
 TAG:=rabbitmq/js-test
 NAME:=JStest
@@ -30,9 +32,9 @@ send: rabbitCID receiveCID
 	  --cidfile="sendCID" \
 		-t ${TAG}
 	-@docker logs -f `cat sendCID`
-	-@docker rm `cat sendCID`
+	docker rm `cat sendCID`
 	-@rm sendCID
-	-@docker logs `cat receiveCID`
+	docker logs `cat receiveCID`
 
 receiveCID: rabbitCID
 	@echo Receive
@@ -60,9 +62,9 @@ rpc_client: rabbitCID rpc_serverCID
 	  --cidfile="rpc_clientCID" \
 		-t ${TAG} rpc_client 3
 	-@docker logs -f `cat rpc_clientCID`
-	-@docker rm `cat rpc_clientCID`
+	docker rm `cat rpc_clientCID`
 	-@rm rpc_clientCID
-	-@docker logs `cat rpc_serverCID`
+	docker logs `cat rpc_serverCID`
 
 workerCID: rabbitCID
 	@echo Worker
@@ -81,9 +83,9 @@ new_task: rabbitCID workerCID
 	  --cidfile="new_taskCID" \
 		-t ${TAG} new_task
 	-@docker logs -f `cat new_taskCID`
-	-@docker rm `cat new_taskCID`
+	docker rm `cat new_taskCID`
 	-@rm new_taskCID
-	-@docker logs `cat workerCID`
+	docker logs `cat workerCID`
 
 emit_log: rabbitCID receive_logsCID
 	@echo Emit Log
@@ -93,9 +95,9 @@ emit_log: rabbitCID receive_logsCID
 		--link ${NAME}-rabbit:rabbit \
 		-t ${TAG} emit_log
 	-@docker logs -f `cat emit_logCID`
-	-@docker rm `cat emit_logCID`
+	docker rm `cat emit_logCID`
 	-@rm emit_logCID
-	-@docker logs `cat receive_logsCID`
+	docker logs `cat receive_logsCID`
 
 receive_logsCID: rabbitCID
 	@echo Receive Logs
@@ -106,21 +108,69 @@ receive_logsCID: rabbitCID
 	  --cidfile="receive_logsCID" \
 		-t ${TAG} receive_logs
 
+emit_log_direct: rabbitCID receive_logs_directCID
+	@echo Emit Log_direct
+	@docker run -d \
+		--env AMQ_HOST=${AMQ_HOST} \
+	  --cidfile="emit_log_directCID" \
+		--link ${NAME}-rabbit:rabbit \
+		-t ${TAG} emit_log_direct
+	-@docker logs -f `cat emit_log_directCID`
+	docker rm `cat emit_log_directCID`
+	-@rm emit_log_directCID
+	docker logs `cat receive_logs_directCID`
+
+receive_logs_directCID: rabbitCID
+	@echo Receive Logs_direct
+	@docker run -d \
+		--name=${NAME}-receive_logs_direct \
+		--env AMQ_HOST=${AMQ_HOST} \
+		--link ${NAME}-rabbit:rabbit \
+	  --cidfile="receive_logs_directCID" \
+		-t ${TAG} receive_logs_direct info
+
+emit_log_topic: rabbitCID receive_logs_topicCID
+	@echo Emit Log_topic
+	@docker run -d \
+		--env AMQ_HOST=${AMQ_HOST} \
+	  --cidfile="emit_log_topicCID" \
+		--link ${NAME}-rabbit:rabbit \
+		-t ${TAG} emit_log_topic
+	-@docker logs -f `cat emit_log_topicCID`
+	docker rm `cat emit_log_topicCID`
+	-@rm emit_log_topicCID
+	docker logs `cat receive_logs_topicCID`
+
+receive_logs_topicCID: rabbitCID
+	@echo Receive Logs_topic
+	@docker run -d \
+		--name=${NAME}-receive_logs_topic \
+		--env AMQ_HOST=${AMQ_HOST} \
+		--link ${NAME}-rabbit:rabbit \
+	  --cidfile="receive_logs_topicCID" \
+		-t ${TAG} receive_logs_topic anonymous.info
+
 kill:
-	-@docker kill `cat receiveCID`
-	-@docker kill `cat receive_logsCID`
-	-@docker kill `cat rpc_serverCID`
-	-@docker kill `cat workerCID`
+	-docker kill `cat receiveCID`
+	-docker kill `cat receive_logsCID`
+	-docker kill `cat receive_logs_directCID`
+	-docker kill `cat receive_logs_topicCID`
+	-docker kill `cat rpc_serverCID`
+	-docker kill `cat workerCID`
 
 rm-image:
-	-@docker rm `cat receiveCID`
-	-@docker rm `cat receive_logsCID`
-	-@docker rm `cat rpc_serverCID`
-	-@docker rm `cat workerCID`
-	-@rm receiveCID
-	-@rm receive_logsCID
-	-@rm rpc_serverCID
-	-@rm workerCID
+	-docker rm `cat receiveCID`
+	-docker rm `cat receive_logsCID`
+	-docker rm `cat receive_logs_directCID`
+	-docker rm `cat receive_logs_topicCID`
+	-docker rm `cat rpc_serverCID`
+	-docker rm `cat workerCID`
+	-rm receiveCID
+	-rm receive_logsCID
+	-rm receive_logs_directCID
+	-rm receive_logs_topicCID
+	-rm rpc_serverCID
+	-rm workerCID
 
 rm: kill rm-image
 
@@ -131,20 +181,20 @@ enter:
 
 logs:
 	@echo Receive
-	-@docker logs `cat receiveCID`
+	-docker logs `cat receiveCID`
 	@echo Receive Logs
-	-@docker logs `cat receive_logsCID`
+	-docker logs `cat receive_logsCID`
 	@echo Worker
-	-@docker logs `cat workerCID`
+	-docker logs `cat workerCID`
 	@echo RPC Server
-	-@docker logs `cat rpc_serverCID`
+	-docker logs `cat rpc_serverCID`
 
 receiveLogs:
 	docker logs -f `cat receiveCID`
 
 killrabbit:
-	-@docker kill `cat rabbitCID`
+	-docker kill `cat rabbitCID`
 
 rmrabbit:
-	-@docker rm `cat rabbitCID`
+	-docker rm `cat rabbitCID`
 	-@rm rabbitCID
