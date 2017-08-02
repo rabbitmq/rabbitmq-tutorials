@@ -53,3 +53,13 @@ To install `amqp.node` using npm:
 
     node src/rpc_server.js
     node src/rpc_client.js
+
+### Makefile quick test
+
+`make` will test all of the tutorials in a local docker setup, you must
+have docker installed
+
+### Rancher
+
+There is now a [Rancher template](https://github.com/rancher/community-catalog/tree/master/templates/rabbitmq-examples)
+as well that allow you to test out a rabbitmq stack easily using these tutorial methods.
