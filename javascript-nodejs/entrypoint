@@ -1,0 +1,5 @@
+#!/bin/sh
+
+find . -iname '*.js'|xargs -n1 -I{} sed -i "s/localhost/$AMQ_HOST/gi" {}
+
+node src/$1.js $2
