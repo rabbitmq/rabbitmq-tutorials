@@ -36,7 +36,7 @@ on windows cd into each project and run `dotnet restore` manually.
 #### [Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-dotnet.html)
 
     dotnet run -p Worker/Worker.csproj
-    dotnet run -p NewTask/NewTask/csproj
+    dotnet run -p NewTask/NewTask.csproj
 
 #### [Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-dotnet.html)
 
