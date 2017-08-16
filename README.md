@@ -21,6 +21,7 @@ The following ports are available:
  * [Java (with IntelliJ IDEA)](./java-idea)
  * [PHP (with php-amqplib)](./php)
  * [PHP (with php-amqp)](./php-amqp)
+ * [PHP (with queue-interop)](./php-interop)
  * [Perl](./perl)
  * [Python (with Pika)](./python)
  * [Ruby (with Bunny)](./ruby)
