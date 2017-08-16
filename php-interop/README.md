@@ -1,6 +1,6 @@
-# PHP code for RabbitMQ tutorials based on AMQP interop
+# RabbitMQ tutorials ported to PHP's queue-interop
 
-This is a [PHP tutorial](./php) port to the [queue-interop](https://github.com/queue-interop/queue-interop#amqp-interop) family
+This is a [PHP tutorial](https://github.com/rabbitmq/rabbitmq-tutorials/tree/master/php) port to the [queue-interop](https://github.com/queue-interop/queue-interop#amqp-interop) family
 of libraries.
 These examples will work with any interop-compatible transport such as [enqueue/amqp-ext](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/amqp.md),
 [enqueue/amqp-bunny](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/amqp_bunny.md),
