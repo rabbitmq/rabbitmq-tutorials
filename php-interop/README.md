@@ -12,7 +12,7 @@ As with other ports, to run the tutorials you'd need a RabbitMQ node started on 
 
 ### PHP 5.5+
 
-You need `PHP 5.5` and one of the amqp interop compatible transport.
+You need `PHP 5.5` and one of the queue-interop compatible transport libraries.
 
 
 ### Composer
