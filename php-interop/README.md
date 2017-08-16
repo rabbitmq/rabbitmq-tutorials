@@ -1,12 +1,14 @@
 # PHP code for RabbitMQ tutorials based on AMQP interop
 
-Here you can find PHP code examples from [RabbitMQ
-tutorials](http://www.rabbitmq.com/getstarted.html) adopted to [amqp interop](https://github.com/queue-interop/queue-interop#amqp-interop)
-These examples will work with any amqp interop compatible transports such as [enqueue/amqp-ext](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/amqp.md), [enqueue/amqp-bunny](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/amqp_bunny.md), [enqueue/amqp-lib](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/amqp_lib.md)
-
-To successfully use the examples you will need a running RabbitMQ server.
+This is a [PHP tutorial](./php) port to the [queue-interop](https://github.com/queue-interop/queue-interop#amqp-interop) family
+of libraries.
+These examples will work with any interop-compatible transport such as [enqueue/amqp-ext](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/amqp.md),
+[enqueue/amqp-bunny](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/amqp_bunny.md),
+or [enqueue/amqp-lib](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/transport/amqp_lib.md).
 
 ## Requirements
+
+As with other ports, to run the tutorials you'd need a RabbitMQ node started on localhost with all defaults.
 
 ### PHP 5.5+
 
@@ -25,6 +27,5 @@ To do that install Composer and add it to your path, then run the following comm
 inside this project folder:
 
 ```bash
-$ composer require enqueue/amqp-bunny
+composer require enqueue/amqp-bunny
 ```
-
