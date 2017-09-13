@@ -26,7 +26,7 @@ public class RPCServer {
     Connection connection = null;
     try {
       connection      = factory.newConnection();
-      Channel channel = connection.createChannel();
+      final Channel channel = connection.createChannel();
 
       channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
 
@@ -56,19 +56,25 @@ public class RPCServer {
           }
           finally {
             channel.basicPublish( "", properties.getReplyTo(), replyProps, response.getBytes("UTF-8"));
-
             channel.basicAck(envelope.getDeliveryTag(), false);
+            // RabbitMq consumer worker thread notifies the RPC server owner thread 
+            synchronized(this) {
+            	this.notify();
+            }
           }
         }
       };
 
       channel.basicConsume(RPC_QUEUE_NAME, false, consumer);
-
-      //loop to prevent reaching finally block
-      while(true) {
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException _ignore) {}
+      // Wait and be prepared to consume the message from RPC client.
+      while (true) {
+      	synchronized(consumer) {
+      		try {
+      			consumer.wait();
+      	    } catch (InterruptedException e) {
+      	    	e.printStackTrace();	    	
+      	    }
+      	}
       }
     } catch (IOException | TimeoutException e) {
       e.printStackTrace();
