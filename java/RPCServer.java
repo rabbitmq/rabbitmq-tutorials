@@ -26,7 +26,7 @@ public class RPCServer {
     Connection connection = null;
     try {
       connection      = factory.newConnection();
-      Channel channel = connection.createChannel();
+      final Channel channel = connection.createChannel();
 
       channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
 
