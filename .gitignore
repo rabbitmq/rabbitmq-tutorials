@@ -3,6 +3,7 @@
 *.zip
 erlang/amqp_client*
 erlang/rabbit_common*
+erlang/recon*
 python/venv
 dotnet/*.exe
 dotnet/lib
