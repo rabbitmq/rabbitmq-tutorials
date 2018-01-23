@@ -43,6 +43,7 @@ Code examples are executed via `runhaskell`:
 
 [Tutorial six: RPC](http://www.rabbitmq.com/tutorial-six-python.html)
 
-    TBD
+    runhaskell rpcServer.hs
+    runhaskell rpcClient.hs
 
 To learn more, see [Network.AMQP](https://github.com/hreinhardt/amqp).
