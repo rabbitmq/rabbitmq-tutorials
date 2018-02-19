@@ -1,17 +1,15 @@
 #!/usr/bin/env ruby
-# encoding: utf-8
+require 'bunny'
 
-require "bunny"
+connection = Bunny.new(automatically_recover: false)
+connection.start
 
-conn = Bunny.new(:automatically_recover => false)
-conn.start
+channel = connection.create_channel
+queue = channel.queue('task_queue', durable: true)
 
-ch   = conn.create_channel
-q    = ch.queue("task_queue", :durable => true)
+message = ARGV.empty? ? 'Hello World!' : ARGV.join(' ')
 
-msg  = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
+queue.publish(message, persistent: true)
+puts " [x] Sent #{message}"
 
-q.publish(msg, :persistent => true)
-puts " [x] Sent #{msg}"
-
-conn.close
+connection.close
