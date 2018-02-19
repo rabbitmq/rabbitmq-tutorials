@@ -1,17 +1,15 @@
 #!/usr/bin/env ruby
-# encoding: utf-8
+require 'bunny'
 
-require "bunny"
+connection = Bunny.new(automatically_recover: false)
+connection.start
 
-conn = Bunny.new(:automatically_recover => false)
-conn.start
+channel = connection.create_channel
+exchange = channel.topic('topic_logs')
+severity = ARGV.shift || 'anonymous.info'
+message = ARGV.empty? ? 'Hello World!' : ARGV.join(' ')
 
-ch       = conn.create_channel
-x        = ch.topic("topic_logs")
-severity = ARGV.shift || "anonymous.info"
-msg      = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
+exchange.publish(message, routing_key: severity)
+puts " [x] Sent #{severity}:#{message}"
 
-x.publish(msg, :routing_key => severity)
-puts " [x] Sent #{severity}:#{msg}"
-
-conn.close
+connection.close
