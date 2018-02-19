@@ -1,17 +1,16 @@
 #!/usr/bin/env ruby
-# encoding: utf-8
 
-require "bunny"
+require 'bunny'
 
-conn = Bunny.new(:automatically_recover => false)
-conn.start
+connection = Bunny.new
+connection.start
 
-ch   = conn.create_channel
-x    = ch.fanout("logs")
+channel = connection.create_channel
+exchange = channel.fanout('logs')
 
-msg  = ARGV.empty? ? "Hello World!" : ARGV.join(" ")
+message = ARGV.empty? ? 'Hello World!' : ARGV.join(' ')
 
-x.publish(msg)
-puts " [x] Sent #{msg}"
+exchange.publish(message)
+puts " [x] Sent #{message}"
 
-conn.close
+connection.close
