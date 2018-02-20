@@ -1,32 +1,28 @@
 #!/usr/bin/env ruby
-# encoding: utf-8
+require 'bunny'
 
-require "bunny"
+abort "Usage: #{$PROGRAM_NAME} [binding key]" if ARGV.empty?
 
-if ARGV.empty?
-  abort "Usage: #{$0} [binding key]"
-end
+connection = Bunny.new(automatically_recover: false)
+connection.start
 
-conn = Bunny.new(:automatically_recover => false)
-conn.start
-
-ch  = conn.create_channel
-x   = ch.topic("topic_logs")
-q   = ch.queue("", :exclusive => true)
+channel = connection.create_channel
+exchange = channel.topic('topic_logs')
+queue = channel.queue('', exclusive: true)
 
 ARGV.each do |severity|
-  q.bind(x, :routing_key => severity)
+  queue.bind(exchange, routing_key: severity)
 end
 
-puts " [*] Waiting for logs. To exit press CTRL+C"
+puts ' [*] Waiting for logs. To exit press CTRL+C'
 
 begin
-  q.subscribe(:block => true) do |delivery_info, properties, body|
+  queue.subscribe(block: true) do |delivery_info, _properties, body|
     puts " [x] #{delivery_info.routing_key}:#{body}"
   end
 rescue Interrupt => _
-  ch.close
-  conn.close
+  channel.close
+  connection.close
 
   exit(0)
 end

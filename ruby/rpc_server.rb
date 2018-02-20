@@ -1,51 +1,52 @@
 #!/usr/bin/env ruby
-# encoding: utf-8
-
-require "bunny"
-
-conn = Bunny.new(:automatically_recover => false)
-conn.start
-
-ch   = conn.create_channel
+require 'bunny'
 
 class FibonacciServer
-
-  def initialize(ch)
-    @ch = ch
+  def initialize
+    @connection = Bunny.new
+    @connection.start
+    @channel = @connection.create_channel
   end
 
   def start(queue_name)
-    @q = @ch.queue(queue_name)
-    @x = @ch.default_exchange
+    @queue = channel.queue(queue_name)
+    @exchange = channel.default_exchange
+    subscribe_to_queue
+  end
 
-    @q.subscribe(:block => true) do |delivery_info, properties, payload|
-      n = payload.to_i
-      r = self.class.fib(n)
+  def stop
+    channel.close
+    connection.close
+  end
 
-      puts " [.] fib(#{n})"
+  private
 
-      @x.publish(r.to_s, :routing_key => properties.reply_to, :correlation_id => properties.correlation_id)
+  attr_reader :channel, :exchange, :queue, :connection
+
+  def subscribe_to_queue
+    queue.subscribe(block: true) do |_delivery_info, properties, payload|
+      result = fibonacci(payload.to_i)
+
+      exchange.publish(
+        result.to_s,
+        routing_key: properties.reply_to,
+        correlation_id: properties.correlation_id
+      )
     end
   end
 
+  def fibonacci(value)
+    return value if value.zero? || value == 1
 
-  def self.fib(n)
-    case n
-    when 0 then 0
-    when 1 then 1
-    else
-      fib(n - 1) + fib(n - 2)
-    end
+    fibonacci(value - 1) + fibonacci(value - 2)
   end
 end
 
 begin
-  server = FibonacciServer.new(ch)
-  puts " [x] Awaiting RPC requests"
-  server.start("rpc_queue")
-rescue Interrupt => _
-  ch.close
-  conn.close
+  server = FibonacciServer.new
 
-  exit(0)
+  puts ' [x] Awaiting RPC requests'
+  server.start('rpc_queue')
+rescue Interrupt => _
+  server.stop
 end

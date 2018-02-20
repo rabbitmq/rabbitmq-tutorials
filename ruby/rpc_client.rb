@@ -1,66 +1,70 @@
 #!/usr/bin/env ruby
-# encoding: utf-8
-
-require "bunny"
-require "thread"
-
-conn = Bunny.new(:automatically_recover => false)
-conn.start
-
-ch   = conn.create_channel
-
+require 'bunny'
+require 'thread'
 
 class FibonacciClient
-  attr_reader :reply_queue
-  attr_accessor :response, :call_id
-  attr_reader :lock, :condition
+  attr_accessor :call_id, :response, :lock, :condition, :connection,
+                :channel, :server_queue_name, :reply_queue, :exchange
 
-  def initialize(ch, server_queue)
-    @ch             = ch
-    @x              = ch.default_exchange
+  def initialize(server_queue_name)
+    @connection = Bunny.new(automatically_recover: false)
+    @connection.start
 
-    @server_queue   = server_queue
-    @reply_queue    = ch.queue("", :exclusive => true)
+    @channel = connection.create_channel
+    @exchange = channel.default_exchange
+    @server_queue_name = server_queue_name
 
+    setup_reply_queue
+  end
 
-    @lock      = Mutex.new
+  def call(n)
+    @call_id = generate_uuid
+
+    exchange.publish(n.to_s,
+                     routing_key: server_queue_name,
+                     correlation_id: call_id,
+                     reply_to: reply_queue.name)
+
+    # wait for the signal to continue the execution
+    lock.synchronize { condition.wait(lock) }
+
+    response
+  end
+
+  def stop
+    channel.close
+    connection.close
+  end
+
+  private
+
+  def setup_reply_queue
+    @lock = Mutex.new
     @condition = ConditionVariable.new
-    that       = self
+    that = self
+    @reply_queue = channel.queue('', exclusive: true)
 
-    @reply_queue.subscribe do |delivery_info, properties, payload|
+    reply_queue.subscribe do |_delivery_info, properties, payload|
       if properties[:correlation_id] == that.call_id
         that.response = payload.to_i
-        that.lock.synchronize{that.condition.signal}
+
+        # sends the signal to continue the execution of #call
+        that.lock.synchronize { that.condition.signal }
       end
     end
   end
 
-  def call(n)
-    self.call_id = self.generate_uuid
-
-    @x.publish(n.to_s,
-      :routing_key    => @server_queue,
-      :correlation_id => call_id,
-      :reply_to       => @reply_queue.name)
-
-    lock.synchronize{condition.wait(lock)}
-    response
-  end
-
-  protected
-
   def generate_uuid
-    # very naive but good enough for code
-    # examples
+    # very naive but good enough for code examples
     "#{rand}#{rand}#{rand}"
   end
 end
 
+client = FibonacciClient.new('rpc_queue')
 
-client   = FibonacciClient.new(ch, "rpc_queue")
-puts " [x] Requesting fib(30)"
+puts ' [x] Requesting fib(30)'
 response = client.call(30)
+
 puts " [.] Got #{response}"
 
-ch.close
-conn.close
+client.stop
