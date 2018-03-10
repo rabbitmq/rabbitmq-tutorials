@@ -29,7 +29,7 @@ public class RPCClient {
   }
 
   public String call(String message) throws IOException, InterruptedException {
-    String corrId = UUID.randomUUID().toString();
+    final String corrId = UUID.randomUUID().toString();
 
     AMQP.BasicProperties props = new AMQP.BasicProperties
             .Builder()
