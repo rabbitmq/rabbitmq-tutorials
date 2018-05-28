@@ -19,7 +19,7 @@ $msg = new AMQPMessage($data);
 
 $channel->basic_publish($msg, 'topic_logs', $routing_key);
 
-echo " [x] Sent ",$routing_key,':',$data," \n";
+echo ' [x] Sent ', $routing_key, ':', $data, "\n";
 
 $channel->close();
 $connection->close();

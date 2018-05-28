@@ -17,7 +17,7 @@ $msg = new AMQPMessage($data);
 
 $channel->basic_publish($msg, 'logs');
 
-echo " [x] Sent ", $data, "\n";
+echo ' [x] Sent ', $data, "\n";
 
 $channel->close();
 $connection->close();

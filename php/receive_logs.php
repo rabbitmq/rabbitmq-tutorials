@@ -12,7 +12,7 @@ list($queue_name, ,) = $channel->queue_declare("", false, false, true, false);
 
 $channel->queue_bind($queue_name, 'logs');
 
-echo ' [*] Waiting for logs. To exit press CTRL+C', "\n";
+echo " [*] Waiting for logs. To exit press CTRL+C\n";
 
 $callback = function ($msg) {
     echo ' [x] ', $msg->body, "\n";

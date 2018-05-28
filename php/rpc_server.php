@@ -23,7 +23,7 @@ function fib($n)
 echo " [x] Awaiting RPC requests\n";
 $callback = function ($req) {
     $n = intval($req->body);
-    echo " [.] fib(", $n, ")\n";
+    echo ' [.] fib(', $n, ")\n";
 
     $msg = new AMQPMessage(
         (string) fib($n),

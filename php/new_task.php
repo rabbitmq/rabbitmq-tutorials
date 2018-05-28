@@ -20,7 +20,7 @@ $msg = new AMQPMessage(
 
 $channel->basic_publish($msg, '', 'task_queue');
 
-echo " [x] Sent ", $data, "\n";
+echo ' [x] Sent ', $data, "\n";
 
 $channel->close();
 $connection->close();

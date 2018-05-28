@@ -20,10 +20,10 @@ foreach ($binding_keys as $binding_key) {
     $channel->queue_bind($queue_name, 'topic_logs', $binding_key);
 }
 
-echo ' [*] Waiting for logs. To exit press CTRL+C', "\n";
+echo " [*] Waiting for logs. To exit press CTRL+C\n";
 
 $callback = function ($msg) {
-    echo ' [x] ',$msg->delivery_info['routing_key'], ':', $msg->body, "\n";
+    echo ' [x] ', $msg->delivery_info['routing_key'], ':', $msg->body, "\n";
 };
 
 $channel->basic_consume($queue_name, '', false, true, false, false, $callback);
