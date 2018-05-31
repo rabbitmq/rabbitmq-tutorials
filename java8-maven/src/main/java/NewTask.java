@@ -30,7 +30,7 @@ public class NewTask {
     private static String getMessage(String[] strings) {
         if (strings.length < 1)
             return "Hello World!";
-        return Stream.of(strings).collect(Collectors.joining(" "));
+        return String.join(" ", strings);
     }
 
 }

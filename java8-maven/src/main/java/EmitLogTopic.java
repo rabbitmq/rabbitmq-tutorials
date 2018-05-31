@@ -41,8 +41,7 @@ public class EmitLogTopic {
     private static String getMessage(String[] strings) {
         if (strings.length < 2)
             return "Hello World!";
-        return Stream.of(Arrays.copyOfRange(strings, 1, strings.length))
-                .collect(Collectors.joining(" "));
+        return String.join(" ", Arrays.copyOfRange(strings, 1, strings.length));
     }
 }
 

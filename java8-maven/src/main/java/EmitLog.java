@@ -28,7 +28,7 @@ public class EmitLog {
     private static String getMessage(String[] strings) {
         if (strings.length < 1)
             return "info: Hello World!";
-        return Stream.of(strings).collect(Collectors.joining(" "));
+        return String.join(" ", strings);
     }
 
 }
