@@ -1,10 +1,5 @@
 import com.rabbitmq.client.ConnectionFactory
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:47:00
- * Comment:
- */
 
 class Send {
     companion object {

@@ -2,11 +2,6 @@
 import com.rabbitmq.client.BuiltinExchangeType
 import com.rabbitmq.client.ConnectionFactory
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:08:00
- * Comment:
- */
 
 class EmitLogDirect {
     companion object {

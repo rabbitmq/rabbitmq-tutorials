@@ -5,12 +5,6 @@ import com.rabbitmq.client.Envelope
 import sun.jvm.hotspot.HelloWorld.fib
 
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:35:00
- * Comment:
- */
-
 class RPCServer {
     companion object {
         const val RPC_QUEUE_NAME = "rpc_queue"

@@ -3,11 +3,6 @@ import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DefaultConsumer
 import com.rabbitmq.client.Envelope
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:29:00
- * Comment:
- */
 
 class Recv {
     companion object {

@@ -2,12 +2,6 @@ import com.rabbitmq.client.BuiltinExchangeType
 import com.rabbitmq.client.ConnectionFactory
 
 
-/**
- * Author: vincent
- * Date: 2018-06-08 16:49:00
- * Comment:
- */
-
 class EmitLog {
     companion object {
         const val EXCHANGE_NAME = "logs"

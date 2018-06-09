@@ -3,12 +3,6 @@ import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:30:00
- * Comment:
- */
-
 class RPCClient {
     private var connection: Connection
     private var channel: Channel

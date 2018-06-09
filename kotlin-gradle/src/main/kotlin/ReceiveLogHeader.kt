@@ -2,12 +2,6 @@ import com.rabbitmq.client.*
 import java.util.*
 
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:19:00
- * Comment:
- */
-
 class ReceiveLogHeader {
     companion object {
         const val EXCHANGE_NAME = "header_test"

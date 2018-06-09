@@ -1,11 +1,6 @@
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.MessageProperties
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:17:00
- * Comment:
- */
 
 class NewTask {
     companion object {

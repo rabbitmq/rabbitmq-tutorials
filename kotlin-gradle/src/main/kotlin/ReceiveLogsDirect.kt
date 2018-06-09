@@ -1,10 +1,5 @@
 import com.rabbitmq.client.*
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:27:00
- * Comment:
- */
 
 class ReceiveLogsDirect {
     companion object {

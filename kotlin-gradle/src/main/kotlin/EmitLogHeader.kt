@@ -4,11 +4,6 @@ import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.MessageProperties
 import java.util.*
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:09:00
- * Comment:
- */
 
 class EmitLogHeader {
     companion object {

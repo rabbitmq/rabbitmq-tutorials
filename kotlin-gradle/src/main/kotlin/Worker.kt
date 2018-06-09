@@ -4,11 +4,6 @@ import com.rabbitmq.client.DefaultConsumer
 import com.rabbitmq.client.Envelope
 import java.io.IOException
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:48:00
- * Comment:
- */
 
 class Worker {
     companion object {

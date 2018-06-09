@@ -4,11 +4,6 @@ import com.rabbitmq.client.Channel
 import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
 
-/**
- * Author: vincent
- * Date: 2018-06-08 17:13:00
- * Comment:
- */
 
 class EmitLogTopic {
     companion object {
