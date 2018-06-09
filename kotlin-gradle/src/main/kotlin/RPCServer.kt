@@ -2,8 +2,6 @@ import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DefaultConsumer
 import com.rabbitmq.client.Envelope
-import sun.jvm.hotspot.HelloWorld.fib
-
 
 class RPCServer {
     companion object {
@@ -36,7 +34,7 @@ fun main(args: Array<String>) {
             val message = String(body, charset("UTF-8"))
             val n = Integer.parseInt(message)
             println(" [.] fib($message)")
-            val response = fib(n).toString()
+            val response = RPCServer.fib(n).toString()
             channel.basicPublish("", properties.replyTo, replyProps, response.toByteArray())
             channel.basicAck(envelope.deliveryTag, false)
         }

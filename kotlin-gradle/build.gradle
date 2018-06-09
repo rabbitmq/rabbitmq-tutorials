@@ -21,6 +21,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "com.rabbitmq:amqp-client:latest.release"
+    compile "org.slf4j:slf4j-simple:1.7.25"
 }
 
 compileKotlin {
@@ -28,4 +29,12 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+task run(type: JavaExec, dependsOn: classes) {
+    if ("$argv".trim().size() > 0)
+        args = "$argv".split(",").toList()
+    if ("$main".trim().size() > 0)
+        main = "${project.getProperty('main')}Kt"
+    classpath = sourceSets.main.runtimeClasspath
 }
