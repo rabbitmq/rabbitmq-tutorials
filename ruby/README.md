@@ -5,13 +5,13 @@ Here you can find Ruby code examples from
 
 ## Requirements
 
-To run this code you need [Bunny](http://rubybunny.info).
+These tutorials require [Bunny](http://rubybunny.info) to be installed.
 
-You can install it via RubyGems:
+To install it with RubyGems:
 
-    gem install bunny --version ">= 2.5.1"
+    gem install bunny --version ">= 2.10.0"
 
-Bunny supports Ruby 2.0 and later versions.
+Bunny supports Ruby 2.2 and later versions.
 
 ## Code
 
