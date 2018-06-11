@@ -1,0 +1,40 @@
+buildscript {
+    ext.kotlin_version = '1.2.31'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+group 'com.rabbitmq'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "com.rabbitmq:amqp-client:latest.release"
+    compile "org.slf4j:slf4j-simple:1.7.25"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+task run(type: JavaExec, dependsOn: classes) {
+    if ("$argv".trim().size() > 0)
+        args = "$argv".split(",").toList()
+    if ("$main".trim().size() > 0)
+        main = "${project.getProperty('main')}Kt"
+    classpath = sourceSets.main.runtimeClasspath
+}
