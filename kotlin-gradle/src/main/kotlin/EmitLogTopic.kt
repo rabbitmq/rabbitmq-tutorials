@@ -1,4 +1,3 @@
-
 import com.rabbitmq.client.BuiltinExchangeType
 import com.rabbitmq.client.Channel
 import com.rabbitmq.client.Connection
@@ -43,4 +42,7 @@ fun main(argv: Array<String>) {
 
     channel.basicPublish(EmitLogTopic.EXCHANGE_NAME, routingKey, null, message.toByteArray(charset("UTF-8")))
     println(" [x] Sent '$routingKey':'$message'")
+
+    channel.close()
+    connection.close()
 }
