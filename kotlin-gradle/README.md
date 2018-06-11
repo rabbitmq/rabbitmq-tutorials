@@ -1,75 +1,95 @@
 # RabbitMQ Tutorials in Kotlin
 
-This is a minimalistic Kotlin port of the RabbitMQ tutorials in Java.
+This is a minimalistic Kotlin port of the [RabbitMQ tutorials in Java](http://www.rabbitmq.com/getstarted.html).
 The port is admittedly quite close to Java in terms of code style.
-This is primarily to the fact that RabbitMQ Java client still supports
-JDK 8 and doesn't have a lambda-friendly API.
 
 
 ## Compiling the Code
 
-```console
-$ gradle clean compileKotlin
+``` shell
+gradle clean compileKotlin
 ```
 
-## Running Examples
+## Running the Tutorials
 
-### Hello World
+### Tutorial 1
 
-Execute the following command to receive a hello world:
+Execute the following command to start a Hello, world consumer
 
-```console
-$ gradle run -P main=Recv
+``` shell
+gradle run -P main=Recv
 ```
 
-Execute the following in a separate shell to send a hello world:
+Execute the following in a separate shell to publish a Hello, world messge:
 
-```console
-$ gradle run -P main=Send
+``` shell
+gradle run -P main=Send
 ```
 
-### Work Queues
+### Tutorial 2
 
-Send a message which will be finshed immediately:
+Send a task message. The task will be completed immediately
 
-```console
-$ gradle run -P main=NewTask
-```
-
-Send a message which need some second to execute each . is one second.
-
-```console
-$ gradle run -P main=NewTask -P argv="rabbit1 ...."
+``` shell
+gradle run -P main=NewTask
 ```
 
 To start a worker (run in a separate shell):
 
-```console
-$ gradle run -P main=Worker
+``` shell
+gradle run -P main=Worker
+```
+
+Send a task message. It will wait for 1 second for each dot in the payload.
+
+``` shell
+gradle run -P main=NewTask -P argv="rabbit1 ...."
 ```
 
 Add more workers to the same queue, message will be distributed in the
 round robin manner.
 
-### Publish and Subscriber
+### Tutorial 3
 
-```console
-$ gradle run -P main=EmitLog -P argv="rabbit1, msg1"
-```
-```console
-$ gradle run -P main=ReceiveLogs
+``` shell
+gradle run -P main=ReceiveLogs
 ```
 
-### RPC
+
+``` shell
+gradle run -P main=EmitLog -P argv="rabbit1, msg1"
+```
+
+### Tutorial 4
+
+``` shell
+gradle run -P main="ReceiveLogsDirect" -P argv="info,error"
+```
+
+``` shell
+gradle run -P main=EmitLogDirect"
+```
+
+### Tutorial 5
+
+``` shell
+gradle run -P main=ReceiveLogsTopic -P argv="anonymous.*"
+```
+
+``` shell
+gradle run -P main=EmitLogTopic -P argv="anonymous.info"
+```
+
+### Tutorial 6
 
 In one shell:
 
-```console
-$ gradle run -P main=RPCServer
+``` shell
+gradle run -P main=RPCServer
 ```
 
 In another shell:
 
-```console
-$ gradle run -P main=RPCClient
+``` shell
+gradle run -P main=RPCClient
 ```
