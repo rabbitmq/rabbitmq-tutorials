@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -23,7 +23,9 @@ public class RpcClient
 
     public string Call(string message)
     {
-        var respQueue = new BlockingCollection<string>();
+        var tcs = new TaskCompletionSource<string>();
+        var resultTask = tcs.Task;
+
         var correlationId = Guid.NewGuid().ToString();
 
         IBasicProperties props = channel.CreateBasicProperties();
@@ -40,7 +42,7 @@ public class RpcClient
                 var body = ea.Body;
                 var response = Encoding.UTF8.GetString(body);
 
-                respQueue.Add(response);
+                tcs.SetResult(response);
             }
         };
         consumer.Received += handler;
@@ -58,7 +60,7 @@ public class RpcClient
             queue: replyQueueName,
             autoAck: true);
 
-        return respQueue.Take(); ;
+        return resultTask.Result;
     }
 
     public void Close()
