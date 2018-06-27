@@ -10,8 +10,6 @@ public class RpcClient
     private readonly IModel channel;
     private readonly string replyQueueName;
     private readonly EventingBasicConsumer consumer;
-    private readonly BlockingCollection<string> respQueue = new BlockingCollection<string>();
-    private readonly IBasicProperties props;
 
     public RpcClient()
     {
@@ -21,25 +19,31 @@ public class RpcClient
         channel = connection.CreateModel();
         replyQueueName = channel.QueueDeclare().QueueName;
         consumer = new EventingBasicConsumer(channel);
-
-        props = channel.CreateBasicProperties();
-        var correlationId = Guid.NewGuid().ToString();
-        props.CorrelationId = correlationId;
-        props.ReplyTo = replyQueueName;
-
-        consumer.Received += (model, ea) =>
-        {
-            var body = ea.Body;
-            var response = Encoding.UTF8.GetString(body);
-            if (ea.BasicProperties.CorrelationId == correlationId)
-            {
-                respQueue.Add(response);
-            }
-        };
     }
 
     public string Call(string message)
     {
+        var respQueue = new BlockingCollection<string>();
+        var correlationId = Guid.NewGuid().ToString();
+
+        IBasicProperties props = channel.CreateBasicProperties();
+        props.CorrelationId = correlationId;
+        props.ReplyTo = replyQueueName;
+
+        EventHandler<BasicDeliverEventArgs> handler = null;
+        handler = (model, ea) =>
+        {
+            if (ea.BasicProperties.CorrelationId == correlationId)
+            {
+                consumer.Received -= handler;
+
+                var body = ea.Body;
+                var response = Encoding.UTF8.GetString(body);
+
+                respQueue.Add(response);
+            }
+        };
+        consumer.Received += handler;
 
         var messageBytes = Encoding.UTF8.GetBytes(message);
         channel.BasicPublish(
