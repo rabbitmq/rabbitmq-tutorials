@@ -14,7 +14,7 @@ defmodule RabbitmqTutorials.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :amqp]]
+    [applications: [:amqp]]
   end
 
   # Dependencies can be Hex packages:
@@ -28,7 +28,7 @@ defmodule RabbitmqTutorials.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:amqp, "~> 0.2.1"},
+      {:amqp, "~> 1.0"},
     ]
   end
 end

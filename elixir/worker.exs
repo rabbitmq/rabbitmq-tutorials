@@ -4,7 +4,7 @@ defmodule Worker do
       {:basic_deliver, payload, meta} ->
         IO.puts " [x] Received #{payload}"
         payload
-        |> to_char_list
+        |> to_charlist
         |> Enum.count(fn x -> x == ?. end)
         |> Kernel.*(1000)
         |> :timer.sleep
