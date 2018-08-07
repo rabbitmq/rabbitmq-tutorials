@@ -16,7 +16,6 @@ public class RPCClient {
   private Connection connection;
   private Channel channel;
   private String requestQueueName = "rpc_queue";
-  private String replyQueueName;
 
   public RPCClient() throws IOException, TimeoutException {
     ConnectionFactory factory = new ConnectionFactory();
@@ -24,13 +23,12 @@ public class RPCClient {
 
     connection = factory.newConnection();
     channel = connection.createChannel();
-
-    replyQueueName = channel.queueDeclare().getQueue();
   }
 
   public String call(String message) throws IOException, InterruptedException {
     final String corrId = UUID.randomUUID().toString();
 
+    String replyQueueName = channel.queueDeclare().getQueue();
     AMQP.BasicProperties props = new AMQP.BasicProperties
             .Builder()
             .correlationId(corrId)
@@ -41,7 +39,7 @@ public class RPCClient {
 
     final BlockingQueue<String> response = new ArrayBlockingQueue<String>(1);
 
-    channel.basicConsume(replyQueueName, true, new DefaultConsumer(channel) {
+    String ctag = channel.basicConsume(replyQueueName, true, new DefaultConsumer(channel) {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
         if (properties.getCorrelationId().equals(corrId)) {
@@ -50,7 +48,9 @@ public class RPCClient {
       }
     });
 
-    return response.take();
+    String result = response.take();
+    channel.basicCancel(ctag);
+    return result;
   }
 
   public void close() throws IOException {
