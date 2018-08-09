@@ -63,9 +63,12 @@ public class RPCClient {
     try {
       fibonacciRpc = new RPCClient();
 
-      System.out.println(" [x] Requesting fib(30)");
-      response = fibonacciRpc.call("30");
-      System.out.println(" [.] Got '" + response + "'");
+      for (int i = 0; i < 32; i++) {
+        String i_str = Integer.toString(i);
+        System.out.println(" [x] Requesting fib(" + i_str + ")");
+        response = fibonacciRpc.call(i_str);
+        System.out.println(" [.] Got '" + response + "'");
+      }
     }
     catch  (IOException | TimeoutException | InterruptedException e) {
       e.printStackTrace();
