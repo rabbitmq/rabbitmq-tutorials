@@ -9,7 +9,7 @@ These tutorials require [Bunny](http://rubybunny.info) to be installed.
 
 To install it with RubyGems:
 
-    gem install bunny --version ">= 2.10.0"
+    gem install bunny --version ">= 2.12.0"
 
 Bunny supports Ruby 2.2 and later versions.
 
