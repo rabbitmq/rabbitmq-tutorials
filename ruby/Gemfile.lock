@@ -9,7 +9,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bunny
+  bunny (>= 2.12.0, < 3.0)
 
 RUBY VERSION
    ruby 2.5.1p57
