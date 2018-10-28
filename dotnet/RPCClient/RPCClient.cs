@@ -1,15 +1,21 @@
-using System;
-using System.Threading.Tasks;
-using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System;
+using System.Collections.Concurrent;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class RpcClient
 {
+    private const string QUEUE_NAME = "rpc_queue";
+
     private readonly IConnection connection;
     private readonly IModel channel;
     private readonly string replyQueueName;
     private readonly EventingBasicConsumer consumer;
+    private readonly ConcurrentDictionary<string, TaskCompletionSource<string>> callbackMapper =
+                new ConcurrentDictionary<string, TaskCompletionSource<string>>();
 
     public RpcClient()
     {
@@ -19,48 +25,39 @@ public class RpcClient
         channel = connection.CreateModel();
         replyQueueName = channel.QueueDeclare().QueueName;
         consumer = new EventingBasicConsumer(channel);
+        consumer.Received += (model, ea) =>
+        {
+            if (!callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<string> tcs))
+                return;
+            var body = ea.Body;
+            var response = Encoding.UTF8.GetString(body);
+            tcs.TrySetResult(response);
+        };
     }
 
-    public string Call(string message)
+    public Task<string> CallAsync(string message, CancellationToken cancellationToken = default(CancellationToken))
     {
-        var tcs = new TaskCompletionSource<string>();
-        var resultTask = tcs.Task;
+      IBasicProperties props = channel.CreateBasicProperties();
+      var correlationId = Guid.NewGuid().ToString();
+      props.CorrelationId = correlationId;
+      props.ReplyTo = replyQueueName;
+      var messageBytes = Encoding.UTF8.GetBytes(message);
+      var tcs = new TaskCompletionSource<string>();
+      callbackMapper.TryAdd(correlationId, tcs);
 
-        var correlationId = Guid.NewGuid().ToString();
+      channel.BasicPublish(
+          exchange: "",
+          routingKey: QUEUE_NAME,
+          basicProperties: props,
+          body: messageBytes);
 
-        IBasicProperties props = channel.CreateBasicProperties();
-        props.CorrelationId = correlationId;
-        props.ReplyTo = replyQueueName;
+      channel.BasicConsume(
+          consumer: consumer,
+          queue: replyQueueName,
+          autoAck: true);
 
-        EventHandler<BasicDeliverEventArgs> handler = null;
-        handler = (model, ea) =>
-        {
-            if (ea.BasicProperties.CorrelationId == correlationId)
-            {
-                consumer.Received -= handler;
-
-                var body = ea.Body;
-                var response = Encoding.UTF8.GetString(body);
-
-                tcs.SetResult(response);
-            }
-        };
-        consumer.Received += handler;
-
-        var messageBytes = Encoding.UTF8.GetBytes(message);
-        channel.BasicPublish(
-            exchange: "",
-            routingKey: "rpc_queue",
-            basicProperties: props,
-            body: messageBytes);
-
-
-        channel.BasicConsume(
-            consumer: consumer,
-            queue: replyQueueName,
-            autoAck: true);
-
-        return resultTask.Result;
+      cancellationToken.Register(() => callbackMapper.TryRemove(correlationId, out var tmp));
+      return tcs.Task;
     }
 
     public void Close()
@@ -71,15 +68,26 @@ public class RpcClient
 
 public class Rpc
 {
-    public static void Main()
-    {
-        var rpcClient = new RpcClient();
+  public static void Main(string[] args)
+  {
+      Console.WriteLine("RPC Client");
+      string n = args.Length > 0 ? args[0] : "30";
+      Task t = InvokeAsync(n);
+      t.Wait();
 
-        Console.WriteLine(" [x] Requesting fib(30)");
-        var response = rpcClient.Call("30");
+      Console.WriteLine(" Press [enter] to exit.");
+      Console.ReadLine();
+  }
 
-        Console.WriteLine(" [.] Got '{0}'", response);
-        rpcClient.Close();
-    }
+  private static async Task InvokeAsync(string n)
+  {
+      var rnd = new Random(Guid.NewGuid().GetHashCode());
+      var rpcClient = new RpcClient();
+
+      Console.WriteLine(" [x] Requesting fib({0})", n);
+      var response = await rpcClient.CallAsync(n.ToString());
+      Console.WriteLine(" [.] Got '{0}'", response);
+
+      rpcClient.Close();
+  }
 }
-
