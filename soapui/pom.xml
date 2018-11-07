@@ -24,8 +24,6 @@
                 <version>5.4.0</version>
                 <configuration>
                     <projectFile>${project.basedir}/RabbitMQ-tutorials-soapui-project.xml</projectFile>
-                    <outputFolder>${project.basedir}/target/soapui-reports</outputFolder>
-                    <exportAll>true</exportAll>
                 </configuration>
                 <executions>
                     <execution>
