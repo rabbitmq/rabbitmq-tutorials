@@ -16,7 +16,7 @@ Or you can use the provided Maven pom: `mvn verify`.
 
 ## Tutorials
 
-The code to send any message to RabbitMQ is pretty much unchanged from the Java tutorials. The biggest difference is: there is no reading of the text of the message from the command line - the text of the messages is included in the individual steps.
+The code to send any message to RabbitMQ is pretty much unchanged from the Java tutorials. The biggest change is: there is no reading of the text of the message from the command line - the text of the message is included in each individual step.
 
 I had to make two changes to the code to read any message:
 
@@ -30,11 +30,11 @@ I had to make two changes to the code to read any message:
    }
    ```
 
-2. At the end of the read script step, I had to explicitly:
+2. At the end of each read script step, I had to explicitly:
 
    ```groovy
    channel.close()
    connection.close()
    ```
 
-   Not including this would *lock up RabbitMQ*(?) and no further messages could be read for that queue.
+   Not including this would *lock up(?) RabbitMQ* and no further messages could be read for that queue.
