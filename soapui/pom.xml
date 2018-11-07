@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.rabbitmq</groupId>
+    <artifactId>soapui-tutorials</artifactId>
+    <version>1-SNAPSHOT</version>
+
+    <name>RabbitMQ tutorials - SoapUI port</name>
+    <url>https://github.com/rabbitmq/rabbitmq-tutorials</url>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>smartbear-repository</id>
+            <url>http://smartbearsoftware.com/repository/maven2</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>com.smartbear.soapui</groupId>
+                <artifactId>soapui-maven-plugin</artifactId>
+                <version>5.4.0</version>
+                <configuration>
+                    <projectFile>${project.basedir}/RabbitMQ-tutorials-soapui-project.xml</projectFile>
+                    <outputFolder>${project.basedir}/target/soapui-reports</outputFolder>
+                    <exportAll>true</exportAll>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.rabbitmq</groupId>
+                        <artifactId>amqp-client</artifactId>
+                        <version>5.5.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+
+    </build>
+
+</project>
