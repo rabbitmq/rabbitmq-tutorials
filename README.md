@@ -34,6 +34,7 @@ The following ports are available:
  * [Scala](./scala)
  * [Swift](./swift)
  * [Spring AMQP](./spring-amqp)
+ * [SoapUI](./soapui)
  
 ## License
 
