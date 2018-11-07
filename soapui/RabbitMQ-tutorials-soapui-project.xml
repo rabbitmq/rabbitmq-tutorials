@@ -1,0 +1,1006 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="9de2d9a5-1db3-43ac-9c62-cccf2f43ed0f" activeEnvironment="Default" name="RabbitMQ-tutorials" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings/>
+  <con:testSuite id="554d77cd-3893-4d7d-a6d0-3e7f0f25a604" name="RabbitMQ Tutorial 1">
+    <con:description>The simplest thing that does something</con:description>
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="98be9eb0-087b-46e7-83ee-97997e4c24c1" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Hello World!" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="">
+      <con:settings/>
+      <con:testStep type="groovy" name="Send" id="d1ed9ea6-c69e-4ac1-8131-43f177436d82">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String QUEUE_NAME = testRunner.testCase.testSuite.getProperty("queue_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.queueDeclare(QUEUE_NAME, false, false, false, null)
+
+String message = "Hello World!"
+channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"))
+log.info " [x] Sent '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="Recv" id="19f54c43-3944-489a-b6ce-2b8b42c208fc">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String QUEUE_NAME = testRunner.testCase.testSuite.getProperty("queue_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.queueDeclare(QUEUE_NAME, false, false, false, null)
+
+String message
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    message = new String(body, "UTF-8")
+    log.info " [x] Received '$message'"
+  }
+}
+channel.basicConsume(QUEUE_NAME, true, consumer)
+
+int stop = 0
+while(message == null &amp;&amp; stop++ &lt; 20) {
+	log.info " [*] Waiting for messages."
+	sleep 500
+}
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>queue_name</con:name>
+        <con:value>hello</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="cca44ffd-0c8d-408c-ae3f-b01e79886b4d" name="RabbitMQ Tutorial 2">
+    <con:description>Distributing tasks among workers (the competing consumers pattern)</con:description>
+    <con:settings/>
+    <con:runType>PARALLELL</con:runType>
+    <con:testCase id="3a863c46-3d67-4397-878e-1e77c168104c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Worker 1" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="groovy" name="Worker" id="7629a789-a01a-46a7-9172-f47a5087f294">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String QUEUE_NAME = testRunner.testCase.testSuite.getProperty("queue_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.queueDeclare(QUEUE_NAME, false, false, false, null)
+// Fair dispatch
+channel.basicQos(1)
+
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    String message = new String(body, "UTF-8")
+    log.info " [${testRunner.testCase.name}] Received '$message'"
+    try {
+      doWork(message)
+    } finally {
+      log.info " [${testRunner.testCase.name}] Done"
+    }
+  }
+}
+// auto ACK
+channel.basicConsume(QUEUE_NAME, true, consumer)
+
+sleep 10000
+channel.close()
+connection.close()
+
+void doWork(String task) throws InterruptedException {
+    for (char ch: task.toCharArray()) {
+        if (ch == '.') sleep(1000)
+    }
+}</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="fab5a4e1-712a-4f36-83aa-46473a019d33" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Worker 2" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="groovy" name="Worker" id="8d4d614d-e4e5-444c-9177-31bc3fc7b883">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String QUEUE_NAME = testRunner.testCase.testSuite.getProperty("queue_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.queueDeclare(QUEUE_NAME, false, false, false, null)
+// Fair dispatch
+channel.basicQos(1)
+
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    String message = new String(body, "UTF-8")
+    log.info " [${testRunner.testCase.name}] Received '$message'"
+    try {
+      doWork(message)
+    } finally {
+      log.info " [${testRunner.testCase.name}] Done"
+      channel.basicAck(envelope.getDeliveryTag(), false)
+    }
+  }
+}
+// manual ACK
+channel.basicConsume(QUEUE_NAME, false, consumer)
+
+sleep 10000
+channel.close()
+connection.close()
+
+void doWork(String task) throws InterruptedException {
+    for (char ch: task.toCharArray()) {
+        if (ch == '.') sleep(1000)
+    }
+}</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="1f80ed30-9686-4a78-a4ca-5f291fa55121" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Tasks" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="delay" name="Delay" id="d8fb5548-a940-4f75-9124-bd3d6cbdf39c">
+        <con:settings/>
+        <con:config>
+          <delay>1000</delay>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="NewTask 1" id="83057320-8eba-4594-98ac-9ab9432ae548">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String QUEUE_NAME = testRunner.testCase.testSuite.getProperty("queue_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.queueDeclare(QUEUE_NAME, false, false, false, null)
+
+String message = "Hello World! ."
+channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="NewTask 2" id="fbcd67e2-1e4f-461e-a23f-cf43224ef736">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String QUEUE_NAME = testRunner.testCase.testSuite.getProperty("queue_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.queueDeclare(QUEUE_NAME, false, false, false, null)
+
+String message = "Hello World! .."
+channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="NewTask 3" id="4e71f0d9-8ad8-4c0f-9fb8-3a563461d7f1">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String QUEUE_NAME = testRunner.testCase.testSuite.getProperty("queue_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.queueDeclare(QUEUE_NAME, false, false, false, null)
+
+String message = "Hello World! ..."
+channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="NewTask 4" id="2f7f66d2-3f77-4991-bb6a-85cd92b59d8b">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String QUEUE_NAME = testRunner.testCase.testSuite.getProperty("queue_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.queueDeclare(QUEUE_NAME, false, false, false, null)
+
+String message = "Hello World! ...."
+channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="NewTask 5" id="1b4d7669-5d3f-4dd4-8baa-493a70872080">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String QUEUE_NAME = testRunner.testCase.testSuite.getProperty("queue_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.queueDeclare(QUEUE_NAME, false, false, false, null)
+
+String message = "Hello World! ....."
+channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>queue_name</con:name>
+        <con:value>task_queue</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="c7facbdf-cb16-4b5e-998b-270ad22edda5" name="RabbitMQ Tutorial 3">
+    <con:description>Sending messages to many consumers at once</con:description>
+    <con:settings/>
+    <con:runType>PARALLELL</con:runType>
+    <con:testCase id="4cbf7878-e2c3-41ac-b516-250b6262c0b4" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ReceiveLogs 1" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="groovy" name="ReceiveLogs" id="fbf0d53e-393d-4f21-8ede-b1cb2192d96d">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT)
+String queueName = channel.queueDeclare().getQueue()
+channel.queueBind(queueName, EXCHANGE_NAME, "")
+
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    String message = new String(body, "UTF-8")
+    log.info " [${testRunner.testCase.name}] Received '$message'"
+  }
+}
+channel.basicConsume(queueName, true, consumer)
+
+sleep 10000
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="05767e3e-4b49-48d4-8977-4ccd7b4b8181" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ReceiveLogs 2" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="groovy" name="ReceiveLogs" id="8163c293-ebbc-41c7-acae-8001f51b5d6b">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT)
+String queueName = channel.queueDeclare().getQueue()
+channel.queueBind(queueName, EXCHANGE_NAME, "")
+
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    String message = new String(body, "UTF-8")
+    log.info " [${testRunner.testCase.name}] Received '$message'"
+  }
+}
+channel.basicConsume(queueName, true, consumer)
+
+sleep 10000
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="5c8011f7-b0e2-45b6-a185-f811a9b6749f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="EmitLogs" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="">
+      <con:settings/>
+      <con:testStep type="delay" name="Delay" id="a20a23c9-c94d-49e3-b366-44912ac37c18">
+        <con:settings/>
+        <con:config>
+          <delay>1000</delay>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLog" id="78d9ab32-815f-4b24-a875-bf805d6b0426">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT)
+
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, "", null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>exchange_name</con:name>
+        <con:value>logs</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="ee88626a-ea26-4149-9026-7158afbfd662" name="RabbitMQ Tutorial 4">
+    <con:description>Receiving messages selectively</con:description>
+    <con:settings/>
+    <con:runType>PARALLELL</con:runType>
+    <con:testCase id="01070000-ff20-41b3-858b-974011d00b04" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ReceiveLogsDirect all" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="">
+      <con:settings/>
+      <con:testStep type="groovy" name="ReceiveLogsDirect" id="a9301637-729a-42df-b2b2-760a95bda253">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT)
+String queueName = channel.queueDeclare().getQueue()
+// bind to all
+channel.queueBind(queueName, EXCHANGE_NAME, "info")
+channel.queueBind(queueName, EXCHANGE_NAME, "warn")
+channel.queueBind(queueName, EXCHANGE_NAME, "error")
+
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    String message = new String(body, "UTF-8")
+    log.info " [${testRunner.testCase.name}] Received '${envelope.routingKey}' : '$message'"
+  }
+}
+channel.basicConsume(queueName, true, consumer)
+
+sleep 10000
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="fbc00db4-cbe8-4d0d-8147-71c696cea1f8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ReceiveLogsDirect error" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="groovy" name="ReceiveLogsDirect" id="853e67e4-5568-45de-b660-3dd805e1073a">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT)
+String queueName = channel.queueDeclare().getQueue()
+// bind only to error
+channel.queueBind(queueName, EXCHANGE_NAME, "error")
+
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    String message = new String(body, "UTF-8")
+    log.info " [${testRunner.testCase.name}] Received '${envelope.routingKey}' : '$message'"
+  }
+}
+channel.basicConsume(queueName, true, consumer)
+
+sleep 10000
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="365081f1-7627-4958-b919-36e17c8e946b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="EmitLogsDirect" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="">
+      <con:settings/>
+      <con:testStep type="delay" name="Delay" id="feccf9bd-9f2e-4243-8f1f-0e1efb1433c1">
+        <con:settings/>
+        <con:config>
+          <delay>1000</delay>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLogDirect 1" id="3ab5c9d4-57c0-4de8-a41e-bb0ff745597c">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT)
+
+String severity = "info"
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, severity, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$severity' : '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLogDirect 2" id="7c255502-95eb-4bad-9b33-5bfc29b816eb">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT)
+
+String severity = "warn"
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, severity, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$severity' : '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLogDirect 3" id="49852491-5381-4fb6-ad7a-578a7cad7414">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT)
+
+String severity = "error"
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, severity, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$severity' : '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>exchange_name</con:name>
+        <con:value>direct_logs</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="f48274dc-0036-43d7-82b7-5839bf339916" name="RabbitMQ Tutorial 5">
+    <con:description>Receiving messages based on a pattern (topics)</con:description>
+    <con:settings/>
+    <con:runType>PARALLELL</con:runType>
+    <con:testCase id="202d4068-fc16-43bc-a746-c02f3ba6776e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ReceiveLogsTopic any" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="">
+      <con:settings/>
+      <con:testStep type="groovy" name="ReceiveLogsTopic" id="8e636856-684b-4d95-bb65-61673a8c42c3">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC)
+String queueName = channel.queueDeclare().getQueue()
+// bind to any topic
+channel.queueBind(queueName, EXCHANGE_NAME, "#")
+
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    String message = new String(body, "UTF-8")
+    log.info " [${testRunner.testCase.name}] Received '${envelope.routingKey}' : '$message'"
+  }
+}
+channel.basicConsume(queueName, true, consumer)
+
+sleep 10000
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="790aa6a1-2420-49b9-81be-94c4d8c676ef" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ReceiveLogsTopic kern" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="">
+      <con:settings/>
+      <con:testStep type="groovy" name="ReceiveLogsTopic" id="48cf137c-fd25-4f28-8e21-c642c65b4c09">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC)
+String queueName = channel.queueDeclare().getQueue()
+// bind to only 2-word kern-anything topic
+channel.queueBind(queueName, EXCHANGE_NAME, "kern.*")
+
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    String message = new String(body, "UTF-8")
+    log.info " [${testRunner.testCase.name}] Received '${envelope.routingKey}' : '$message'"
+  }
+}
+channel.basicConsume(queueName, true, consumer)
+
+sleep 10000
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="3be273b9-3d6a-4b11-8ce3-53eb04771319" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ReceiveLogsTopic critical" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="">
+      <con:settings/>
+      <con:testStep type="groovy" name="ReceiveLogsTopic" id="796e0b6f-c61a-4a1e-8f07-50d945580728">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC)
+String queueName = channel.queueDeclare().getQueue()
+// bind to any-critical topic (no matter how many leading words)
+channel.queueBind(queueName, EXCHANGE_NAME, "#.critical")
+
+Consumer consumer = new DefaultConsumer(channel) {
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+      throws IOException {
+    String message = new String(body, "UTF-8")
+    log.info " [${testRunner.testCase.name}] Received '${envelope.routingKey}' : '$message'"
+  }
+}
+channel.basicConsume(queueName, true, consumer)
+
+sleep 10000
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="f5176029-1fb5-437a-8364-592f30ac1e8e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="EmitLogsTopic" searchProperties="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword="">
+      <con:settings/>
+      <con:testStep type="delay" name="Delay" id="21172481-ea66-4d01-9cfd-a0f6ed61d6fc">
+        <con:settings/>
+        <con:config>
+          <delay>1000</delay>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLogTopic 1" id="c93fbb6b-8b49-432e-b2cc-c808ce0ba5a5">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC)
+
+String routingKey = "kern.critical"
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$routingKey' : '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLogTopic 2" id="94ba31e2-643b-45bb-b8d1-7032a5ca8fdf">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC)
+
+String routingKey = "kern.info"
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$routingKey' : '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLogTopic 3" id="e7a201fe-e8a8-4f81-81e7-bd63068e32d1">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC)
+
+String routingKey = "kern.info.foo.bar"
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$routingKey' : '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLogTopic 4" id="e61b6ba7-5846-46ca-b402-464c9bed80a3">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC)
+
+String routingKey = "foo.bar.kern.critical"
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$routingKey' : '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLogTopic 5" id="7bcef757-3ef3-4360-97bc-72116f1a0e4b">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC)
+
+String routingKey = "not.critical"
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$routingKey' : '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="groovy" name="EmitLogTopic 6" id="1ab00df4-812c-4013-bd4b-342f88899724">
+        <con:settings/>
+        <con:config>
+          <script>import com.rabbitmq.client.*
+
+
+String EXCHANGE_NAME = testRunner.testCase.testSuite.getProperty("exchange_name")
+
+ConnectionFactory factory = new ConnectionFactory()
+// uncomment to change defaults
+//factory.setUsername("guest")
+//factory.setPassword("guest")
+//factory.setVirtualHost("/")
+//factory.setHost("localhost")
+//factory.setPort(5672)
+Connection connection = factory.newConnection()
+Channel channel = connection.createChannel()
+
+channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC)
+
+String routingKey = "foo.bar"
+String message = "Hello World!"
+channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"))
+log.info " [${testRunner.testCase.name}] Sent '$routingKey' : '$message'"
+
+channel.close()
+connection.close()</script>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>exchange_name</con:name>
+        <con:value>topic_logs</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:properties/>
+  <con:wssContainer/>
+  <con:oAuth2ProfileContainer/>
+  <con:oAuth1ProfileContainer/>
+  <con:sensitiveInformation/>
+</con:soapui-project>
