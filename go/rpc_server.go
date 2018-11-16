@@ -7,12 +7,6 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
-	}
-}
-
 func fib(n int) int {
 	if n == 0 {
 		return 0
