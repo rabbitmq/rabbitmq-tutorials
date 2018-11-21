@@ -13,7 +13,9 @@ amqp.connect('amqp://localhost', function(err, conn) {
       ch.bindQueue(q.queue, ex, '');
 
       ch.consume(q.queue, function(msg) {
-        console.log(" [x] %s", msg.content.toString());
+        if(msg.content) {
+          console.log(" [x] %s", msg.content.toString());
+        }
       }, {noAck: true});
     });
   });
