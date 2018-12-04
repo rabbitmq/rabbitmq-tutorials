@@ -4,13 +4,13 @@ import java.util.concurrent.{ArrayBlockingQueue, BlockingQueue}
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client._
 
-class ResponseConsumer(val ch: Channel, val corrId: String) extends DefaultConsumer(ch) {
+class ResponseCallback(val corrId: String) extends DeliverCallback {
   val response: BlockingQueue[String] = new ArrayBlockingQueue[String](1)
 
-  override def handleDelivery(consumerTag: String, envelope: Envelope, properties: BasicProperties, body: Array[Byte]): Unit = {
-     if (properties.getCorrelationId.equals(corrId)) {
-          response.offer(new String(body, "UTF-8"))
-     }
+  override def handle(consumerTag: String, message: Delivery): Unit = {
+    if (message.getProperties.getCorrelationId.equals(corrId)) {
+      response.offer(new String(message.getBody, "UTF-8"))
+    }
   }
 
   def take(): String = {
@@ -35,10 +35,10 @@ class RPCClient(host: String) {
       .build()
     channel.basicPublish("", requestQueueName, props, message.getBytes("UTF-8"))
 
-    val consumer = new ResponseConsumer(channel, corrId)
-    channel.basicConsume(replyQueueName, true, consumer)
+    val responseCallback = new ResponseCallback(corrId)
+    channel.basicConsume(replyQueueName, true, responseCallback, _ => { })
 
-    consumer.take()
+    responseCallback.take()
   }
 
   def close() {

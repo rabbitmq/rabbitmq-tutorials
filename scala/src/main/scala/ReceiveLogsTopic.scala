@@ -19,17 +19,11 @@ object ReceiveLogsTopic {
       channel.queueBind(queueName, EXCHANGE_NAME, bindingKey)
     }
     println(" [*] Waiting for messages. To exit press CTRL+C")
-    val consumer = new DefaultConsumer(channel) {
-
-      override def handleDelivery(consumerTag: String,
-                                  envelope: Envelope,
-                                  properties: AMQP.BasicProperties,
-                                  body: Array[Byte]) {
-        val message = new String(body, "UTF-8")
-        println(" [x] Received '" + envelope.getRoutingKey + "':'" + message +
-          "'")
-      }
+    val deliverCallback: DeliverCallback = (_, delivery) => {
+      val message = new String(delivery.getBody, "UTF-8")
+      println(" [x] Received '" +
+        delivery.getEnvelope.getRoutingKey + "':'" + message + "'")
     }
-    channel.basicConsume(queueName, true, consumer)
+    channel.basicConsume(queueName, true, deliverCallback, _ => {})
   }
 }

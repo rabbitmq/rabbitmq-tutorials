@@ -3,29 +3,32 @@ import java.util.concurrent.CountDownLatch
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client._
 
-class ServerConsumer(val ch: Channel, val latch: CountDownLatch) extends DefaultConsumer(ch) {
-  override def handleDelivery(consumerTag: String, envelope: Envelope, properties: BasicProperties, body: Array[Byte]): Unit = {
+class ServerCallback(val ch: Channel, val latch: CountDownLatch) extends DeliverCallback {
+
+  override def handle(consumerTag: String, delivery: Delivery): Unit = {
     var response: String = null
     val replyProps = new BasicProperties.Builder()
-          .correlationId(properties.getCorrelationId)
-          .build
+      .correlationId(delivery.getProperties.getCorrelationId)
+      .build
 
     try {
-          val message = new String(body, "UTF-8")
-          val n = java.lang.Integer.parseInt(message)
-          println(" [.] fib(" + message + ")")
-          response = "" + Fibonacci.fib(n)
-        } catch {
-          case e: Exception => {
-            println(" [.] " + e.toString)
-            response = ""
-          }
-        } finally {
-          ch.basicPublish("", properties.getReplyTo, replyProps, response.getBytes("UTF-8"))
-          ch.basicAck(envelope.getDeliveryTag, false)
-          latch.countDown()
-        }
+      val message = new String(delivery.getBody, "UTF-8")
+      val n = java.lang.Integer.parseInt(message)
+      println(" [.] fib(" + message + ")")
+      response = "" + Fibonacci.fib(n)
+    } catch {
+      case e: Exception => {
+        println(" [.] " + e.toString)
+        response = ""
+      }
+    } finally {
+      ch.basicPublish("", delivery.getProperties.getReplyTo, replyProps, response.getBytes("UTF-8"))
+      ch.basicAck(delivery.getEnvelope.getDeliveryTag, false)
+      latch.countDown()
+    }
+
   }
+
 }
 
 object Fibonacci {
@@ -51,8 +54,8 @@ object RPCServer {
       channel.basicQos(1)
       // stop after one consumed message since this is example code
       val latch = new CountDownLatch(1)
-      val consumer = new ServerConsumer(channel, latch)
-      channel.basicConsume(RPC_QUEUE_NAME, false, consumer)
+      val serverCallback = new ServerCallback(channel, latch)
+      channel.basicConsume(RPC_QUEUE_NAME, false, serverCallback, _ => { })
       println(" [x] Awaiting RPC requests")
       latch.await()
     } catch {

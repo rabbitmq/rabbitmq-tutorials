@@ -12,16 +12,10 @@ object Recv {
     val channel = connection.createChannel()
     channel.queueDeclare(QUEUE_NAME, false, false, false, null)
     println(" [*] Waiting for messages. To exit press CTRL+C")
-    val consumer = new DefaultConsumer(channel) {
-
-      override def handleDelivery(consumerTag: String,
-                                  envelope: Envelope,
-                                  properties: AMQP.BasicProperties,
-                                  body: Array[Byte]) {
-        var message = new String(body, "UTF-8")
-        println(" [x] Received '" + message + "'")
-      }
+    val deliverCallback: DeliverCallback = (_, delivery) => {
+      val message = new String(delivery.getBody, "UTF-8")
+      println(" [x] Received '" + message + "'")
     }
-    channel.basicConsume(QUEUE_NAME, true, consumer)
+    channel.basicConsume(QUEUE_NAME, true, deliverCallback, _ => { })
   }
 }

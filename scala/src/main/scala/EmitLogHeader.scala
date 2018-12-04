@@ -33,5 +33,7 @@ object EmitLogHeader {
     val theProps = builder.build()
     channel.basicPublish(EXCHANGE_NAME, routingKey, theProps, message.getBytes("UTF-8"))
     println(" [x] Sent message: '" + message + "'")
+    channel.close()
+    connection.close()
   }
 }

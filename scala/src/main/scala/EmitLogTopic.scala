@@ -1,33 +1,21 @@
-import com.rabbitmq.client.{Channel, Connection, ConnectionFactory}
+import com.rabbitmq.client.ConnectionFactory
 
 object EmitLogTopic {
 
   private val EXCHANGE_NAME = "topic_logs"
 
   def main(argv: Array[String]) {
-    var connection: Connection = null
-    var channel: Channel = null
-    try {
-      val factory = new ConnectionFactory()
-      factory.setHost("localhost")
-      connection = factory.newConnection()
-      channel = connection.createChannel()
-      channel.exchangeDeclare(EXCHANGE_NAME, "topic")
-      val routingKey = getRouting(argv)
-      val message = getMessage(argv)
-      channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"))
-      println(" [x] Sent '" + routingKey + "':'" + message + "'")
-    } catch {
-      case e: Exception => e.printStackTrace()
-    } finally {
-      if (connection != null) {
-        try {
-          connection.close()
-        } catch {
-          case ignore: Exception =>
-        }
-      }
-    }
+    val factory = new ConnectionFactory()
+    factory.setHost("localhost")
+    val connection = factory.newConnection()
+    val channel = connection.createChannel()
+    channel.exchangeDeclare(EXCHANGE_NAME, "topic")
+    val routingKey = getRouting(argv)
+    val message = getMessage(argv)
+    channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"))
+    println(" [x] Sent '" + routingKey + "':'" + message + "'")
+    channel.close()
+    connection.close()
   }
 
   private def getRouting(strings: Array[String]): String = {

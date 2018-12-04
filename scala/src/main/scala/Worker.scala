@@ -12,23 +12,17 @@ object Worker {
     channel.queueDeclare(TASK_QUEUE_NAME, true, false, false, null)
     println(" [*] Waiting for messages. To exit press CTRL+C")
     channel.basicQos(1)
-    val consumer = new DefaultConsumer(channel) {
-
-      override def handleDelivery(consumerTag: String,
-                                  envelope: Envelope,
-                                  properties: AMQP.BasicProperties,
-                                  body: Array[Byte]) {
-        val message = new String(body, "UTF-8")
-        println(" [x] Received '" + message + "'")
-        try {
-          doWork(message)
-        } finally {
-          println(" Done")
-          channel.basicAck(envelope.getDeliveryTag, false)
-        }
+    val deliverCallback: DeliverCallback = (_, delivery) => {
+      val message = new String(delivery.getBody, "UTF-8")
+      println(" [x] Received '" + message + "'")
+      try {
+        doWork(message)
+      } finally {
+        println(" Done")
+        channel.basicAck(delivery.getEnvelope.getDeliveryTag, false)
       }
     }
-    channel.basicConsume(TASK_QUEUE_NAME, false, consumer)
+    channel.basicConsume(TASK_QUEUE_NAME, false, deliverCallback, _ => {})
   }
 
   private def doWork(task: String) {

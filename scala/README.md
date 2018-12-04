@@ -8,7 +8,7 @@ JDK 6 and doesn't have a lambda-friendly API.
 
 ## Compiling the Code
 
-    mvn compile
+    ./mvnw compile
 
 
 ## Running Examples
@@ -17,41 +17,60 @@ JDK 6 and doesn't have a lambda-friendly API.
 
 Execute the following command to receive a hello world:
 
-    mvn exec:java -Dexec.mainClass="Recv"
+    ./mvnw exec:java -Dexec.mainClass="Recv"
 
 Execute the following in a separate shell to send a hello world:
 
-    mvn exec:java -Dexec.mainClass="Send"
+    ./mvnw exec:java -Dexec.mainClass="Send"
 
 ### Work Queues
 
-Send a message which will be finshed immediately:
+Send a message which will be finished immediately:
 
-    mvn exec:java -Dexec.mainClass="NewTask"
+    ./mvnw exec:java -Dexec.mainClass="NewTask"
 
 Send a message which need some second to execute each . is one second.
 
-    mvn exec:java -Dexec.mainClass="NewTask" -Dexec.args="rabbit1 ...."
+    ./mvnw exec:java -Dexec.mainClass="NewTask" -Dexec.args="rabbit1 ...."
 
 To start a worker (run in a separate shell):
 
-    mvn exec:java -Dexec.mainClass="Worker"
+    ./mvnw exec:java -Dexec.mainClass="Worker"
 
 Add more workers to the same queue, message will be distributed in the
 round robin manner.
 
 ### Publish and Subscriber
 
-    mvn exec:java -Dexec.mainClass="EmitLog" -Dexec.args="rabbit1 msg1"
+    ./mvnw exec:java -Dexec.mainClass="ReceiveLogs"
 
-    mvn exec:java -Dexec.mainClass="ReceiveLogs"
+    ./mvnw exec:java -Dexec.mainClass="EmitLog" -Dexec.args="rabbit1 msg1"
+
+
+### Routing
+
+    ./mvnw exec:java -Dexec.mainClass="ReceiveLogsDirect" -Dexec.args="info warning error"
+
+    ./mvnw exec:java -Dexec.mainClass="EmitLogDirect" -Dexec.args="error Run. Run. Or it will explode."
+
+### Topics
+
+    ./mvnw exec:java -Dexec.mainClass="ReceiveLogsTopic" -Dexec.args="#"
+
+    ./mvnw exec:java -Dexec.mainClass="ReceiveLogsTopic" -Dexec.args="kern.*"
+
+    ./mvnw exec:java -Dexec.mainClass="ReceiveLogsTopic" -Dexec.args="*.critical"
+
+    ./mvnw exec:java -Dexec.mainClass="ReceiveLogsTopic" -Dexec.args="kern.* *.critical"
+
+    ./mvnw exec:java -Dexec.mainClass="EmitLogTopic" -Dexec.args="kern.critical A critical kernel error"
 
 ### RPC
 
 In one shell:
 
-    mvn exec:java -Dexec.mainClass="RPCServer"
+    ./mvnw exec:java -Dexec.mainClass="RPCServer"
 
 In another shell:
 
-    mvn exec:java -Dexec.mainClass="RPCClient"
+    ./mvnw exec:java -Dexec.mainClass="RPCClient"
