@@ -1,1 +1,0 @@
-../../java/EmitLogDirect.java
