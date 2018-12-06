@@ -17,7 +17,7 @@ a different host, port or credentials, connections settings would require adjust
 These tutorials use Maven. To build them run
 
 ```
-mvn package
+./mvnw clean package
 ```
 The app uses Spring Profiles to control what tutorial it's running, and if it's a
 Sender or Receiver. Choose which tutorial to run by using these profiles:
@@ -34,7 +34,7 @@ After building with maven, run the app however you like to run boot apps.
 For example:
 
 ```
-java -jar target/rabbit-tutorials-*.jar --spring.profiles.active=work-queues,sender
+java -jar target/rabbitmq-tutorials.jar --spring.profiles.active=work-queues,sender
 ```
 
 will run the publisher part of tutorial 2 (Work Queues).
@@ -49,7 +49,7 @@ java -jar target/rabbit-tutorials-*.jar --spring.profiles.active=work-queues,rec
 java -jar target/rabbit-tutorials-*.jar --spring.profiles.active=work-queues,sender
 ```
 
-For tutorial 6, run the Server followed by the Client.
+For tutorial 6, run the server followed by the client.
 
 ##C onfiguration
 

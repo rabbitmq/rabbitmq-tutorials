@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,12 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * @author Gary Russell
  * @author Scott Deeg
+ * @author Arnaud Cogoluègnes
  */
 public class Tut5Sender {
 
@@ -32,10 +35,9 @@ public class Tut5Sender {
 	@Autowired
 	private TopicExchange topic;
 
+	AtomicInteger index = new AtomicInteger(0);
 
-	private int index;
-
-	private int count;
+	AtomicInteger count = new AtomicInteger(0);
 
 	private final String[] keys = {"quick.orange.rabbit", "lazy.orange.elephant", "quick.orange.fox",
 			"lazy.brown.fox", "lazy.pink.rabbit", "quick.brown.fox"};
@@ -43,12 +45,12 @@ public class Tut5Sender {
 	@Scheduled(fixedDelay = 1000, initialDelay = 500)
 	public void send() {
 		StringBuilder builder = new StringBuilder("Hello to ");
-		if (++this.index == keys.length) {
-			this.index = 0;
+		if (this.index.incrementAndGet() == keys.length) {
+			this.index.set(0);
 		}
-		String key = keys[this.index];
+		String key = keys[this.index.get()];
 		builder.append(key).append(' ');
-		builder.append(Integer.toString(++this.count));
+		builder.append(this.count.incrementAndGet());
 		String message = builder.toString();
 		template.convertAndSend(topic.getName(), key, message);
 		System.out.println(" [x] Sent '" + message + "'");

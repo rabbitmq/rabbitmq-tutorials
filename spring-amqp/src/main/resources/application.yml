@@ -8,4 +8,4 @@ logging:
 
 tutorial:
   client:
-    duration: 600000
+    duration: 10000

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,12 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * @author Gary Russell
  * @author Scott Deeg
+ * @author Arnaud Cogoluègnes
  */
 public class Tut4Sender {
 
@@ -32,21 +35,21 @@ public class Tut4Sender {
 	@Autowired
 	private DirectExchange direct;
 
-	private int index;
+	AtomicInteger index = new AtomicInteger(0);
 
-	private int count;
+	AtomicInteger count = new AtomicInteger(0);
 
 	private final String[] keys = {"orange", "black", "green"};
 
 	@Scheduled(fixedDelay = 1000, initialDelay = 500)
 	public void send() {
 		StringBuilder builder = new StringBuilder("Hello to ");
-		if (++this.index == 3) {
-			this.index = 0;
+		if (this.index.incrementAndGet() == 3) {
+			this.index.set(0);
 		}
-		String key = keys[this.index];
+		String key = keys[this.index.get()];
 		builder.append(key).append(' ');
-		builder.append(Integer.toString(++this.count));
+		builder.append(this.count.incrementAndGet());
 		String message = builder.toString();
 		template.convertAndSend(direct.getName(), key, message);
 		System.out.println(" [x] Sent '" + message + "'");
