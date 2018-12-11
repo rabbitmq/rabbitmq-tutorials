@@ -28,6 +28,10 @@ To do that install Composer and add it to your path, then run the following comm
 inside this project folder:
 
     composer.phar install
+    
+Or you can require it to the existing project using a command:
+
+    composer.phar require php-amqplib/php-amqplib
 
 ## Code
 
