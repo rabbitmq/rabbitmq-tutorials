@@ -1,3 +1,8 @@
+
+##第一步先启动容器
+docker run -d --hostname my-rabbit -p 8080:15672 -p 5672:5672 rabbitmq:3-management
+
+
 # RabbitMQ Tutorials
 
 This project contains code for [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html) with
