@@ -6,6 +6,8 @@ their ports to various languages.
 This repository only contains runnable code. Please consult [tutorials on the site](http://www.rabbitmq.com/getstarted.html)
 to learn more about [the concepts](http://www.rabbitmq.com/getstarted.html), requirements, supported client library version and so on.
 
+A please check out the rest of [RabbitMQ documentation](https://www.rabbitmq.com/documentation.html)!
+
 ## Prerequisites
 
 All tutorials **require a RabbitMQ node running on localhost** with stock (default) settings.
