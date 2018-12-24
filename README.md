@@ -12,14 +12,14 @@ A please check out the rest of [RabbitMQ documentation](https://www.rabbitmq.com
 
 All tutorials **require a RabbitMQ node running on localhost** with stock (default) settings.
 
-Please refer to [RabbitMQ documentation](https://www.rabbitmq.com/download.html) to learn
-more about various installation options:
+Please refer to RabbitMQ documentation to learn
+more about various [installation options](https://www.rabbitmq.com/download.html):
 
  * A [Windows installer](https://www.rabbitmq.com/install-windows.html)
  * A [Docker image](https://hub.docker.com/_/rabbitmq/)
  * [Homebrew](https://www.rabbitmq.com/install-homebrew.html) on MacOS
  * Packages for [Ubuntu and Debian](https://www.rabbitmq.com/install-debian.html) as well as [RPM-based distributions](https://www.rabbitmq.com/install-rpm.html) 
- * A generic [binary build](http://www.rabbitmq.com/install-generic-unix.html) for Linux, *BSD and other UNIX-like systems
+ * A generic [binary build](https://www.rabbitmq.com/install-generic-unix.html) for Linux, *BSD and other UNIX-like systems
 
 ## Languages
 
