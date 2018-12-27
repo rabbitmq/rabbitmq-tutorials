@@ -20,7 +20,7 @@ void main (List<String> arguments) {
         });
     });
 
-    List<String> routingKeys = arguments.sublist(0, 1);
+    List<String> routingKeys = arguments.sublist(0, 2);
     client
         .channel()
         .then((Channel channel) {
