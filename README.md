@@ -29,6 +29,7 @@ The following ports are available:
  * [C# (with Visual Studio)](./dotnet-visual-studio)
  * [Clojure](./clojure)
  * [Common Lisp](./common-lisp)
+ * [Dart](./dart)
  * [Elixir](./elixir) 
  * [Erlang](./erlang)
  * [Go](./go)
