@@ -39,7 +39,7 @@ Tutorial four: Routing
 
     dart receive_logs_direct.dart info warning
     dart emit_log_direct.dart info "A message"
-    dart emit_log_direct.dart warning "A message"
+    dart emit_log_direct.dart warning "A warning"
 
 Tutorial five: Topics
 
