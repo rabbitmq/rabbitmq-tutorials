@@ -45,7 +45,7 @@ Tutorial five: Topics
 
     dart receive_logs_topic.dart "info.*" "warn.*"
     dart emit_log_topic.dart "info.connections" "Connected"
-    dart emit_log_topic.dart "info.connections" "Connected"
+    dart emit_log_topic.dart "warn.connecctions" "A warning"
 
 Tutorial six: RPC (Request/Response)
 

@@ -3,7 +3,7 @@ import "package:dart_amqp/dart_amqp.dart";
 
 void main (List<String> arguments) {
     if (arguments.isEmpty) {
-        print("Usage: receive_logs_direct.dart <facility>.<routingKey>");
+        print("Usage: receive_logs_direct.dart <topic> [<topic>, ...]");
         return;
     }
 
@@ -20,7 +20,7 @@ void main (List<String> arguments) {
         });
     });
 
-    List<String> routingKeys = arguments.sublist(0, 2);
+    List<String> routingKeys = arguments.sublist(0);
     client
         .channel()
         .then((Channel channel) {
