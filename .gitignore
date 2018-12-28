@@ -31,3 +31,4 @@ target/
 .vs/
 
 *.log
+.packages
