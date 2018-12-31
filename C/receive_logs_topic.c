@@ -44,14 +44,14 @@ int main(int argc, char const *const *argv) {
     socket = amqp_tcp_socket_new(conn);
     if (!socket) {
         fprintf(stderr, "failed to allocate tcp socket\n");
-        return 1;
+        goto error;
     }
 
     // use socket to open connection with broker
     status = amqp_socket_open(socket, hostname, port);
     if (status != 0) {
         fprintf(stderr, "failed to connect to broker. server error: %d errno: %d\n", status, errno);
-        return 1;
+        goto error;
     }
 
     // login to the broker - sync call
@@ -65,14 +65,14 @@ int main(int argc, char const *const *argv) {
       DEFAULT_PASSWORD);
     if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
         fprintf(stderr, "failed to login to broker. reply type: %d\n", reply.reply_type);
-        return 1;
+        goto error;
     }
 
     // open channel and check response
     channel_status = amqp_channel_open(conn, CHANNEL_ID);
     if (!channel_status) {
         fprintf(stderr, "failed to open channel\n");
-        return 1;
+        goto error;
     }
 
     // declare the exchange
@@ -89,12 +89,12 @@ int main(int argc, char const *const *argv) {
             );
     if (!exchange_status) {
         fprintf(stderr, "failed to create exchange (client)\n");
-        return 1;
+        goto error;
     }
     reply = amqp_get_rpc_reply(conn);
     if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
         fprintf(stderr, "failed to create exchange on broker. reply type: %d\n", reply.reply_type);
-        return 1;
+        goto error;
     }
     
     // create a temporary queue queue that will be automatically
@@ -112,18 +112,18 @@ int main(int argc, char const *const *argv) {
                 );
         if (!queue_status) {
             fprintf(stderr, "failed to create queue (client)\n");
-            return 1;
+            goto error;
         }
         reply = amqp_get_rpc_reply(conn);
         if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
             fprintf(stderr, "failed to create queue on broker. reply type: %d\n", reply.reply_type);
-            return 1;
+            goto error;
         }
         // store the generated name
         queue = amqp_bytes_malloc_dup(queue_status->queue);
         if (queue.bytes == NULL) {
             fprintf(stderr, "failed to copy queue (out of memory)\n");
-            return 1;
+            goto error;
         }
     }
 
@@ -136,7 +136,7 @@ int main(int argc, char const *const *argv) {
             amqp_empty_table);
     if (!bind_status) {
         fprintf(stderr, "failed bind queue %.*s to key %s\n", (int)queue.len, (char*)queue.bytes, key);
-        return 1;
+        goto error;
     }
 
     // define message consumption 
@@ -152,7 +152,7 @@ int main(int argc, char const *const *argv) {
             );
     if (!consume_status) {
         fprintf(stderr, "failed to start consumer (client)\n");
-        return 1;
+        goto error;
     }
 
     printf(" [*] Waiting for messages. To exit press CTRL+C\n");
@@ -170,9 +170,12 @@ int main(int argc, char const *const *argv) {
                 (int)envelope.message.body.len, (char*)envelope.message.body.bytes);
         amqp_destroy_envelope(&envelope);
     }
-    // cleanup
-    amqp_destroy_connection(conn);
 
+    amqp_destroy_connection(conn);
     return 0;
+
+error:
+    amqp_destroy_connection(conn);
+    return 1;
 }
 
