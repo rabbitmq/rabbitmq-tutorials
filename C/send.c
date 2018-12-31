@@ -8,27 +8,26 @@
 int main(int argc, char const *const *argv) {
     char const *hostname;
     int port, status;
-    const char* key;
-    char const *exchange;
+    char const *queue;
     amqp_socket_t *socket = NULL;
     amqp_connection_state_t conn;
    	const amqp_channel_t CHANNEL_ID = 1;
     const char* DEFAULT_VHOST = "/";
     const char* DEFAULT_USER = "guest";
     const char* DEFAULT_PASSWORD = "guest";
+    const char* DEFAULT_EXCHANGE = "";
     amqp_rpc_reply_t reply;
     amqp_channel_open_ok_t* channel_status;
-    amqp_exchange_declare_ok_t* exchange_status;
+    amqp_queue_declare_ok_t* queue_status;
 
-    if (argc != 5) {
-        fprintf(stderr, "Usage: %s <host> <port> <exchange> <key>\n", argv[0]);
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <host> <port> <queue>\n", argv[0]);
         return 1;
     }
 
     hostname = argv[1];
     port = atoi(argv[2]);
-    exchange = argv[3];
-    key = argv[4];
+    queue = argv[3];
 
     // create new connection object
     conn = amqp_new_connection();
@@ -72,25 +71,23 @@ int main(int argc, char const *const *argv) {
         return 1;
     }
 
-    // declare the exchange
-    exchange_status = amqp_exchange_declare(
-            conn, 
+    // declare a queue
+    queue_status = amqp_queue_declare(conn, 
             CHANNEL_ID, 
-            amqp_cstring_bytes(exchange),
-            amqp_cstring_bytes("topic"), 
-            0, // not passive - create the exchange
-            1, // durable
+            amqp_cstring_bytes(queue),
+            0, // not passive - create the queue
+            1, // durable queue
+            0, // not exclusive
             0, // dont autodelete
-            0, // not internal
-            amqp_empty_table // no attributes
+            amqp_empty_table // no properties
             );
-    if (!exchange_status) {
-        fprintf(stderr, "failed to create exchange (client)\n");
+    if (!queue_status) {
+        fprintf(stderr, "failed to create queue (client)\n");
         return 1;
     }
     reply = amqp_get_rpc_reply(conn);
     if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
-        fprintf(stderr, "failed to create exchange on broker. reply type: %d\n", reply.reply_type);
+        fprintf(stderr, "failed to create queue on broker. reply type: %d\n", reply.reply_type);
         return 1;
     }
 
@@ -98,8 +95,8 @@ int main(int argc, char const *const *argv) {
     status = amqp_basic_publish(
         conn, 
         CHANNEL_ID, 
-        amqp_cstring_bytes(exchange),
-        amqp_cstring_bytes(key),
+        amqp_cstring_bytes(DEFAULT_EXCHANGE),
+        amqp_cstring_bytes(queue),
         0, // not mandatory
         0, // not immediate
         NULL, // no properties
@@ -116,7 +113,7 @@ int main(int argc, char const *const *argv) {
     }
 
     printf(" [x] Sent 'Hello World!'\n");
-    
+
     // cleanup
     amqp_destroy_connection(conn);
 
