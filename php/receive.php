@@ -22,3 +22,4 @@ while (count($channel->callbacks)) {
 
 $channel->close();
 $connection->close();
+?>
