@@ -16,3 +16,4 @@ echo " [x] Sent 'Hello World!'\n";
 
 $channel->close();
 $connection->close();
+?>
