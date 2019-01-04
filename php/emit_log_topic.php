@@ -23,3 +23,4 @@ echo ' [x] Sent ', $routing_key, ':', $data, "\n";
 
 $channel->close();
 $connection->close();
+?>
