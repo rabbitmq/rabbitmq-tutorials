@@ -72,3 +72,4 @@ class FibonacciRpcClient
 $fibonacci_rpc = new FibonacciRpcClient();
 $response = $fibonacci_rpc->call(30);
 echo ' [.] Got ', $response, "\n";
+?>
