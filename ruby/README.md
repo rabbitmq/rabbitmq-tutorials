@@ -19,7 +19,7 @@ bundle install
 To run [tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-ruby.html):
 
 ``` sh
-bundle exec send.rb
+bundle exec ruby send.rb
 bundle exec ruby receive.rb
 ```
 
