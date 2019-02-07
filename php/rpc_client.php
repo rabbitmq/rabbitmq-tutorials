@@ -32,7 +32,7 @@ class FibonacciRpcClient
             $this->callback_queue,
             '',
             false,
-            false,
+            true,
             false,
             false,
             array(
