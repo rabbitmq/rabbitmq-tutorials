@@ -11,6 +11,8 @@ channel.prefetch(1)
 puts ' [*] Waiting for messages. To exit press CTRL+C'
 
 begin
+  # block: true is only used to keep the main thread
+  # alive. Please avoid using it in real world applications.
   queue.subscribe(manual_ack: true, block: true) do |delivery_info, _properties, body|
     puts " [x] Received '#{body}'"
     # imitate some work

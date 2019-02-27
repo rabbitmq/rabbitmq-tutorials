@@ -24,6 +24,8 @@ class FibonacciServer
   attr_reader :channel, :exchange, :queue, :connection
 
   def subscribe_to_queue
+    # block: true is only used to keep the main thread
+    # alive. Please avoid using it in real world applications.
     queue.subscribe(block: true) do |_delivery_info, properties, payload|
       result = fibonacci(payload.to_i)
 
