@@ -33,7 +33,7 @@ if(empty($message))
 	$message = "Hello World!";
 
 $exchange = new AMQPExchange($channel);
-$exchange->publish($message, $routing_key);
+$exchange->publish($message, $routing_key, AMQP_NOPARAM, array('delivery_mode' => 2));
 
 echo " [x] Sent {$message}", PHP_EOL;
 
