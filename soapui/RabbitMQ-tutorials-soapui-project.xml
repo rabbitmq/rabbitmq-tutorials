@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="9de2d9a5-1db3-43ac-9c62-cccf2f43ed0f" activeEnvironment="Default" name="RabbitMQ-tutorials" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="9de2d9a5-1db3-43ac-9c62-cccf2f43ed0f" activeEnvironment="Default" name="RabbitMQ-tutorials" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="https://eviware.com/soapui/config">
   <con:settings/>
   <con:testSuite id="554d77cd-3893-4d7d-a6d0-3e7f0f25a604" name="RabbitMQ Tutorial 1">
     <con:description>The simplest thing that does something</con:description>
