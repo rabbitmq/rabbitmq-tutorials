@@ -1,7 +1,7 @@
 # Dart code for RabbitMQ tutorials
 
 Here you can find an [Dart](https://www.dartlang.org/) port of
-[RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
+[RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.html).
 
 
 ## Requirements

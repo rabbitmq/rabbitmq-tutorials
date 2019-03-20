@@ -1,7 +1,7 @@
 # Java code for RabbitMQ tutorials
 
 Here you can find the Java code examples from [RabbitMQ
-tutorials](http://www.rabbitmq.com/getstarted.html).
+tutorials](https://www.rabbitmq.com/getstarted.html).
 
 To successfully use the examples you will need a running RabbitMQ server.
 
@@ -35,21 +35,21 @@ use a semicolon instead of a colon to separate items in the classpath.
 
 ## Code
 
-[Tutorial one: "Hello World!"](http://www.rabbitmq.com/tutorial-one-java.html):
+[Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorial-one-java.html):
 
     $ javac -cp amqp-client-4.0.2.jar Send.java Recv.java
 
     $ java -cp .:amqp-client-4.0.2.jar:slf4j-api-1.7.21.jar:slf4j-simple-1.7.22.jar Send
     $ java -cp .:amqp-client-4.0.2.jar:slf4j-api-1.7.21.jar:slf4j-simple-1.7.22.jar Recv
 
-[Tutorial two: Work Queues](http://www.rabbitmq.com/tutorial-two-java.html):
+[Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-java.html):
 
     $ javac -cp amqp-client-4.0.2.jar NewTask.java Worker.java
 
     $ java -cp $CP NewTask
     $ java -cp $CP Worker
 
-[Tutorial three: Publish/Subscribe](http://www.rabbitmq.com/tutorial-three-java.html)
+[Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-java.html)
 
     $ javac -cp amqp-client-4.0.2.jar EmitLog.java ReceiveLogs.java
 

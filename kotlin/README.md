@@ -1,6 +1,6 @@
 # RabbitMQ Tutorials in Kotlin
 
-This is a minimalistic Kotlin port of the [RabbitMQ tutorials in Java](http://www.rabbitmq.com/getstarted.html).
+This is a minimalistic Kotlin port of the [RabbitMQ tutorials in Java](https://www.rabbitmq.com/getstarted.html).
 The port is admittedly quite close to Java in terms of code style.
 
 

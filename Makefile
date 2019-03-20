@@ -24,7 +24,7 @@ all:
 # this commands:
 #     cd /usr/src
 #     apt-get -y install libncurses-dev libssl-dev
-#     [ -e otp_src_R14B03.tar.gz ] || wget http://www.erlang.org/download/otp_src_R14B03.tar.gz
+#     [ -e otp_src_R14B03.tar.gz ] || wget https://www.erlang.org/download/otp_src_R14B03.tar.gz
 #     [ -e otp_src_R14B03 ] || tar xzf otp_src_R14B03.tar.gz
 #     cd otp_src_R14B03/
 #     ./configure
@@ -41,8 +41,8 @@ test: setup
 test-travisci: setup-travisci
 		SLOWNESS=4 RUBY=ruby python travisci.py
 
-RABBITVER:=$(shell curl -s "http://www.rabbitmq.com/releases/rabbitmq-server/" | grep -oE '([0-9\.]{5,})' | tail -n 1)
-R=http://www.rabbitmq.com/releases
+RABBITVER:=$(shell curl -s "https://www.rabbitmq.com/releases/rabbitmq-server/" | grep -oE '([0-9\.]{5,})' | tail -n 1)
+R=https://www.rabbitmq.com/releases
 
 # Default value assumes CI environment
 RUBY?=ruby1.9.1

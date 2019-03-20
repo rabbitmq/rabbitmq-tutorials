@@ -21,7 +21,7 @@ Then [install Composer](https://getcomposer.org/download/) per instructions on t
 
 ### Client Library
 
-Then you can, for example, install `enqueue/amqp-bunny` using [Composer](http://getcomposer.org).
+Then you can, for example, install `enqueue/amqp-bunny` using [Composer](https://getcomposer.org).
 
 To do that install Composer and add it to your path, then run the following command
 inside this project folder:

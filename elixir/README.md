@@ -1,12 +1,12 @@
 # Elixir code for RabbitMQ tutorials
 
-Here you can find an [Elixir](http://elixir-lang.org) port of
-[RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
+Here you can find an [Elixir](https://elixir-lang.org) port of
+[RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
 
-To run this code you need a [recent Elixir version installed](http://elixir-lang.org/install.html),
-which should include [Mix, the Elixir build tool](http://elixir-lang.org/docs/stable/mix/Mix.html).
+To run this code you need a [recent Elixir version installed](https://elixir-lang.org/install.html),
+which should include [Mix, the Elixir build tool](https://elixir-lang.org/docs/stable/mix/Mix.html).
 
 These tutorials use [Elixir AMQP 0-9-1 client](https://github.com/pma/amqp) built
 on top of the official [RabbitMQ Erlang client](https://www.rabbitmq.com/erlang-client-user-guide.html).
