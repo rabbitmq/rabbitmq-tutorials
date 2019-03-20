@@ -1,12 +1,12 @@
 # RabbitMQ tutorials ported to SoapUI
 
-The code is based on the [Java tutorials](http://www.rabbitmq.com/tutorials),
+The code is based on the [Java tutorials](https://www.rabbitmq.com/tutorials),
 with slight modifications to make it work in SoapUI.
 
 ## Prerequisites
 
  * [SoapUI](https://www.soapui.org/downloads/soapui.html) or [ReadyAPI](https://smartbear.com/product/ready-api/overview/)
- with the [Java Client](http://www.rabbitmq.com/download.html#clients) JAR file in the `bin/ext` directory.
+ with the [Java Client](https://www.rabbitmq.com/download.html#clients) JAR file in the `bin/ext` directory.
  * local RabbitMQ broker instance running with all the defaults
 
 ## Running

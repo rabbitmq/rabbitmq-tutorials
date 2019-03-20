@@ -12,7 +12,7 @@ sbcl --noinform --noprint <<EOF
     (fast-io:write64-be val obuffer)
     (fast-io:finish-output-buffer obuffer)))
 
-;; http://www.cliki.net/fibonacci
+;; https://www.cliki.net/fibonacci
 (defun fibonacci (n)
   "Successive squaring method from SICP"
   (check-type n (integer 0 *))

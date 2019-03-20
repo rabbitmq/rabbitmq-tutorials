@@ -1,10 +1,10 @@
 # RabbitMQ Tutorials
 
-This project contains code for [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html) with
+This project contains code for [RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.html) with
 their ports to various languages.
 
-This repository only contains runnable code. Please consult [tutorials on the site](http://www.rabbitmq.com/getstarted.html)
-to learn more about [the concepts](http://www.rabbitmq.com/getstarted.html), requirements, supported client library version and so on.
+This repository only contains runnable code. Please consult [tutorials on the site](https://www.rabbitmq.com/getstarted.html)
+to learn more about [the concepts](https://www.rabbitmq.com/getstarted.html), requirements, supported client library version and so on.
 
 A please check out the rest of [RabbitMQ documentation](https://www.rabbitmq.com/documentation.html)!
 

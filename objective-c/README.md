@@ -1,6 +1,6 @@
 # Objective-C code for RabbitMQ tutorials
 
-Objective-C code examples for the [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
+Objective-C code examples for the [RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
 

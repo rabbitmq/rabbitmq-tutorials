@@ -1,6 +1,6 @@
 # Swift code for RabbitMQ tutorials
 
-Swift code examples for the [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html).
+Swift code examples for the [RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.html).
 
 ## Requirements
 

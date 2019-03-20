@@ -8,7 +8,7 @@ sender, receiver, and configuration.
 [1]: https://www.rabbitmq.com/getstarted.html
 
 ## Prerequisites
-These tutorials assume RabbitMQ is [installed](http://rabbitmq.com/download.html) and running
+These tutorials assume RabbitMQ is [installed](https://rabbitmq.com/download.html) and running
 on `localhost` using the standard port (`5672`). In case you use
 a different host, port or credentials, connections settings would require adjusting.
 
@@ -78,5 +78,5 @@ spring:
 
 To use this at runtime create a file called `application-remote.yml` (or properties) and set the properties in there.  Then set the
 remote profile as in the example above.  See the [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
-and [Spring AMQP documentation](http://docs.spring.io/spring-amqp/reference/html/) for more information on setting application
+and [Spring AMQP documentation](https://docs.spring.io/spring-amqp/reference/html/) for more information on setting application
 properties and AMQP properties specifically.
