@@ -49,10 +49,10 @@ java -cp %CP% Send
 javac -cp amqp-client-5.6.0.jar Send.java Recv.java
 
 # terminal tab 1
-java -cp .:amqp-client-5.6.0.jar:slf4j-api-1.7.25.jar:slf4j-simple-1.7.25.jar Send
+java -cp .:amqp-client-5.6.0.jar:slf4j-api-1.7.25.jar:slf4j-simple-1.7.25.jar Recv
 
 # terminal tab 2
-java -cp .:amqp-client-5.6.0.jar:slf4j-api-1.7.25.jar:slf4j-simple-1.7.25.jar Recv
+java -cp .:amqp-client-5.6.0.jar:slf4j-api-1.7.25.jar:slf4j-simple-1.7.25.jar Send
 ```
 
 [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-java.html):
