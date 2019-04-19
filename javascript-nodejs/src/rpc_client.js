@@ -9,24 +9,27 @@ if (args.length === 0) {
   process.exit(1);
 }
 
-amqp.connect('amqp://localhost', function(err, conn) {
-  conn.createChannel(function(err, ch) {
-    ch.assertQueue('', {exclusive: true}, function(err, q) {
-      var corr = generateUuid();
+amqp.connect('amqp://localhost', function(error, connection) {
+  if (error) throw error;
+  connection.createChannel(function(erro, channel) {
+    if (erro) throw erro;
+    channel.assertQueue('', {exclusive: true}, function(err, q) {
+      if (err) throw err;
+      var correlationId = generateUuid();
       var num = parseInt(args[0]);
 
       console.log(' [x] Requesting fib(%d)', num);
 
-      ch.consume(q.queue, function(msg) {
-        if (msg.properties.correlationId === corr) {
+      channel.consume(q.queue, function(msg) {
+        if (msg.properties.correlationId === correlationId) {
           console.log(' [.] Got %s', msg.content.toString());
-          setTimeout(function() { conn.close(); process.exit(0) }, 500);
+          setTimeout(function() { connection.close(); process.exit(0) }, 500);
         }
       }, {noAck: true});
 
-      ch.sendToQueue('rpc_queue',
-        new Buffer(num.toString()),
-        { correlationId: corr, replyTo: q.queue });
+      channel.sendToQueue('rpc_queue',
+        Buffer.from(num.toString()),
+        { correlationId: correlationId, replyTo: q.queue });
     });
   });
 });

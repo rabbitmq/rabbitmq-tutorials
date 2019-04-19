@@ -9,20 +9,23 @@ if (args.length == 0) {
   process.exit(1);
 }
 
-amqp.connect('amqp://localhost', function(err, conn) {
-  conn.createChannel(function(err, ch) {
-    var ex = 'topic_logs';
+amqp.connect('amqp://localhost', function(error, connection) {
+  if (error) throw error;
+  connection.createChannel(function(erro, channel) {
+    if (erro) throw erro;
+    var exchange = 'topic_logs';
 
-    ch.assertExchange(ex, 'topic', {durable: false});
+    channel.assertExchange(exchange, 'topic', {durable: false});
 
-    ch.assertQueue('', {exclusive: true}, function(err, q) {
+    channel.assertQueue('', {exclusive: true}, function(err, q) {
+      if (err) throw err;
       console.log(' [*] Waiting for logs. To exit press CTRL+C');
 
       args.forEach(function(key) {
-        ch.bindQueue(q.queue, ex, key);
+        channel.bindQueue(q.queue, exchange, key);
       });
 
-      ch.consume(q.queue, function(msg) {
+      channel.consume(q.queue, function(msg) {
         console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());
       }, {noAck: true});
     });
