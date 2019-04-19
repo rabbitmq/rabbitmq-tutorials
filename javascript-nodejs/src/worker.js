@@ -6,11 +6,11 @@ amqp.connect('amqp://localhost', function(error, connection) {
     connection.createChannel(function(error, channel) {
         var queue = 'task_queue';
 
-        channel.assertQueue(q, {
+        channel.assertQueue(queue, {
             durable: true
         });
         channel.prefetch(1);
-        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
+        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
         channel.consume(queue, function(msg) {
             var secs = msg.content.toString().split('.').length - 1;
 
