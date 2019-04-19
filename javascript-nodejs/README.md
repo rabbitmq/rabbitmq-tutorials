@@ -52,4 +52,4 @@ To install `amqp.node` using npm:
 [Tutorial six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-javascript.html):
 
     node src/rpc_server.js
-    node src/rpc_client.js
+    node src/rpc_client.js 30
