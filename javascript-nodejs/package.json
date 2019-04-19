@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "RabbitMQ amqp.node tutorial ",
   "dependencies": {
-    "amqplib": "^0.3.2"
+    "amqplib": "latest",
+    "js-beautify": "^1.9.1"
   }
 }
