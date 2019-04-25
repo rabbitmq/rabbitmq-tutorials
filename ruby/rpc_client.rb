@@ -62,8 +62,10 @@ end
 
 client = FibonacciClient.new('rpc_queue')
 
-puts ' [x] Requesting fib(30)'
-response = client.call(30)
+n = (ARGV[0] || 30).to_i
+
+puts " [x] Requesting fib(#{n})"
+response = client.call(n)
 
 puts " [.] Got #{response}"
 
