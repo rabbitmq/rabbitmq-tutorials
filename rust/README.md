@@ -36,7 +36,14 @@ cargo run --bin new-task "hi" # specify a custom message
 ```
 
 #### [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-dotnet.html)
-// TODO
+```
+cd 03-publish-subscribe
+```
+Start receiver and emitter in separate shells:
+```
+cargo run --bin receive
+cargo run --bin emit "hi" # specify a custom message
+```
 
 #### [Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-dotnet.html)
 // TODO
