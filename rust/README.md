@@ -13,13 +13,12 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 ## Code
 Each tutorial is a separate crate where each source file corresponds to a
-binary executable.
+binary executable. Each cargo command should be launched in a separate shell.
 
 #### [Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorial-one-dotnet.html)
 ```
 cd 01-hello-world
 ```
-Start receiver and sender in two separate shells:
 ```
 cargo run --bin receive
 cargo run --bin send
@@ -29,7 +28,6 @@ cargo run --bin send
 ```
 cd 02-work-queues
 ```
-Start workers and task creator in separate shells:
 ```
 cargo run --bin worker
 cargo run --bin new-task "hi" # specify a custom message
@@ -39,7 +37,6 @@ cargo run --bin new-task "hi" # specify a custom message
 ```
 cd 03-publish-subscribe
 ```
-Start receiver and emitter in separate shells:
 ```
 cargo run --bin receive
 cargo run --bin emit "hi" # specify a custom message
@@ -49,14 +46,17 @@ cargo run --bin emit "hi" # specify a custom message
 ```
 cd 04-routing
 ```
-Start receiver and emitter in separate shells:
 ```
 cargo run --bin receive info error # specify log levels
 cargo run --bin emit-direct error "help!" # specify severity and custom message
 ```
 
 #### [Tutorial five: Topics](https://www.rabbitmq.com/tutorial-five-dotnet.html)
-// TODO
-
-#### [Tutorial six: RPC](https://www.rabbitmq.com/tutorial-six-dotnet.html)
+```
+cd 05-topics
+```
+```
+cargo run --bin receive-topic kern.* # specify topic filter
+cargo run --bin emit-topic kern.mem "No memory left!" # specify topic and message
+```
 
