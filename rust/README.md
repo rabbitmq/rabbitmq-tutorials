@@ -46,7 +46,14 @@ cargo run --bin emit "hi" # specify a custom message
 ```
 
 #### [Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-dotnet.html)
-// TODO
+```
+cd 04-routing
+```
+Start receiver and emitter in separate shells:
+```
+cargo run --bin receive info error # specify log levels
+cargo run --bin emit-direct error "help!" # specify severity and custom message
+```
 
 #### [Tutorial five: Topics](https://www.rabbitmq.com/tutorial-five-dotnet.html)
 // TODO

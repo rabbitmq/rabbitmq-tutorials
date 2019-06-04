@@ -44,8 +44,8 @@ fn main() {
                     };
                     channel
                         .exchange_declare(
-                            "logs",
-                            "fanout",
+                            "direct_logs",
+                            "direct",
                             ExchangeDeclareOptions::default(),
                             FieldTable::new(),
                         )
@@ -60,14 +60,22 @@ fn main() {
                         .and_then(move |(ch, queue)| {
                             // bind our queue to declared exchange
                             let name = queue.name();
-                            ch.queue_bind(
-                                &name,
-                                "logs",
-                                "",
-                                QueueBindOptions::default(),
-                                FieldTable::new(),
-                            )
-                            .map(move |_| (ch.clone(), queue))
+                            let c = ch.clone();
+                            let args: Vec<_> = std::env::args().skip(1).collect();
+                            let severities = match args.len() {
+                                0 => vec!["info".to_string()],
+                                _ => args,
+                            };
+                            let binds = severities.into_iter().map(move |severity| {
+                                c.queue_bind(
+                                    &name,
+                                    "direct_logs",
+                                    &severity,
+                                    QueueBindOptions::default(),
+                                    FieldTable::new(),
+                                )
+                            });
+                            futures::future::join_all(binds).map(move |_| (ch.clone(), queue))
                         })
                         .and_then(move |(ch, queue)| {
                             // create a message receiver
@@ -82,8 +90,9 @@ fn main() {
                         .and_then(move |(ch, stream)| {
                             // print received messages
                             stream.for_each(move |message| {
+                                let severity = &message.routing_key;
                                 let text = std::str::from_utf8(&message.data).unwrap();
-                                println!("Received: {:?}", text);
+                                println!("Received: [{:?}] {:?}", severity, text);
                                 ch.basic_ack(message.delivery_tag, false)
                             })
                         })

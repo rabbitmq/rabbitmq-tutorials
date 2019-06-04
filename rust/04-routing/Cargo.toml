@@ -1,0 +1,16 @@
+[package]
+name = "tutorial-04"
+version = "0.1.0"
+authors = ["Adel Vilkov <vilkov.adel@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+failure = "^0.1"
+futures = "^0.1"
+itertools = "^0.8.0"
+lapin-futures = "^0.18"
+tokio = "^0.1.8"
+tokio-codec = "^0.1"
+tokio-io = "^0.1"
+tokio-sync = "^0.1"
+tokio-timer = "^0.2"
