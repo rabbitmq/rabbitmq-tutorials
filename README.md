@@ -45,6 +45,7 @@ The following ports are available:
  * [Perl](./perl)
  * [Python (with Pika)](./python)
  * [Ruby (with Bunny)](./ruby)
+ * [Rust](./rust)
  * [Scala](./scala)
  * [Swift](./swift)
  * [Spring AMQP](./spring-amqp)
