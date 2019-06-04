@@ -26,7 +26,14 @@ cargo run --bin send
 ```
 
 #### [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-dotnet.html)
-// TODO
+```
+cd 02-work-queues
+```
+Start workers and task creator in separate shells:
+```
+cargo run --bin worker
+cargo run --bin new-task "hi" # specify a custom message
+```
 
 #### [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-dotnet.html)
 // TODO
