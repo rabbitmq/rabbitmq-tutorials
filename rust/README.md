@@ -5,7 +5,7 @@ tutorials](https://www.rabbitmq.com/getstarted.html).
 
 The examples use [lapin](https://github.com/sozu-proxy/lapin) client library.
 
-To successfully use the examples you will need a running RabbitMQ server.
+You should have a RabbitMQ server running on default port.
 
 ## Requirements
 
@@ -38,8 +38,8 @@ cargo run --bin new-task "hi" # specify a custom message
 cd 03-publish-subscribe
 ```
 ```
-cargo run --bin receive
-cargo run --bin emit "hi" # specify a custom message
+cargo run --bin subscribe
+cargo run --bin publish "hi" # specify a custom message
 ```
 
 #### [Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-dotnet.html)
@@ -47,7 +47,7 @@ cargo run --bin emit "hi" # specify a custom message
 cd 04-routing
 ```
 ```
-cargo run --bin receive info error # specify log levels
+cargo run --bin receive-direct info error # specify log levels
 cargo run --bin emit-direct error "help!" # specify severity and custom message
 ```
 
