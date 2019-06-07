@@ -8,7 +8,7 @@ channel = connection.channel()
 
 channel.exchange_declare(exchange='topic_logs', exchange_type='topic')
 
-result = channel.queue_declare('', exclusive=True)
+result = channel.queue_declare(queue='', exclusive=True)
 queue_name = result.method.queue
 
 binding_keys = sys.argv[1:]
