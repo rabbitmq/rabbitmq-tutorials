@@ -6,122 +6,133 @@
 #include <amqp_tcp_socket.h>
 
 int main(int argc, char const *const *argv) {
-    char const *hostname;
-    int port, status;
-    char const *queue;
-    amqp_socket_t *socket = NULL;
     amqp_connection_state_t conn;
-   	const amqp_channel_t CHANNEL_ID = 1;
+    amqp_socket_t *socket = NULL;
+    const char* DEFAULT_HOSTNAME = "localhost";
+    const int DEFAULT_PORT = 5672;
+    int socket_status;
     const char* DEFAULT_VHOST = "/";
     const char* DEFAULT_USER = "guest";
     const char* DEFAULT_PASSWORD = "guest";
-    amqp_rpc_reply_t reply;
+    amqp_rpc_reply_t rpc_reply;
+    const amqp_channel_t CHANNEL_ID = 1;
     amqp_channel_open_ok_t* channel_status;
+    const char* QUEUE_NAME = "hello";
     amqp_queue_declare_ok_t* queue_status;
     amqp_basic_consume_ok_t* consume_status;
 
-    if (argc != 4) {
-        fprintf(stderr, "Usage: %s <host> <port> <queue>\n", argv[0]);
-        return 1;
-    }
-
-    hostname = argv[1];
-    port = atoi(argv[2]);
-    queue = argv[3];
-
-    // create new connection object
+    // Create new connection object
     conn = amqp_new_connection();
     if (!conn) {
-        fprintf(stderr, "failed to allocate connection\n");
+        fprintf(stderr, "Failed to allocate connection.\n");
         return 1;
     }
 
-    // create socket for connection
+    // Create socket for connection
     socket = amqp_tcp_socket_new(conn);
     if (!socket) {
-        fprintf(stderr, "failed to allocate tcp socket\n");
+        fprintf(stderr, "Failed to allocate TCP socket.\n");
         goto error;
     }
 
-    // use socket to open connection with broker
-    status = amqp_socket_open(socket, hostname, port);
-    if (status != 0) {
-        fprintf(stderr, "failed to connect to broker. server error: %d errno: %d\n", status, errno);
+    // Use socket to open connection with broker
+    socket_status = amqp_socket_open(socket, DEFAULT_HOSTNAME, DEFAULT_PORT);
+    if (socket_status != 0) {
+        fprintf(stderr, "Failed to connect to broker. Server error: %d; errno: %d.\n", socket_status, errno);
         goto error;
     }
 
-    // login to the broker - sync call
-    reply = amqp_login(conn,
-      DEFAULT_VHOST,
-      AMQP_DEFAULT_MAX_CHANNELS,
-      AMQP_DEFAULT_FRAME_SIZE,
-      0, // no heartbeat
-      AMQP_SASL_METHOD_PLAIN,
-      DEFAULT_USER,
-      DEFAULT_PASSWORD);
-    if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
-        fprintf(stderr, "failed to login to broker. reply type: %d\n", reply.reply_type);
+    // Login to the broker (sync call)
+    rpc_reply = amqp_login(
+        conn,
+        DEFAULT_VHOST,
+        AMQP_DEFAULT_MAX_CHANNELS,
+        AMQP_DEFAULT_FRAME_SIZE,
+        0, // no heartbeat
+        AMQP_SASL_METHOD_PLAIN,
+        DEFAULT_USER,
+        DEFAULT_PASSWORD
+    );
+    if (rpc_reply.reply_type != AMQP_RESPONSE_NORMAL) {
+        fprintf(stderr, "Failed to login to broker. Reply type: %d.\n", rpc_reply.reply_type);
         goto error;
     }
 
-    // open channel and check response
+    // Open channel
     channel_status = amqp_channel_open(conn, CHANNEL_ID);
     if (!channel_status) {
-        fprintf(stderr, "failed to open channel\n");
+        fprintf(stderr, "Failed to open channel.\n");
+        goto error;
+    }
+    rpc_reply = amqp_get_rpc_reply(conn);
+    if (rpc_reply.reply_type != AMQP_RESPONSE_NORMAL) {
+        fprintf(stderr, "Failed to open channel on broker. Reply type: %d.\n", rpc_reply.reply_type);
         goto error;
     }
 
-    // declare a queue
-    queue_status = amqp_queue_declare(conn, 
-            CHANNEL_ID, 
-            amqp_cstring_bytes(queue),
-            0, // not passive - create the queue
-            1, // durable queue
-            0, // not exclusive
-            0, // dont autodelete
-            amqp_empty_table // no properties
-            );
+    // Declare queue
+    queue_status = amqp_queue_declare(
+        conn,
+        CHANNEL_ID,
+        amqp_cstring_bytes(QUEUE_NAME), // queue
+        0, // passive
+        0, // durable
+        0, // exclusive
+        0, // auto_delete
+        amqp_empty_table // arguments
+    );
     if (!queue_status) {
-        fprintf(stderr, "failed to create queue (client)\n");
+        fprintf(stderr, "Failed to create queue.\n");
         goto error;
     }
-    reply = amqp_get_rpc_reply(conn);
-    if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
-        fprintf(stderr, "failed to create queue on broker. reply type: %d\n", reply.reply_type);
+    rpc_reply = amqp_get_rpc_reply(conn);
+    if (rpc_reply.reply_type != AMQP_RESPONSE_NORMAL) {
+        fprintf(stderr, "Failed to create queue on broker. Reply type: %d.\n", rpc_reply.reply_type);
         goto error;
     }
 
-    // define message consumption 
+    // Define message consumption
     consume_status = amqp_basic_consume(
-            conn, 
-            CHANNEL_ID, 
-            amqp_cstring_bytes(queue), 
-            amqp_empty_bytes, // no consumer tag
-            1, // not local 
-            1, // no ack
-            0, // not exclusive 
-            amqp_empty_table // no attributes
-            );
+        conn,
+        CHANNEL_ID,
+        amqp_cstring_bytes(QUEUE_NAME),
+        amqp_empty_bytes, // consumer_tag
+        1, // no_local
+        1, // no_ack
+        0, // exclusive
+        amqp_empty_table // arguments
+    );
     if (!consume_status) {
-        fprintf(stderr, "failed to start consumer (client)\n");
+        fprintf(stderr, "Failed to start to consume.\n");
+        goto error;
+    }
+    rpc_reply = amqp_get_rpc_reply(conn);
+    if (rpc_reply.reply_type != AMQP_RESPONSE_NORMAL) {
+        fprintf(stderr, "Failed to start to consume on broker. Reply type: %d.\n", rpc_reply.reply_type);
         goto error;
     }
 
-    printf(" [*] Waiting for messages. To exit press CTRL+C\n");
-    // processing messages
+    printf(" [*] Waiting for messages. To exit press CTRL+C.\n");
+
+    // Consume messages
     for (;;) {
         amqp_envelope_t envelope;
 
-        // consume message - blocking call without timeout
-        reply = amqp_consume_message(conn, &envelope, NULL, 0);
-        if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
-            fprintf(stderr, "invalid message received. reply type: %d\n", reply.reply_type);
+        // Consume message (blocking call without timeout)
+        rpc_reply = amqp_consume_message(conn, &envelope, NULL, 0);
+        if (rpc_reply.reply_type != AMQP_RESPONSE_NORMAL) {
+            fprintf(stderr, "Invalid message received. Reply type: %d.\n", rpc_reply.reply_type);
             break;
         }
-        printf(" [x] Received %.*s\n", (int)envelope.message.body.len, (char*)envelope.message.body.bytes);
+
+        char *body = envelope.message.body.bytes;
+        int len = envelope.message.body.len;
+
+        printf(" [x] Received %.*s\n", len, body);
+
         amqp_destroy_envelope(&envelope);
     }
-    
+
     amqp_destroy_connection(conn);
     return 0;
 
@@ -129,4 +140,3 @@ error:
     amqp_destroy_connection(conn);
     return 1;
 }
-

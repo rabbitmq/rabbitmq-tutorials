@@ -6,113 +6,114 @@
 #include <amqp_tcp_socket.h>
 
 int main(int argc, char const *const *argv) {
-    char const *hostname;
-    int port, status;
-    char const *queue;
-    amqp_socket_t *socket = NULL;
     amqp_connection_state_t conn;
-   	const amqp_channel_t CHANNEL_ID = 1;
+    amqp_socket_t *socket = NULL;
+    const char* DEFAULT_HOSTNAME = "localhost";
+    const int DEFAULT_PORT = 5672;
+    int socket_status;
     const char* DEFAULT_VHOST = "/";
     const char* DEFAULT_USER = "guest";
     const char* DEFAULT_PASSWORD = "guest";
-    const char* DEFAULT_EXCHANGE = "";
-    amqp_rpc_reply_t reply;
+    amqp_rpc_reply_t rpc_reply;
+    const amqp_channel_t CHANNEL_ID = 1;
     amqp_channel_open_ok_t* channel_status;
+    const char* QUEUE_NAME = "hello";
     amqp_queue_declare_ok_t* queue_status;
+    const char* DEFAULT_EXCHANGE = "";
+    int publish_status;
 
-    if (argc != 4) {
-        fprintf(stderr, "Usage: %s <host> <port> <queue>\n", argv[0]);
-        return 1;
-    }
-
-    hostname = argv[1];
-    port = atoi(argv[2]);
-    queue = argv[3];
-
-    // create new connection object
+    // Create new connection object
     conn = amqp_new_connection();
     if (!conn) {
-        fprintf(stderr, "failed to allocate connection\n");
+        fprintf(stderr, "Failed to allocate connection.\n");
         return 1;
     }
 
-    // create socket for connection
+    // Create socket for connection
     socket = amqp_tcp_socket_new(conn);
     if (!socket) {
-        fprintf(stderr, "failed to allocate tcp socket\n");
+        fprintf(stderr, "Failed to allocate TCP socket.\n");
         goto error;
     }
 
-    // use socket to open connection with broker
-    status = amqp_socket_open(socket, hostname, port);
-    if (status != 0) {
-        fprintf(stderr, "failed to connect to broker. server error: %d errno: %d\n", status, errno);
+    // Use socket to open connection with broker
+    socket_status = amqp_socket_open(socket, DEFAULT_HOSTNAME, DEFAULT_PORT);
+    if (socket_status != 0) {
+        fprintf(stderr, "Failed to connect to broker. Server error: %d; errno: %d.\n", socket_status, errno);
         goto error;
     }
 
-    // login to the broker - sync call
-    reply = amqp_login(conn,
-      DEFAULT_VHOST,
-      AMQP_DEFAULT_MAX_CHANNELS,
-      AMQP_DEFAULT_FRAME_SIZE,
-      0, // no heartbeat
-      AMQP_SASL_METHOD_PLAIN,
-      DEFAULT_USER,
-      DEFAULT_PASSWORD);
-    if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
-        fprintf(stderr, "failed to login to broker. reply type: %d\n", reply.reply_type);
+    // Login to the broker (sync call)
+    rpc_reply = amqp_login(
+        conn,
+        DEFAULT_VHOST,
+        AMQP_DEFAULT_MAX_CHANNELS,
+        AMQP_DEFAULT_FRAME_SIZE,
+        0, // no heartbeat
+        AMQP_SASL_METHOD_PLAIN,
+        DEFAULT_USER,
+        DEFAULT_PASSWORD
+    );
+    if (rpc_reply.reply_type != AMQP_RESPONSE_NORMAL) {
+        fprintf(stderr, "Failed to login to broker. Reply type: %d.\n", rpc_reply.reply_type);
         goto error;
     }
 
-    // open channel and check response
+    // Open channel
     channel_status = amqp_channel_open(conn, CHANNEL_ID);
     if (!channel_status) {
-        fprintf(stderr, "failed to open channel\n");
+        fprintf(stderr, "Failed to open channel.\n");
+        goto error;
+    }
+    rpc_reply = amqp_get_rpc_reply(conn);
+    if (rpc_reply.reply_type != AMQP_RESPONSE_NORMAL) {
+        fprintf(stderr, "Failed to open channel on broker. Reply type: %d.\n", rpc_reply.reply_type);
         goto error;
     }
 
-    // declare a queue
-    queue_status = amqp_queue_declare(conn, 
-            CHANNEL_ID, 
-            amqp_cstring_bytes(queue),
-            0, // not passive - create the queue
-            1, // durable queue
-            0, // not exclusive
-            0, // dont autodelete
-            amqp_empty_table // no properties
-            );
+    // Declare queue
+    queue_status = amqp_queue_declare(
+        conn,
+        CHANNEL_ID,
+        amqp_cstring_bytes(QUEUE_NAME), // queue
+        0, // passive
+        0, // durable
+        0, // exclusive
+        0, // auto_delete
+        amqp_empty_table // arguments
+    );
     if (!queue_status) {
-        fprintf(stderr, "failed to create queue (client)\n");
+        fprintf(stderr, "Failed to create queue.\n");
         goto error;
     }
-    reply = amqp_get_rpc_reply(conn);
-    if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
-        fprintf(stderr, "failed to create queue on broker. reply type: %d\n", reply.reply_type);
+    rpc_reply = amqp_get_rpc_reply(conn);
+    if (rpc_reply.reply_type != AMQP_RESPONSE_NORMAL) {
+        fprintf(stderr, "Failed to create queue on broker. Reply type: %d.\n", rpc_reply.reply_type);
         goto error;
     }
 
-    // send message to broker
-    status = amqp_basic_publish(
-        conn, 
-        CHANNEL_ID, 
+    // Publish message
+    publish_status = amqp_basic_publish(
+        conn,
+        CHANNEL_ID,
         amqp_cstring_bytes(DEFAULT_EXCHANGE),
-        amqp_cstring_bytes(queue),
-        0, // not mandatory
-        0, // not immediate
-        NULL, // no properties
-        amqp_cstring_bytes("Hello World!")
-        );
-    if (status != 0) {
-        fprintf(stderr, "failed to publish to broker. server error: %d errno: %d\n", status, errno);
+        amqp_cstring_bytes(QUEUE_NAME), // routing_key
+        0, // mandatory
+        0, // immediate
+        NULL, // properties
+        amqp_cstring_bytes("Hello World from C producer!") // body
+    );
+    if (publish_status != 0) {
+        fprintf(stderr, "Failed to publish to broker. Server error: %d; errno: %d.\n", publish_status, errno);
         goto error;
     }
-    reply = amqp_get_rpc_reply(conn);
-    if (reply.reply_type != AMQP_RESPONSE_NORMAL) {
-        fprintf(stderr, "broker reply type: %d\n", reply.reply_type);
+    rpc_reply = amqp_get_rpc_reply(conn);
+    if (rpc_reply.reply_type != AMQP_RESPONSE_NORMAL) {
+        fprintf(stderr, "Failed to start to consume on broker. Reply type: %d.\n", rpc_reply.reply_type);
         goto error;
     }
 
-    printf(" [x] Sent 'Hello World!'\n");
+    printf(" [x] Sent 'Hello World from C producer!'.\n");
 
     amqp_destroy_connection(conn);
     return 0;
@@ -121,4 +122,3 @@ error:
     amqp_destroy_connection(conn);
     return 1;
 }
-
