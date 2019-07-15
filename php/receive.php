@@ -16,7 +16,7 @@ $callback = function ($msg) {
 
 $channel->basic_consume('hello', '', false, true, false, false, $callback);
 
-while (count($channel->callbacks)) {
+while ($channel->is_consuming()) {
     $channel->wait();
 }
 

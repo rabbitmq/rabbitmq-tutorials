@@ -43,7 +43,7 @@ $callback = function ($req) {
 $channel->basic_qos(null, 1, null);
 $channel->basic_consume('rpc_queue', '', false, false, false, false, $callback);
 
-while (count($channel->callbacks)) {
+while ($channel->is_consuming()) {
     $channel->wait();
 }
 
