@@ -5,39 +5,67 @@ And is based on the examples taken from there.
 
 ## Requirements
 
-To run this code you need a C compiler (e.g. gcc) and ```make```.
-You would also need to install the rabbitmq-c development package. 
+To run this code you need a C compiler (e.g. `gcc`) and `make`.
+You would also need to install the rabbitmq-c development package.
 
 On Redhat/CentOS/Fedora machines, this would be:
+
 ```
-# sudo yum install librabbotmq-devel
+sudo yum install librabbotmq-devel
+```
+
+On OSX machines, this would be: 
+
+```
+brew install rabbitmq-c
 ```
 
 ## Code
 
 To compile the examples use:
-```
-# make
-```
-## [Example 1](https://www.rabbitmq.com/tutorials/tutorial-one-python.html)
-Sending and receiving a "Hello World!" message over a queue called "hello".
 
-In one terminal:
+```
+make
+```
+
+#### [Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorial-one-python.html):
+
 ```
 ./receive localhost 5672 hello
-```
-And from another terminal:
-```
 ./send localhost 5672 hello
 ```
-## [Example 5](https://www.rabbitmq.com/tutorials/tutorial-five-python.html)
-Sending and receiving a "Hello World!" message using an exchange called "topic_logs". Receiver will get all messages that use a topic that ends with ".critical".
 
-In one terminal:
+#### [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-python.html):
+
 ```
-./receive_logs_topic localhost 5672 topic_logs "*.critical"
+./new_task "A very hard task which takes two seconds.."
+./worker
 ```
-And from another terminal:
+    
+#### [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-go.html)
+
 ```
-./emit_log_topic localhost 5672 topic_logs "kern.critical"
+./receive_logs
+./emit_log "info: This is the log message"
+```
+
+#### [Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-go.html)
+
+```
+./receive_logs_direct info
+./emit_log_direct info "The message"
+```
+
+#### [Tutorial five: Topics](https://www.rabbitmq.com/tutorial-five-go.html)
+
+```
+./receive_logs_topic "*.critical"
+./emit_log_topic "kern.critical"
+```
+
+#### [Tutorial six: RPC](https://www.rabbitmq.com/tutorial-six-go.html)
+
+```
+./rpc_server
+./rpc_client
 ```
