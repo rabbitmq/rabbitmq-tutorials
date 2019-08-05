@@ -93,7 +93,7 @@ PVER=0.10.0
 python/.ok:
 	(cd python && \
 		virtualenv venv && \
-		./venv/bin/python -m ensurepip && \
+		./venv/bin/easy_install pip && \
 		./venv/bin/pip install pika==$(PVER) && \
 		touch .ok)
 clean::
