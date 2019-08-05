@@ -9,7 +9,7 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 To run this code you need to install the `pika` package version `1.0.0` or later. To install it, run
 
-    pip install pika
+    python -m pip install pika
 
 You may first need to run
 
