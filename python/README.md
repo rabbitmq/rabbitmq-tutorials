@@ -13,7 +13,7 @@ To run this code you need to install the `pika` package version `1.0.0` or later
 
 You may first need to run
 
-    easy_install pip
+    python -m ensurepip
 
 
 ## Code
