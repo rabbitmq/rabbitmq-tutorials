@@ -1,11 +1,13 @@
 ﻿using System;
 using RabbitMQ.Client;
 using System.Text;
+using System.Threading;
 
 class Program
 {
     public static void Main(string[] args)
     {
+        Thread.Sleep(2000);
         var factory = new ConnectionFactory() { HostName = "localhost" };
         using(var connection = factory.CreateConnection())
         using(var channel = connection.CreateModel())
