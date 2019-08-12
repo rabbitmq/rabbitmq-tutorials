@@ -10,7 +10,7 @@ class EmitLog
         using(var connection = factory.CreateConnection())
         using(var channel = connection.CreateModel())
         {
-            channel.ExchangeDeclare(exchange: "logs", type: "fanout");
+            channel.ExchangeDeclare(exchange: "logs", type: ExchangeType.Fanout);
 
             var message = GetMessage(args);
             var body = Encoding.UTF8.GetBytes(message);
