@@ -112,7 +112,6 @@ public class PublisherConfirms {
             long start = System.nanoTime();
             for (int i = 0; i < MESSAGE_COUNT; i++) {
                 String body = String.valueOf(i);
-                ch.basicPublish("", queue, null, body.getBytes());
                 outstandingConfirms.put(ch.getNextPublishSeqNo(), body);
                 ch.basicPublish("", queue, null, body.getBytes());
             }
