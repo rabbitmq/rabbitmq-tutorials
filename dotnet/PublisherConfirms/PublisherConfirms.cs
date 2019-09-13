@@ -10,7 +10,7 @@ class PublisherConfirms
 {
     private const int MESSAGE_COUNT = 50_000;
 
-        public static void Main(string[] args)
+        public static void Main()
         {
             PublishMessagesIndividually();
             PublishMessagesInBatch();
