@@ -42,3 +42,7 @@ time opening it in order to get the .NET RabbitMQ dependency from NuGet.
 
 - 6_RPCServer
 - 6_RPCClient
+
+#### [Tutorial 7: Publisher Confirms](https://www.rabbitmq.com/tutorials/tutorial-seven-dotnet.html)
+
+- 7_PublisherConfirms
