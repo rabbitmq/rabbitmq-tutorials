@@ -57,3 +57,7 @@ on windows cd into each project and run `dotnet restore` manually.
 
     dotnet run -p RPCServer/RPCServer.csproj
     dotnet run -p RPCClient/RPCClient.csproj
+
+#### [Tutorial seven: Publisher Confirms](https://www.rabbitmq.com/tutorial-seven-dotnet.html)
+
+    dotnet run -p PublisherConfirms/PublisherConfirms.csproj
