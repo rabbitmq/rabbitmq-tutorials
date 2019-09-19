@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "1_Send", "1_Send\1_Send.csproj", "{5FCA7642-F829-4AB9-BC2D-C5FDEFCA80BF}"
 EndProject
@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1CAFD4
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7_PublisherConfirms", "7_PublisherConfirms\7_PublisherConfirms.csproj", "{A46637FF-A028-4FF9-A70F-82CB32EC3A74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,8 +90,15 @@ Global
 		{FD2191EB-380C-426D-A629-53DF095E6295}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD2191EB-380C-426D-A629-53DF095E6295}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD2191EB-380C-426D-A629-53DF095E6295}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A46637FF-A028-4FF9-A70F-82CB32EC3A74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A46637FF-A028-4FF9-A70F-82CB32EC3A74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A46637FF-A028-4FF9-A70F-82CB32EC3A74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A46637FF-A028-4FF9-A70F-82CB32EC3A74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {364576C4-05CA-4C17-AFFD-AB4F1157596A}
 	EndGlobalSection
 EndGlobal
