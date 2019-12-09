@@ -81,7 +81,6 @@ public class Rpc
 
   private static async Task InvokeAsync(string n)
   {
-      var rnd = new Random(Guid.NewGuid().GetHashCode());
       var rpcClient = new RpcClient();
 
       Console.WriteLine(" [x] Requesting fib({0})", n);
