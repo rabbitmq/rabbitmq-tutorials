@@ -22,12 +22,10 @@ public class Worker {
             String message = new String(delivery.getBody(), "UTF-8");
 
             System.out.println(" [x] Received '" + message + "'");
-            try {
-                doWork(message);
-            } finally {
-                System.out.println(" [x] Done");
-                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-            }
+            doWork(message);
+            // we never get past here if doWork raises an exception and this
+            // worker crashes. This way we only Ack if the work was done.
+            channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
         };
         channel.basicConsume(TASK_QUEUE_NAME, false, deliverCallback, consumerTag -> { });
     }
