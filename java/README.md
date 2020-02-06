@@ -10,7 +10,7 @@ To successfully use the examples you will need a RabbitMQ node running locally.
 You'll need to download the following JAR files
 from Maven Central:
 
- * [RabbitMQ Java Client](https://repo1.maven.org/maven2/com/rabbitmq/amqp-client/5.6.0//amqp-client-5.6.0.jar)
+ * [RabbitMQ Java Client](https://repo1.maven.org/maven2/com/rabbitmq/amqp-client/5.6.0/amqp-client-5.6.0.jar)
  * [SLF4J API](https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar)
  * [SLF4J Simple](https://repo1.maven.org/maven2/org/slf4j/slf4j-simple/1.7.25/slf4j-simple-1.7.25.jar)
 
