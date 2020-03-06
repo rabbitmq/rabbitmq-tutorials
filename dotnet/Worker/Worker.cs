@@ -30,7 +30,7 @@ class Worker
 
                 Console.WriteLine(" [x] Done");
 
-                model.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                ((IModel)model).BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };
             channel.BasicConsume(queue: "task_queue", autoAck: false, consumer: consumer);
 
