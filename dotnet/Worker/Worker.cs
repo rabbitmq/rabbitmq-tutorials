@@ -19,7 +19,7 @@ class Worker
             Console.WriteLine(" [*] Waiting for messages.");
 
             var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += (model, ea) =>
+            consumer.Received += (sender, ea) =>
             {
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
@@ -30,7 +30,7 @@ class Worker
 
                 Console.WriteLine(" [x] Done");
 
-                ((IModel)model).BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                ((EventingBasicConsumer)sender).Model.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };
             channel.BasicConsume(queue: "task_queue", autoAck: false, consumer: consumer);
 
