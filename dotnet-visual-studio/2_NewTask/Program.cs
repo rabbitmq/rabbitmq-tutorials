@@ -16,7 +16,7 @@ class Program
             var body = Encoding.UTF8.GetBytes(message);
 
             var properties = channel.CreateBasicProperties();
-            properties.SetPersistent(true);
+            properties.Persistent = true;
 
             channel.BasicPublish(exchange: "", routingKey: "task_queue", basicProperties: properties, body: body);
             Console.WriteLine(" [x] Sent {0}", message);
