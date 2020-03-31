@@ -28,9 +28,10 @@ class RpcClient
         _consumer.Received += (model, ea) =>
         {
             if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<string> tcs))
+            {
                 return;
-            var body = ea.Body;
-            var response = Encoding.UTF8.GetString(body);
+            }
+            var response = Encoding.UTF8.GetString(ea.Body.ToArray());
             tcs.TrySetResult(response);
         };
     }
