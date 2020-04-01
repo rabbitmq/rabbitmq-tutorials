@@ -30,6 +30,7 @@ class Program
 
                 Console.WriteLine(" [x] Done");
 
+                // here channel could also be accessed as ((EventingBasicConsumer)sender).Model
                 channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };
             channel.BasicConsume(queue: "task_queue", autoAck: false, consumer: consumer);

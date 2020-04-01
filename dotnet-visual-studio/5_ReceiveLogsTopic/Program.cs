@@ -14,7 +14,7 @@ class Program
             channel.ExchangeDeclare(exchange: "topic_logs", type: "topic");
             var queueName = channel.QueueDeclare().QueueName;
 
-            if(args.Length < 1)
+            if (args.Length < 1)
             {
                 Console.Error.WriteLine("Usage: {0} [binding_key...]", Environment.GetCommandLineArgs()[0]);
                 Console.WriteLine(" Press [enter] to exit.");

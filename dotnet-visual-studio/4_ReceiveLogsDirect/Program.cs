@@ -14,7 +14,7 @@ class Program
             channel.ExchangeDeclare(exchange: "direct_logs", type: "direct");
             var queueName = channel.QueueDeclare().QueueName;
 
-            if(args.Length < 1)
+            if (args.Length < 1)
             {
                 Console.Error.WriteLine("Usage: {0} [info] [warning] [error]", Environment.GetCommandLineArgs()[0]);
                 Console.WriteLine(" Press [enter] to exit.");

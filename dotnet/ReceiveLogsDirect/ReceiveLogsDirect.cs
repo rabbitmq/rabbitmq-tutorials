@@ -5,7 +5,7 @@ using System.Text;
 
 class ReceiveLogsDirect
 {
-    public static int Main(string[] args)
+    public static void Main(string[] args)
     {
         var factory = new ConnectionFactory() { HostName = "localhost" };
         using(var connection = factory.CreateConnection())
@@ -14,12 +14,13 @@ class ReceiveLogsDirect
             channel.ExchangeDeclare(exchange: "direct_logs", type: "direct");
             var queueName = channel.QueueDeclare().QueueName;
 
-            if(args.Length < 1)
+            if (args.Length < 1)
             {
                 Console.Error.WriteLine("Usage: {0} [info] [warning] [error]", Environment.GetCommandLineArgs()[0]);
                 Console.WriteLine(" Press [enter] to exit.");
                 Console.ReadLine();
-                return 1;
+                Environment.ExitCode = 1;
+                return;
             }
 
             foreach(var severity in args)
@@ -32,8 +33,7 @@ class ReceiveLogsDirect
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
             {
-                var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body);
+                var message = Encoding.UTF8.GetString(ea.Body.ToArray());
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine(" [x] Received '{0}':'{1}'", routingKey, message);
             };
@@ -41,7 +41,6 @@ class ReceiveLogsDirect
 
             Console.WriteLine(" Press [enter] to exit.");
             Console.ReadLine();
-            return 0;
         }
     }
 }

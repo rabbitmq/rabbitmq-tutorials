@@ -24,6 +24,6 @@ class Program
 
     private static string GetMessage(string[] args)
     {
-        return (( args.Length > 0) ? string.Join(" ", args) : "info: Hello World!");
+        return ((args.Length > 0) ? string.Join(" ", args) : "info: Hello World!");
     }
 }

@@ -16,6 +16,8 @@ class Program
             var queueName = channel.QueueDeclare().QueueName;
             channel.QueueBind(queue: queueName, exchange: "logs", routingKey: "");
 
+            Console.WriteLine(" [*] Waiting for logs.");
+
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
             {
