@@ -21,7 +21,7 @@ class Program
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
             {
-                var body = ea.Body;
+                byte[] body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
                 Console.WriteLine(" [x] Received {0}", message);
 
@@ -30,6 +30,7 @@ class Program
 
                 Console.WriteLine(" [x] Done");
 
+                // here channel could also be accessed as ((EventingBasicConsumer)sender).Model
                 channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };
             channel.BasicConsume(queue: "task_queue", autoAck: false, consumer: consumer);

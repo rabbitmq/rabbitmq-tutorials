@@ -28,7 +28,7 @@ class RPCServer
 
                 try
                 {
-                    var message = Encoding.UTF8.GetString(body);
+                    var message = Encoding.UTF8.GetString(body.ToArray());
                     int n = int.Parse(message);
                     Console.WriteLine(" [.] fib({0})", message);
                     response = fib(n).ToString();

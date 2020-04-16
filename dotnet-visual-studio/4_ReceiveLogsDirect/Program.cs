@@ -14,7 +14,7 @@ class Program
             channel.ExchangeDeclare(exchange: "direct_logs", type: "direct");
             var queueName = channel.QueueDeclare().QueueName;
 
-            if(args.Length < 1)
+            if (args.Length < 1)
             {
                 Console.Error.WriteLine("Usage: {0} [info] [warning] [error]", Environment.GetCommandLineArgs()[0]);
                 Console.WriteLine(" Press [enter] to exit.");
@@ -33,8 +33,7 @@ class Program
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
             {
-                var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body);
+                var message = Encoding.UTF8.GetString(ea.Body.ToArray());
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine(" [x] Received '{0}':'{1}'", routingKey, message);
             };

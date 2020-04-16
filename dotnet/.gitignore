@@ -1,4 +1,4 @@
-recompile.sh
 *.dll
 *.exe
 *.lock.json
+packages/
