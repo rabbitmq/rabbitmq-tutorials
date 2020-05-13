@@ -4,9 +4,10 @@ set -ex
 
 rm -rf ~/Library/Caches/org.carthage.CarthageKit
 
-for tutdir in `ls | grep "tutorial[1-9]"`
+for dir in `ls | grep "tutorial[1-9]"`
 do
-    cd $tutdir
+    cd $dir
     carthage update --platform iOS
+    carthage copy-frameworks
     cd ..
 done
