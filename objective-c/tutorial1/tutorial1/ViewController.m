@@ -24,6 +24,8 @@
     [ch.defaultExchange publish:[@"Hello World!" dataUsingEncoding:NSUTF8StringEncoding] routingKey:q.name];
     NSLog(@"Sent 'Hello World!'");
 
+    [NSThread sleepForTimeInterval:2.0f];
+
     [conn close];
 }
 

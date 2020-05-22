@@ -30,6 +30,7 @@
     [ch.defaultExchange publish:msgData routingKey:q.name persistent:YES];
     NSLog(@"Sent %@", msg);
 
+    [NSThread sleepForTimeInterval:2.0f];
     [conn close];
 }
 
