@@ -42,7 +42,7 @@ public class Tut2Sender {
 	@Scheduled(fixedDelay = 1000, initialDelay = 500)
 	public void send() {
 		StringBuilder builder = new StringBuilder("Hello");
-		if (dots.getAndIncrement() == 3) {
+		if (dots.getAndIncrement() == 4) {
 			dots.set(1);
 		}
 		for (int i = 0; i < dots.get(); i++) {
