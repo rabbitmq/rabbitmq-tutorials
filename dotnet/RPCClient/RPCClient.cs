@@ -29,8 +29,8 @@ public class RpcClient
         {
             if (!callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<string> tcs))
                 return;
-            var body = ea.Body;
-            var response = Encoding.UTF8.GetString(body.ToArray());
+            var body = ea.Body.ToArray();
+            var response = Encoding.UTF8.GetString(body);
             tcs.TrySetResult(response);
         };
     }

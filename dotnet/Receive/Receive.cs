@@ -18,8 +18,8 @@ class Receive
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
             {
-                var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body.ToArray());
+                var body = ea.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
                 Console.WriteLine(" [x] Received {0}", message);
             };
             channel.BasicConsume(queue: "hello", autoAck: true, consumer: consumer);

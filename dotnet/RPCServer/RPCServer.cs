@@ -21,14 +21,14 @@ class RPCServer
             {
                 string response = null;
 
-                var body = ea.Body;
+                var body = ea.Body.ToArray();
                 var props = ea.BasicProperties;
                 var replyProps = channel.CreateBasicProperties();
                 replyProps.CorrelationId = props.CorrelationId;
 
                 try
                 {
-                    var message = Encoding.UTF8.GetString(body.ToArray());
+                    var message = Encoding.UTF8.GetString(body);
                     int n = int.Parse(message);
                     Console.WriteLine(" [.] fib({0})", message);
                     response = fib(n).ToString();
