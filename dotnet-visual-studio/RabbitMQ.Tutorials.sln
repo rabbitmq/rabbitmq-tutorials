@@ -27,13 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6_RPCClient", "6_RPCClient\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6_RPCServer", "6_RPCServer\6_RPCServer.csproj", "{FD2191EB-380C-426D-A629-53DF095E6295}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1CAFD4AB-D050-49DF-97B5-EEC43D4D1EA0}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7_PublisherConfirms", "7_PublisherConfirms\7_PublisherConfirms.csproj", "{A46637FF-A028-4FF9-A70F-82CB32EC3A74}"
 EndProject
 Global
