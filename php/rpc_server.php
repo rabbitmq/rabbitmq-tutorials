@@ -35,9 +35,7 @@ $callback = function ($req) {
         '',
         $req->get('reply_to')
     );
-    $req->delivery_info['channel']->basic_ack(
-        $req->delivery_info['delivery_tag']
-    );
+    $req->ack();
 };
 
 $channel->basic_qos(null, 1, null);
