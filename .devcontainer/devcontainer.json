@@ -1,0 +1,16 @@
+{
+	"name": "RabbitMQ Tutorials",
+	"dockerFile": "Dockerfile",
+	"forwardPorts": [ 4369, 5671, 5672, 15691, 15692, 25672 ],
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": { 
+		"terminal.integrated.shell.linux": "/bin/bash"
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [],
+
+	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+	// "remoteUser": "vscode"
+}
