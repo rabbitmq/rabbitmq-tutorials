@@ -20,7 +20,7 @@ $callback = function ($msg) {
 
 $channel->basic_consume($queue_name, '', false, true, false, false, $callback);
 
-while ($channel->is_consuming()) {
+while ($channel->is_open()) {
     $channel->wait();
 }
 
