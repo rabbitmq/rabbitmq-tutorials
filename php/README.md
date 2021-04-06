@@ -7,9 +7,9 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 ## Requirements
 
-### PHP 5.3+
+### PHP 7.-+
 
-You need `PHP 5.3` and `php-amqplib`. To get these
+You need `PHP 7.0` and `php-amqplib`. To get these
 dependencies on Ubuntu type:
 
     sudo apt-get install git-core php5-cli
