@@ -14,36 +14,48 @@ To run this code you need [Network.AMQP](https://hackage.haskell.org/package/amq
 
 ## Code
 
-Code examples are executed via `runhaskell`:
+Code examples are executed via `runhaskell`.
 
-[Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorial-one-python.html):
+Tutorial one:
 
-    runhaskell send.hs
-    runhaskell receive.hs
+``` shell
+runhaskell send.hs
+runhaskell receive.hs
+```
 
-[Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-python.html):
+Tutorial two:
 
-    runhaskell newTask.hs hello world
-    runhaskell worker.hs
+``` shell
+runhaskell newTask.hs hello world
+runhaskell worker.hs
+```
 
-[Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-python.html)
+Tutorial three: Publish/Subscribe
 
-    runhaskell receiveLogs.hs
-    runhaskell emitLog.hs hello world
+``` shell
+runhaskell receiveLogs.hs
+runhaskell emitLog.hs hello world
+```
 
-[Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-python.html)
+Tutorial four: Routing
 
-    runhaskell receiveLogsDirect.hs info warn
-    runhaskell emitLogDirect.hs warn "a warning"
+``` shell
+runhaskell receiveLogsDirect.hs info warn
+runhaskell emitLogDirect.hs warn "a warning"
+```
 
-[Tutorial five: Topics](https://www.rabbitmq.com/tutorial-five-python.html)
+Tutorial five: Topics
 
-    runhaskell receiveLogsTopic.hs info warn
-    runhaskell emitLogTopic.hs warn "a warning"
+``` shell
+runhaskell receiveLogsTopic.hs info warn
+runhaskell emitLogTopic.hs warn "a warning"
+```
 
-[Tutorial six: RPC](https://www.rabbitmq.com/tutorial-six-python.html)
+Tutorial six: RPC
 
-    runhaskell rpcServer.hs
-    runhaskell rpcClient.hs
+``` shell
+runhaskell rpcServer.hs
+runhaskell rpcClient.hs
+```
 
 To learn more, see [Network.AMQP](https://github.com/hreinhardt/amqp).

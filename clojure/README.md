@@ -13,32 +13,32 @@ These tutorials will work on JDK 6 through 8 (Oracle or OpenJDK).
 
 Code examples are executed via `lein run`:
 
-[Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorial-one-java.html):
+Tutorial one: "Hello World!"
 
     lein run -m rabbitmq.tutorials.send
     lein run -m rabbitmq.tutorials.receive
 
-[Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-java.html):
+Tutorial two: Work Queues
 
     lein run -m rabbitmq.tutorials.new-task
     lein run -m rabbitmq.tutorials.worker
 
-[Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-java.html)
+Tutorial three: Publish/Subscribe
 
     lein run -m rabbitmq.tutorials.receive-logs
     lein run -m rabbitmq.tutorials.emit-log
 
-[Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-java.html)
+Tutorial four: Routing
 
     lein run -m rabbitmq.tutorials.receive-logs-direct
     lein run -m rabbitmq.tutorials.emit-log-direct info
 
-[Tutorial five: Topics](https://www.rabbitmq.com/tutorial-five-java.html)
+Tutorial five: Topics
 
     lein run -m rabbitmq.tutorials.receive-logs-topic
     lein run -m rabbitmq.tutorials.emit-log-topic info
 
-[Tutorial six: RPC](https://www.rabbitmq.com/tutorial-six-java.html)
+Tutorial six: RPC
 
     lein run -m rabbitmq.tutorials.rpc-server
     lein run -m rabbitmq.tutorials.rpc-client

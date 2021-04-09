@@ -21,27 +21,27 @@ You need Erlang Client binaries:
 
 ## Code
 
-[Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorial-one-python.html):
+[Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorials/tutorial-one-python.html):
 
     ./send.erl
     ./receive.erl
 
-[Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-python.html):
+[Tutorial two: Work Queues](https://www.rabbitmq.com/tutorials/tutorial-two-python.html):
 
     ./new_task.erl "A very hard task which takes two seconds.."
     ./worker.erl
 
-[Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-python.html):
+[Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorials/tutorial-three-python.html):
 
     ./receive_logs.erl
     ./emit_log.erl "info: This is the log message"
 
-[Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-python.html):
+[Tutorial four: Routing](https://www.rabbitmq.com/tutorials/tutorial-four-python.html):
 
     ./receive_logs_direct.erl info
     ./emit_log_direct.erl info Hello
 
-[Tutorial five: Topics](https://www.rabbitmq.com/tutorial-five-python.html):
+[Tutorial five: Topics](https://www.rabbitmq.com/tutorials/tutorial-five-python.html):
 
     ./receive_logs_topic.erl "*.rabbit"
     ./emit_log_topic.erl red.rabbit Hello

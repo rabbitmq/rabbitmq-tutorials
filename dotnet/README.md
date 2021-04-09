@@ -28,36 +28,36 @@ First run the `recompile.sh` script. This will run `dotnet restore` and build
 each project which is required before they can be run. Alternatively or if you are
 on windows cd into each project and run `dotnet restore` manually.
 
-#### [Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorial-one-dotnet.html)
+#### [Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorials/tutorial-one-dotnet.html)
 
     dotnet run -p Receive/Receive.csproj
     dotnet run -p Send/Send.csproj
 
-#### [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-dotnet.html)
+#### [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorials/tutorial-two-dotnet.html)
 
     dotnet run -p Worker/Worker.csproj
     dotnet run -p NewTask/NewTask.csproj
 
-#### [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-dotnet.html)
+#### [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorials/tutorial-three-dotnet.html)
 
     dotnet run -p ReceiveLogs/ReceiveLogs.csproj
     dotnet run -p EmitLog/EmitLog.csproj
 
-#### [Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-dotnet.html)
+#### [Tutorial four: Routing](https://www.rabbitmq.com/tutorials/tutorial-four-dotnet.html)
 
     dotnet run -p ReceiveLogsDirect/ReceiveLogsDirect.csproj info
     dotnet run -p EmitLogDirect/EmitLogDirect.csproj
 
-#### [Tutorial five: Topics](https://www.rabbitmq.com/tutorial-five-dotnet.html)
+#### [Tutorial five: Topics](https://www.rabbitmq.com/tutorials/tutorial-five-dotnet.html)
 
     dotnet run -p ReceiveLogsTopic/ReceiveLogsTopic.csproj anonymous.info
     dotnet run -p EmitLogTopic/EmitLogTopic.csproj
 
-#### [Tutorial six: RPC](https://www.rabbitmq.com/tutorial-six-dotnet.html)
+#### [Tutorial six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-dotnet.html)
 
     dotnet run -p RPCServer/RPCServer.csproj
     dotnet run -p RPCClient/RPCClient.csproj
 
-#### [Tutorial seven: Publisher Confirms](https://www.rabbitmq.com/tutorial-seven-dotnet.html)
+#### [Tutorial seven: Publisher Confirms](https://www.rabbitmq.com/tutorials/tutorial-seven-dotnet.html)
 
     dotnet run -p PublisherConfirms/PublisherConfirms.csproj

@@ -16,42 +16,42 @@ bundle install
 
 ## Code
 
-To run [tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorial-one-ruby.html):
+To run [tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorials/tutorial-one-ruby.html):
 
 ``` sh
 bundle exec ruby send.rb
 bundle exec ruby receive.rb
 ```
 
-[Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-ruby.html):
+[Tutorial two: Work Queues](https://www.rabbitmq.com/tutorials/tutorial-two-ruby.html):
 
 ``` sh
 bundle exec ruby new_task.rb
 bundle exec ruby worker.rb
 ```
 
-[Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-ruby.html)
+[Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorials/tutorial-three-ruby.html)
 
 ``` sh
 bundle exec ruby receive_logs.rb
 bundle exec ruby emit_log.rb
 ```
 
-[Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-ruby.html)
+[Tutorial four: Routing](https://www.rabbitmq.com/tutorials/tutorial-four-ruby.html)
 
 ``` sh
 bundle exec ruby receive_logs_direct.rb
 bundle exec ruby emit_log_direct.rb
 ```
 
-[Tutorial five: Topics](https://www.rabbitmq.com/tutorial-five-ruby.html)
+[Tutorial five: Topics](https://www.rabbitmq.com/tutorials/tutorial-five-ruby.html)
 
 ``` sh
 bundle exec ruby receive_logs_topic.rb
 bundle exec ruby emit_log_topic.rb
 ```
 
-[Tutorial six: RPC](https://www.rabbitmq.com/tutorial-six-ruby.html)
+[Tutorial six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-ruby.html)
 
 ``` sh
 bundle exec ruby rpc_server.rb

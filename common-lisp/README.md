@@ -17,32 +17,32 @@ All our examples are in fact executable sbcl scripts. You can run them from comm
 
 ## Code
 
-[Tutorial one: "Hello World!"](https://cl-rabbit.io/cl-bunny/tutorials/tutorial-one-cl.html):
+Tutorial one: "Hello World!"]:
 
     ./send.lisp
     ./receive.lisp
 
-[Tutorial two: Work Queues](https://cl-rabbit.io/cl-bunny/tutorials/tutorial-two-cl.html):
+Tutorial two: Work Queues:
 
     ./new-task.lisp
     ./worker.lisp
 
-[Tutorial three: Publish/Subscribe](https://cl-rabbit.io/cl-bunny/tutorials/tutorial-three-cl.html)
+Tutorial three: Publish/Subscribe
 
     ./receive-logs.lisp
     ./emit-log.lisp
 
-[Tutorial four: Routing](https://cl-rabbit.io/cl-bunny/tutorials/tutorial-four-cl.html)
+Tutorial four: Routing
 
     ./receive-logs-direct.lisp
     ./emit-log-direct.lisp
 
-[Tutorial five: Topics](https://cl-rabbit.io/cl-bunny/tutorials/tutorial-five-cl.html)
+Tutorial five: Topics
 
     ./receive-logs-topic.lisp
     ./emit-log-topic.lisp
 
-[Tutorial six: RPC](https://cl-rabbit.io/cl-bunny/tutorials/tutorial-six-cl.html)
+Tutorial six: RPC
 
     ./rpc-server.lisp
     ./rpc-client.lisp

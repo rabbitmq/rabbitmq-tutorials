@@ -27,37 +27,37 @@ On Ubuntu:
 
 ## Code
 
-[Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorial-one-python.html):
+Tutorial one: "Hello World!"
 
     perl send.pl
     perl receive.pl
 
 
-[Tutorial two: Work Queues](https://www.rabbitmq.com/tutorial-two-python.html):
+Tutorial two: Work Queues
 
     perl new_task.pl "A very hard task which takes two seconds.."
     perl worker.pl
 
 
-[Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorial-three-python.html):
+Tutorial three: Publish/Subscribe
 
     perl receive_logs.pl
     perl emit_log.pl "info: This is the log message"
 
 
-[Tutorial four: Routing](https://www.rabbitmq.com/tutorial-four-python.html):
+Tutorial four: Routing
 
     perl receive_logs_direct.pl info
     perl emit_log_direct.pl info "The message"
 
 
-[Tutorial five: Topics](https://www.rabbitmq.com/tutorial-five-python.html):
+Tutorial five: Topics
 
     perl receive_logs_topic.pl "*.rabbit"
     perl emit_log_topic.pl red.rabbit Hello
 
 
-[Tutorial six: RPC](https://www.rabbitmq.com/tutorial-six-python.html):
+Tutorial six: RPC
 
     perl rpc_server.pl
     perl rpc_client.pl
