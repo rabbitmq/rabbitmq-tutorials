@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func failOnError(err error, msg string) {

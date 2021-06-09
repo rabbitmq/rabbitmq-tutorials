@@ -6,10 +6,10 @@ Here you can find Go code examples from [RabbitMQ tutorials](https://www.rabbitm
 
 ## Requirements
 
-To run this code you need [Go RabbitMQ client](https://github.com/streadway/amqp):
+These examples use the [`rabbitmq/amqp091-go`](https://github.com/rabbitmq/amqp091-go) client library.
+Get it first with
 
-    go get github.com/streadway/amqp
-
+    go get github.com/rabbitmq/amqp091-go
 
 ## Code
 
@@ -45,4 +45,4 @@ Code examples are executed via `go run`:
     go run rpc_server.go
     go run rpc_client.go 10
 
-To learn more, see [Go RabbitMQ client](https://github.com/streadway/amqp).
+To learn more, see [`rabbitmq/amqp091-go`](https://github.com/rabbitmq/amqp091-go).
