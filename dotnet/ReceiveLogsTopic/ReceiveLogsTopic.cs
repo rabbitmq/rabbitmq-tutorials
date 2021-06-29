@@ -12,7 +12,8 @@ class ReceiveLogsTopic
         using(var channel = connection.CreateModel())
         {
             channel.ExchangeDeclare(exchange: "topic_logs", type: "topic");
-            var queueName = channel.QueueDeclare().QueueName;
+            // declare a server-named queue
+            var queueName = channel.QueueDeclare(queue: "").QueueName;
 
             if (args.Length < 1)
             {

@@ -13,7 +13,8 @@ class ReceiveLogs
         {
             channel.ExchangeDeclare(exchange: "logs", type: ExchangeType.Fanout);
 
-            var queueName = channel.QueueDeclare().QueueName;
+            // declare a server-named queue
+            var queueName = channel.QueueDeclare(queue: "").QueueName;
             channel.QueueBind(queue: queueName, exchange: "logs", routingKey: "");
 
             Console.WriteLine(" [*] Waiting for logs.");

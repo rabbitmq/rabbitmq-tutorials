@@ -23,7 +23,8 @@ public class RpcClient
 
         connection = factory.CreateConnection();
         channel = connection.CreateModel();
-        replyQueueName = channel.QueueDeclare().QueueName;
+        // declare a server-named queue
+        replyQueueName = channel.QueueDeclare(queue: "").QueueName;
         consumer = new EventingBasicConsumer(channel);
         consumer.Received += (model, ea) =>
         {

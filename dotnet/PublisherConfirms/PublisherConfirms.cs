@@ -28,7 +28,8 @@ class PublisherConfirms
             using (var connection = CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                var queueName = channel.QueueDeclare().QueueName;
+                // declare a server-named queue
+                var queueName = channel.QueueDeclare(queue: "").QueueName;
                 channel.ConfirmSelect();
 
                 var timer = new Stopwatch();
@@ -49,7 +50,8 @@ class PublisherConfirms
             using (var connection = CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                var queueName = channel.QueueDeclare().QueueName;
+                // declare a server-named queue
+                var queueName = channel.QueueDeclare(queue: "").QueueName;
                 channel.ConfirmSelect();
 
                 var batchSize = 100;
@@ -82,7 +84,8 @@ class PublisherConfirms
             using (var connection = CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                var queueName = channel.QueueDeclare().QueueName;
+                // declare a server-named queue
+                var queueName = channel.QueueDeclare(queue: "").QueueName;
                 channel.ConfirmSelect();
 
                 var outstandingConfirms = new ConcurrentDictionary<ulong, string>();
