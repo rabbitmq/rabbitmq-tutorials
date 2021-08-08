@@ -34,6 +34,11 @@ public class RpcClient
             var response = Encoding.UTF8.GetString(body);
             tcs.TrySetResult(response);
         };
+
+        channel.BasicConsume(
+          consumer: consumer,
+          queue: replyQueueName,
+          autoAck: true);
     }
 
     public Task<string> CallAsync(string message, CancellationToken cancellationToken = default(CancellationToken))
@@ -51,11 +56,6 @@ public class RpcClient
           routingKey: QUEUE_NAME,
           basicProperties: props,
           body: messageBytes);
-
-      channel.BasicConsume(
-          consumer: consumer,
-          queue: replyQueueName,
-          autoAck: true);
 
       cancellationToken.Register(() => callbackMapper.TryRemove(correlationId, out var tmp));
       return tcs.Task;
