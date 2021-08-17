@@ -9,3 +9,7 @@ branches:
     - master
 env:
   - RUBY=ruby GEM=gem SLOWNESS=6
+
+cache:
+  directories:
+  - $HOME/.m2
