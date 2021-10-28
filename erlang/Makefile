@@ -1,5 +1,5 @@
-DEPS = amqp_client
+all:
+  rebar3 compile
 
-dep_amqp_client = hex 3.7.13
-
-include erlang.mk
+clean:
+  rebar3 clean && rm -rf _build
