@@ -1,0 +1,22 @@
+plugins {
+    id 'groovy'
+}
+
+group 'com.rabbitmq'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:3.0.5'
+    implementation group: 'com.rabbitmq', name: 'amqp-client', version: '5.13.1'
+    implementation 'org.slf4j:slf4j-simple:1.7.26'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
