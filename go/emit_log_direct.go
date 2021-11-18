@@ -10,7 +10,7 @@ import (
 
 func failOnError(err error, msg string) {
 	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
+		log.Panicf("%s: %s", msg, err)
 	}
 }
 
@@ -38,8 +38,8 @@ func main() {
 	err = ch.Publish(
 		"logs_direct",         // exchange
 		severityFrom(os.Args), // routing key
-		false, // mandatory
-		false, // immediate
+		false,                 // mandatory
+		false,                 // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(body),
