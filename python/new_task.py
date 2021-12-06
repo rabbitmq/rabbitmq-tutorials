@@ -14,7 +14,7 @@ channel.basic_publish(
     routing_key='task_queue',
     body=message,
     properties=pika.BasicProperties(
-        delivery_mode=2,  # make message persistent
+        delivery_mode=pika.spec.PERSISTENT_DELIVERY_MODE,
     ))
 print(" [x] Sent %r" % message)
 connection.close()
