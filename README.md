@@ -1,4 +1,5 @@
 # RabbitMQ Tutorials
+[![Maintainability](https://cloud.quality-gate.com/dashboard/api/badge?projectName=rabbitmq_rabbitmq-tutorials&branchName=master)](https://cloud.quality-gate.com/dashboard/branches/307942#overview)
 
 This project contains code for [RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.html) with
 their ports to various languages.
