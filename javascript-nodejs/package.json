@@ -5,6 +5,6 @@
   "dependencies": {
     "amqplib": "latest",
     "js-beautify": "^1.9.1",
-    "url-parse": ">=1.5.8"
+    "url-parse": ">=1.5.9"
   }
 }
