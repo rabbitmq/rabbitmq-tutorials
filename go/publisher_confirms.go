@@ -52,7 +52,7 @@ func main() {
 	publish(ch, q.Name, "hello")
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	forever := make(chan bool)
+	var forever chan struct{}
 	<-forever
 }
 
