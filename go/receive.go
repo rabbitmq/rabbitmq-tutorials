@@ -42,7 +42,7 @@ func main() {
 	)
 	failOnError(err, "Failed to register a consumer")
 
-	forever := make(chan bool)
+	var forever chan struct{}
 
 	go func() {
 		for d := range msgs {
