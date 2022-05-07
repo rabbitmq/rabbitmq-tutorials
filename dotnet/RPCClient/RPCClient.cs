@@ -63,7 +63,8 @@ public class RpcClient
 
     public void Close()
     {
-        connection.Close();
+        channel.Close();
+        connection.Close();        
     }
 }
 
