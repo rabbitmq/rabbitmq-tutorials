@@ -14,12 +14,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .await?;
 
+    let payload = b"Hello world!";
     channel
         .basic_publish(
             "",
             "hello",
             BasicPublishOptions::default(),
-            &*b"Hello World!".to_vec(),
+            payload,
             BasicProperties::default(),
         )
         .await?;

@@ -77,7 +77,7 @@ impl FibonacciRpcClient {
                 "",
                 "rpc_queue",
                 BasicPublishOptions::default(),
-                n.to_le_bytes().to_vec(),
+                &*n.to_le_bytes().to_vec(),
                 BasicProperties::default()
                     .with_reply_to(self.callback_queue.name().clone())
                     .with_correlation_id(self.correlation_id.clone()),
