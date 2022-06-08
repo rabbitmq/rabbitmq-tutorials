@@ -19,7 +19,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             "",
             "hello",
             BasicPublishOptions::default(),
-            b"Hello World!".to_vec(),
+            &*b"Hello World!".to_vec(),
             BasicProperties::default(),
         )
         .await?;
