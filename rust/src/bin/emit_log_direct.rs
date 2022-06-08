@@ -29,7 +29,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             "direct_logs",
             severity,
             BasicPublishOptions::default(),
-            message.clone(),
+            &*message.clone(),
             BasicProperties::default(),
         )
         .await?;
