@@ -1,4 +1,7 @@
-use lapin::{options::*, types::FieldTable, Connection, ConnectionProperties, ExchangeKind};
+use std::borrow::Borrow;
+
+use futures::StreamExt;
+use lapin::{Connection, ConnectionProperties, ExchangeKind, options::*, types::FieldTable};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -35,6 +38,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .await?;
 
+
     futures::future::join_all(severities.into_iter().map(|severity| {
         channel.queue_bind(
             queue.name().as_str(),
@@ -43,10 +47,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             QueueBindOptions::default(),
             FieldTable::default(),
         )
-    }))
-    .await;
+    })).await;
 
-    let consumer = channel
+    let mut consumer = channel
         .basic_consume(
             queue.name().as_str(),
             "consumer",
@@ -60,14 +63,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!(" [*] Waiting for logs. To exit press CTRL+C");
 
-    for delivery in consumer {
-        let (_, delivery) = delivery?;
-        println!(
-            " [x] {}:{:?}",
-            delivery.routing_key,
-            std::str::from_utf8(&delivery.data)?
-        );
+    while let Some(delivery) = consumer.next().await {
+        if let Ok(delivery) = delivery {
+            println!(
+                " [x] {}:{:?}",
+                delivery.routing_key,
+                std::str::from_utf8(&delivery.data)?
+            );
+        }
     }
-
     Ok(())
 }
