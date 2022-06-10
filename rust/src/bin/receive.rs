@@ -1,4 +1,5 @@
-use lapin::{options::*, types::FieldTable, Connection, ConnectionProperties};
+use futures::StreamExt;
+use lapin::{Connection, ConnectionProperties, options::*, types::FieldTable};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -14,23 +15,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .await?;
 
-    let consumer = channel
+    let mut consumer = channel
         .basic_consume(
             "hello",
             "consumer",
-            BasicConsumeOptions {
-                no_ack: true,
-                ..Default::default()
-            },
+            BasicConsumeOptions::default(),
             FieldTable::default(),
         )
-        .await?;
+        .await
+        .expect("basic_consume");
 
     println!(" [*] Waiting for messages. To exit press CTRL+C");
 
-    for delivery in consumer {
-        let (_, delivery) = delivery?;
-        println!(" [x] Received {:?}", std::str::from_utf8(&delivery.data)?);
+
+    while let Some(delivery) = consumer.next().await {
+        if let Ok(delivery) = delivery {
+            println!(" [x] Received {:?}", std::str::from_utf8(&delivery.data)?);
+            delivery.ack(BasicAckOptions::default())
+                .await
+                .expect("basic_ack");
+        }
     }
 
     Ok(())

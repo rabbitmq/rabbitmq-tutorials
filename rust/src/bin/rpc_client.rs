@@ -1,10 +1,10 @@
+use futures::StreamExt;
 use lapin::{
     options::*, types::FieldTable, types::ShortString, BasicProperties, Channel, Connection,
     ConnectionProperties, Consumer, Queue,
 };
 use std::convert::TryInto;
 use std::fmt::Display;
-use tokio::stream::StreamExt;
 use uuid::Uuid;
 
 #[derive(Debug)]
@@ -77,7 +77,7 @@ impl FibonacciRpcClient {
                 "",
                 "rpc_queue",
                 BasicPublishOptions::default(),
-                n.to_le_bytes().to_vec(),
+                &*n.to_le_bytes().to_vec(),
                 BasicProperties::default()
                     .with_reply_to(self.callback_queue.name().clone())
                     .with_correlation_id(self.correlation_id.clone()),
@@ -86,15 +86,16 @@ impl FibonacciRpcClient {
             .await?;
 
         while let Some(delivery) = self.consumer.next().await {
-            let (_, reply) = delivery?;
-            if reply.properties.correlation_id().as_ref() == Some(&self.correlation_id) {
-                return Ok(u64::from_le_bytes(
-                    reply
-                        .data
-                        .as_slice()
-                        .try_into()
-                        .map_err(|_| Error::CannotDecodeReply)?,
-                ));
+            if let Ok(delivery) = delivery {
+                if delivery.properties.correlation_id().as_ref() == Some(&self.correlation_id) {
+                    return Ok(u64::from_le_bytes(
+                        delivery
+                            .data
+                            .as_slice()
+                            .try_into()
+                            .map_err(|_| Error::CannotDecodeReply)?,
+                    ));
+                }
             }
         }
 

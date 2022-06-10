@@ -5,7 +5,8 @@ authors = ["Michal Malek <michalm@fastmail.fm>"]
 edition = "2018"
 
 [dependencies]
-futures = "0.3.7"
-lapin = "1.5"
-tokio = { version = "0.3.3", features = ["macros", "rt-multi-thread", "stream"] }
-uuid = { version = "0.8.1", features = ["v4"] }
+futures = "0.3.21"
+lapin = "2.1.1"
+tokio = { version = "1.19.2", features = ["full"] }
+uuid = { version = "1.1.1", features = ["v4"] }
+tokio-stream = "0.1"
