@@ -1,6 +1,7 @@
-use lapin::{options::*, types::FieldTable, BasicProperties, Connection, ConnectionProperties};
 use std::convert::TryInto;
 use std::fmt::Display;
+use futures::StreamExt;
+use lapin::{BasicProperties, Connection, ConnectionProperties, options::*, types::FieldTable};
 
 #[derive(Debug)]
 enum Error {
@@ -45,7 +46,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     channel.basic_qos(1, BasicQosOptions::default()).await?;
 
-    let consumer = channel
+    let mut consumer = channel
         .basic_consume(
             "rpc_queue",
             "rpc_server",
@@ -56,44 +57,48 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!(" [x] Awaiting RPC requests");
 
-    for delivery in consumer {
-        let (channel, delivery) = delivery?;
-        let n = u64::from_le_bytes(
-            delivery
-                .data
-                .as_slice()
-                .try_into()
-                .map_err(|_| Error::CannotDecodeArg)?,
-        );
-        println!(" [.] fib({})", n);
-        let response = fib(n);
 
-        let routing_key = delivery
-            .properties
-            .reply_to()
-            .as_ref()
-            .ok_or(Error::MissingReplyTo)?
-            .as_str();
+    while let Some(delivery) = consumer.next().await {
+        if let Ok(delivery) = delivery {
+            println!(" [x] Received {:?}", std::str::from_utf8(&delivery.data)?);
+            let n = u64::from_le_bytes(
+                delivery
+                    .data
+                    .as_slice()
+                    .try_into()
+                    .map_err(|_| Error::CannotDecodeArg)?,
+            );
+            println!(" [.] fib({})", n);
+            let response = fib(n);
+            let payload = response.to_be_bytes();
 
-        let correlation_id = delivery
-            .properties
-            .correlation_id()
-            .clone()
-            .ok_or(Error::MissingCorrelationId)?;
+            let routing_key = delivery
+                .properties
+                .reply_to()
+                .as_ref()
+                .ok_or(Error::MissingReplyTo)?
+                .as_str();
 
-        channel
-            .basic_publish(
-                "",
-                routing_key,
-                BasicPublishOptions::default(),
-                response.to_le_bytes().to_vec(),
-                BasicProperties::default().with_correlation_id(correlation_id),
-            )
-            .await?;
+            let correlation_id = delivery
+                .properties
+                .correlation_id()
+                .clone()
+                .ok_or(Error::MissingCorrelationId)?;
 
-        channel
-            .basic_ack(delivery.delivery_tag, BasicAckOptions::default())
-            .await?;
+            channel
+                .basic_publish(
+                    "",
+                    routing_key,
+                    BasicPublishOptions::default(),
+                    &payload,
+                    BasicProperties::default().with_correlation_id(correlation_id),
+                )
+                .await?;
+
+            channel
+                .basic_ack(delivery.delivery_tag, BasicAckOptions::default())
+                .await?;
+        }
     }
 
     Ok(())

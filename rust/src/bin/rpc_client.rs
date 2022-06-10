@@ -5,7 +5,6 @@ use lapin::{
 };
 use std::convert::TryInto;
 use std::fmt::Display;
-use tokio::stream::StreamExt;
 use uuid::Uuid;
 
 #[derive(Debug)]
@@ -87,15 +86,16 @@ impl FibonacciRpcClient {
             .await?;
 
         while let Some(delivery) = self.consumer.next().await {
-            let (_, reply) = delivery?;
-            if reply.properties.correlation_id().as_ref() == Some(&self.correlation_id) {
-                return Ok(u64::from_le_bytes(
-                    reply
-                        .data
-                        .as_slice()
-                        .try_into()
-                        .map_err(|_| Error::CannotDecodeReply)?,
-                ));
+            if let Ok(delivery) = delivery {
+                if delivery.properties.correlation_id().as_ref() == Some(&self.correlation_id) {
+                    return Ok(u64::from_le_bytes(
+                        delivery
+                            .data
+                            .as_slice()
+                            .try_into()
+                            .map_err(|_| Error::CannotDecodeReply)?,
+                    ));
+                }
             }
         }
 
