@@ -1,3 +1,4 @@
+use futures::StreamExt;
 use lapin::{
     options::*, types::FieldTable, types::ShortString, BasicProperties, Channel, Connection,
     ConnectionProperties, Consumer, Queue,

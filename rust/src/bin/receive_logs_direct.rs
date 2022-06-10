@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use futures::StreamExt;
 use lapin::{Connection, ConnectionProperties, ExchangeKind, options::*, types::FieldTable};
 
@@ -39,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
 
 
-    futures::future::join_all(severities.into_iter().map(|severity| {
+    futures::future::join_all(severities.iter().map(|severity| {
         channel.queue_bind(
             queue.name().as_str(),
             "direct_logs",
