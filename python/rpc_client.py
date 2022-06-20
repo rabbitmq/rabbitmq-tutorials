@@ -38,8 +38,7 @@ class FibonacciRpcClient(object):
             ),
             body=str(n))
         while self.response is None:
-            self.connection.process_data_events()
-            self.connection.sleep(0.00001)
+            self.connection.process_data_events(None)
         return int(self.response)
 
 
