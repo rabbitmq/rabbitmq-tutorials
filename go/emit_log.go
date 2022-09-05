@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -34,8 +36,11 @@ func main() {
 	)
 	failOnError(err, "Failed to declare an exchange")
 
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	body := bodyFrom(os.Args)
-	err = ch.Publish(
+	err = ch.PublishWithContext(ctx,
 		"logs", // exchange
 		"",     // routing key
 		false,  // mandatory

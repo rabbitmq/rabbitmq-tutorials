@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"math/rand"
 	"os"
@@ -61,7 +62,10 @@ func fibonacciRPC(n int) (res int, err error) {
 
 	corrId := randomString(32)
 
-	err = ch.Publish(
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = ch.PublishWithContext(ctx,
 		"",          // exchange
 		"rpc_queue", // routing key
 		false,       // mandatory
