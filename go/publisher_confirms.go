@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"log"
+	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -76,7 +78,9 @@ func consume(ch *amqp.Channel, qName string) {
 }
 
 func publish(ch *amqp.Channel, qName, text string) {
-	err := ch.Publish("", qName, false, false, amqp.Publishing{
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	err := ch.PublishWithContext(ctx, "", qName, false, false, amqp.Publishing{
 		ContentType: "text/plain",
 		Body:        []byte(text),
 	})
