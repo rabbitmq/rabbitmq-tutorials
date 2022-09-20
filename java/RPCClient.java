@@ -5,9 +5,7 @@ import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
 import java.util.UUID;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 public class RPCClient implements AutoCloseable {
 
@@ -31,12 +29,12 @@ public class RPCClient implements AutoCloseable {
                 String response = fibonacciRpc.call(i_str);
                 System.out.println(" [.] Got '" + response + "'");
             }
-        } catch (IOException | TimeoutException | InterruptedException e) {
+        } catch (IOException | TimeoutException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
 
-    public String call(String message) throws IOException, InterruptedException {
+    public String call(String message) throws IOException, InterruptedException, ExecutionException {
         final String corrId = UUID.randomUUID().toString();
 
         String replyQueueName = channel.queueDeclare().getQueue();
@@ -48,16 +46,16 @@ public class RPCClient implements AutoCloseable {
 
         channel.basicPublish("", requestQueueName, props, message.getBytes("UTF-8"));
 
-        final BlockingQueue<String> response = new ArrayBlockingQueue<>(1);
+        final CompletableFuture<String> response = new CompletableFuture<>();
 
         String ctag = channel.basicConsume(replyQueueName, true, (consumerTag, delivery) -> {
             if (delivery.getProperties().getCorrelationId().equals(corrId)) {
-                response.offer(new String(delivery.getBody(), "UTF-8"));
+                response.complete(new String(delivery.getBody(), "UTF-8"));
             }
         }, consumerTag -> {
         });
 
-        String result = response.take();
+        String result = response.get();
         channel.basicCancel(ctag);
         return result;
     }
