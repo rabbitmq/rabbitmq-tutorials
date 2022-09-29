@@ -15,9 +15,11 @@ using apt:
 
     sudo apt-get install erlang
 
+You also need rebar3: https://rebar3.readme.io/docs/getting-started
+
 You need Erlang Client binaries:
 
-    make deps
+    make all
 
 ## Code
 

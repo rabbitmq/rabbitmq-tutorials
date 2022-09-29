@@ -1,5 +1,5 @@
 all:
-  rebar3 compile
+	rebar3 compile
 
 clean:
-  rebar3 clean && rm -rf _build
+	rebar3 clean && rm -rf _build

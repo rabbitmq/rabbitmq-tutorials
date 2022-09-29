@@ -1,5 +1,5 @@
 #!/usr/bin/env escript
-%%! -pz ./deps/amqp_client/ebin ./deps/rabbit_common/ebin ./deps/amqp_client/ebin ./deps/rabbit_common/ebin ./deps/recon/ebin ./deps/lager/ebin ./deps/goldrush/ebin ./deps/jsx/ebin ./deps/ranch/ebin
+%%! -pz ./_build/default/lib/amqp_client/ebin ./_build/default/lib/credentials_obfuscation/ebin ./_build/default/lib/jsx/ebin ./_build/default/lib/rabbit_common/ebin ./_build/default/lib/recon/ebin
 
 -include_lib("amqp_client/include/amqp_client.hrl").
 
@@ -12,8 +12,8 @@ main(_) ->
 
     amqp_channel:cast(Channel,
                       #'basic.publish'{
-                        exchange = <<"">>,
-                        routing_key = <<"hello">>},
+                         exchange = <<"">>,
+                         routing_key = <<"hello">>},
                       #amqp_msg{payload = <<"Hello World!">>}),
     io:format(" [x] Sent 'Hello World!'~n"),
     ok = amqp_channel:close(Channel),

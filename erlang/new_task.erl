@@ -1,5 +1,5 @@
 #!/usr/bin/env escript
-%%! -pz ./deps/amqp_client/ebin ./deps/rabbit_common/ebin ./deps/amqp_client/ebin ./deps/rabbit_common/ebin ./deps/recon/ebin ./deps/lager/ebin ./deps/goldrush/ebin ./deps/jsx/ebin ./deps/ranch/ebin
+%%! -pz ./_build/default/lib/amqp_client/ebin ./_build/default/lib/credentials_obfuscation/ebin ./_build/default/lib/jsx/ebin ./_build/default/lib/rabbit_common/ebin ./_build/default/lib/recon/ebin
 
 -include_lib("amqp_client/include/amqp_client.hrl").
 
@@ -17,8 +17,8 @@ main(Argv) ->
               end,
     amqp_channel:cast(Channel,
                       #'basic.publish'{
-                        exchange = <<"">>,
-                        routing_key = <<"task_queue">>},
+                         exchange = <<"">>,
+                         routing_key = <<"task_queue">>},
                       #amqp_msg{props = #'P_basic'{delivery_mode = 2},
                                 payload = Message}),
     io:format(" [x] Sent ~p~n", [Message]),
