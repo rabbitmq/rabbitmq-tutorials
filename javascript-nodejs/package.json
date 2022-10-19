@@ -1,7 +1,7 @@
 {
   "name": "rabbitmq-node-tutorial",
   "version": "1.0.0",
-  "description": "RabbitMQ amqp.node tutorial ",
+  "description": "RabbitMQ amqplib tutorial ",
   "dependencies": {
     "amqplib": "latest",
     "js-beautify": "^1.9.1",
