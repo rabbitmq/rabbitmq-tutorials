@@ -9,13 +9,13 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 ### Node.js
 
-You need [Node.js](https://nodejs.org/en/download/) and [amqp.node](https://github.com/squaremo/amqp.node)
+You need [Node.js](https://nodejs.org/en/download/) and [amqplib](https://github.com/amqp-node/amqplib)
 to run these tutorials.
 
 
 ### Client Library
 
-To install `amqp.node` using npm:
+To install `amqplib` using npm:
 
 ``` shell
 npm install amqplib -g
