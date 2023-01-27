@@ -9,7 +9,7 @@ using var channel = connection.CreateModel();
 
 channel.ExchangeDeclare(exchange: "direct_logs", type: ExchangeType.Direct);
 // declare a server-named queue
-var queueName = channel.QueueDeclare(queue: "").QueueName;
+var queueName = channel.QueueDeclare().QueueName;
 
 if (args.Length < 1)
 {

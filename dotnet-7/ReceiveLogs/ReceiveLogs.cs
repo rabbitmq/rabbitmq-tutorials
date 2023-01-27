@@ -9,7 +9,7 @@ using var channel = connection.CreateModel();
 channel.ExchangeDeclare(exchange: "logs", type: ExchangeType.Fanout);
 
 // declare a server-named queue
-var queueName = channel.QueueDeclare(queue: "").QueueName;
+var queueName = channel.QueueDeclare().QueueName;
 channel.QueueBind(queue: queueName, exchange: "logs", routingKey: "");
 
 Console.WriteLine(" [*] Waiting for logs.");
