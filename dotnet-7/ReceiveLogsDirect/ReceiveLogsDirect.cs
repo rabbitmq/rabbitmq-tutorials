@@ -7,7 +7,7 @@ var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
-channel.ExchangeDeclare(exchange: "direct_logs", type: "direct");
+channel.ExchangeDeclare(exchange: "direct_logs", type: ExchangeType.Direct);
 // declare a server-named queue
 var queueName = channel.QueueDeclare(queue: "").QueueName;
 

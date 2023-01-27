@@ -5,7 +5,7 @@ var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
-channel.ExchangeDeclare(exchange: "direct_logs", type: "direct");
+channel.ExchangeDeclare(exchange: "direct_logs", type: ExchangeType.Direct);
 
 var severity = (args.Length > 0) ? args[0] : "info";
 var message = (args.Length > 1) ? string.Join(" ", args.Skip(1).ToArray()) : "Hello World!";
