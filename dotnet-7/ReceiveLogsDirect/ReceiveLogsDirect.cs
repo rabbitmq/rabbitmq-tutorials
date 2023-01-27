@@ -1,8 +1,8 @@
+using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Text;
 
-var factory = new ConnectionFactory() { HostName = "localhost" };
+var factory = new ConnectionFactory { HostName = "localhost" };
 
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
@@ -20,7 +20,7 @@ if (args.Length < 1)
     return;
 }
 
-foreach(var severity in args)
+foreach (var severity in args)
 {
     channel.QueueBind(queue: queueName, exchange: "direct_logs", routingKey: severity);
 }

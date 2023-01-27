@@ -1,7 +1,7 @@
-﻿using RabbitMQ.Client;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
+using RabbitMQ.Client;
 
 const int MESSAGE_COUNT = 50_000;
 
@@ -40,7 +40,7 @@ static void PublishMessagesInBatch()
 {
     using var connection = CreateConnection();
     using var channel = connection.CreateModel();
-    
+
     // declare a server-named queue
     var queueName = channel.QueueDeclare(queue: "").QueueName;
     channel.ConfirmSelect();
@@ -119,7 +119,7 @@ static void HandlePublishConfirmsAsynchronously()
 static bool WaitUntil(int numberOfSeconds, Func<bool> condition)
 {
     int waited = 0;
-    while(!condition() && waited < numberOfSeconds * 1000)
+    while (!condition() && waited < numberOfSeconds * 1000)
     {
         Thread.Sleep(100);
         waited += 100;
