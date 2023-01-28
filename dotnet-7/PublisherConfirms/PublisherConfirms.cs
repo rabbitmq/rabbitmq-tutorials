@@ -29,7 +29,7 @@ static void PublishMessagesIndividually()
     for (int i = 0; i < MESSAGE_COUNT; i++)
     {
         var body = Encoding.UTF8.GetBytes(i.ToString());
-        channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
+        channel.BasicPublish(exchange: string.Empty, routingKey: queueName, basicProperties: null, body: body);
         channel.WaitForConfirmsOrDie(TimeSpan.FromSeconds(5));
     }
 
@@ -55,7 +55,7 @@ static void PublishMessagesInBatch()
     for (int i = 0; i < MESSAGE_COUNT; i++)
     {
         var body = Encoding.UTF8.GetBytes(i.ToString());
-        channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
+        channel.BasicPublish(exchange: string.Empty, routingKey: queueName, basicProperties: null, body: body);
         outstandingMessageCount++;
 
         if (outstandingMessageCount == batchSize)
@@ -110,7 +110,7 @@ static async Task HandlePublishConfirmsAsynchronously()
     {
         var body = i.ToString();
         outstandingConfirms.TryAdd(channel.NextPublishSeqNo, i.ToString());
-        channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: Encoding.UTF8.GetBytes(body));
+        channel.BasicPublish(exchange: string.Empty, routingKey: queueName, basicProperties: null, body: Encoding.UTF8.GetBytes(body));
     }
 
     if (!await WaitUntil(60, () => outstandingConfirms.IsEmpty))

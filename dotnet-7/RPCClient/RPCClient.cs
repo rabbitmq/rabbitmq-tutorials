@@ -47,7 +47,7 @@ public class RpcClient : IDisposable
         callbackMapper.TryAdd(correlationId, tcs);
 
         channel.BasicPublish(
-            exchange: "",
+            exchange: string.Empty,
             routingKey: QUEUE_NAME,
             basicProperties: props,
             body: messageBytes);
