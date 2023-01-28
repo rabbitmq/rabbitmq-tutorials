@@ -14,7 +14,7 @@ Console.WriteLine(" [x] Awaiting RPC requests");
 
 consumer.Received += (model, ea) =>
 {
-    string response = string.Empty;
+    var response = string.Empty;
 
     var body = ea.Body.ToArray();
     var props = ea.BasicProperties;
@@ -24,19 +24,19 @@ consumer.Received += (model, ea) =>
     try
     {
         var message = Encoding.UTF8.GetString(body);
-        int n = int.Parse(message);
-        Console.WriteLine($" [.] fib({message})");
-        response = fib(n).ToString();
+        var n = int.Parse(message);
+        Console.WriteLine($" [.] Fib({message})");
+        response = Fib(n).ToString();
     }
     catch (Exception e)
     {
         Console.WriteLine($" [.] {e.Message}");
-        response = "";
+        response = string.Empty;
     }
     finally
     {
         var responseBytes = Encoding.UTF8.GetBytes(response);
-        channel.BasicPublish(exchange: "", routingKey: props.ReplyTo, basicProperties: replyProps, body: responseBytes);
+        channel.BasicPublish(exchange: string.Empty, routingKey: props.ReplyTo, basicProperties: replyProps, body: responseBytes);
         channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
     }
 };
@@ -44,16 +44,14 @@ consumer.Received += (model, ea) =>
 Console.WriteLine(" Press [enter] to exit.");
 Console.ReadLine();
 
-/// <summary>
-/// Assumes only valid positive integer input.
-/// Don't expect this one to work for big numbers, and it's probably the slowest recursive implementation possible.
-/// </summary>
-static int fib(int n)
+// Assumes only valid positive integer input.
+// Don't expect this one to work for big numbers, and it's probably the slowest recursive implementation possible.
+static int Fib(int n)
 {
-    if (n == 0 || n == 1)
+    if (n is 0 or 1)
     {
         return n;
     }
 
-    return fib(n - 1) + fib(n - 2);
+    return Fib(n - 1) + Fib(n - 2);
 }
