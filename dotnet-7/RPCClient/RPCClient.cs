@@ -10,7 +10,6 @@ public class RpcClient : IDisposable
     private readonly IConnection connection;
     private readonly IModel channel;
     private readonly string replyQueueName;
-    private readonly EventingBasicConsumer consumer;
     private readonly ConcurrentDictionary<string, TaskCompletionSource<string>> callbackMapper = new();
 
     public RpcClient()
@@ -21,7 +20,7 @@ public class RpcClient : IDisposable
         channel = connection.CreateModel();
         // declare a server-named queue
         replyQueueName = channel.QueueDeclare().QueueName;
-        consumer = new EventingBasicConsumer(channel);
+        var consumer = new EventingBasicConsumer(channel);
         consumer.Received += (model, ea) =>
         {
             if (!callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out var tcs))
