@@ -14,7 +14,7 @@ Console.WriteLine(" [x] Awaiting RPC requests");
 
 consumer.Received += (model, ea) =>
 {
-    var response = string.Empty;
+    string response = string.Empty;
 
     var body = ea.Body.ToArray();
     var props = ea.BasicProperties;
@@ -24,7 +24,7 @@ consumer.Received += (model, ea) =>
     try
     {
         var message = Encoding.UTF8.GetString(body);
-        var n = int.Parse(message);
+        int n = int.Parse(message);
         Console.WriteLine($" [.] Fib({message})");
         response = Fib(n).ToString();
     }
