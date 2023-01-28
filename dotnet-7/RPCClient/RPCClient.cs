@@ -3,7 +3,7 @@ using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-public class RpcClient
+public class RpcClient : IDisposable
 {
     private const string QUEUE_NAME = "rpc_queue";
 
@@ -24,7 +24,7 @@ public class RpcClient
         consumer = new EventingBasicConsumer(channel);
         consumer.Received += (model, ea) =>
         {
-            if (!callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<string>? tcs))
+            if (!callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out var tcs))
                 return;
             var body = ea.Body.ToArray();
             var response = Encoding.UTF8.GetString(body);
@@ -53,11 +53,11 @@ public class RpcClient
             basicProperties: props,
             body: messageBytes);
 
-        cancellationToken.Register(() => callbackMapper.TryRemove(correlationId, out var tmp));
+        cancellationToken.Register(() => callbackMapper.TryRemove(correlationId, out _));
         return tcs.Task;
     }
 
-    public void Close()
+    public void Dispose()
     {
         connection.Close();
     }
@@ -65,12 +65,11 @@ public class RpcClient
 
 public class Rpc
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Console.WriteLine("RPC Client");
         string n = args.Length > 0 ? args[0] : "30";
-        Task t = InvokeAsync(n);
-        t.Wait();
+        await InvokeAsync(n);
 
         Console.WriteLine(" Press [enter] to exit.");
         Console.ReadLine();
@@ -78,12 +77,10 @@ public class Rpc
 
     private static async Task InvokeAsync(string n)
     {
-        var rpcClient = new RpcClient();
+        using var rpcClient = new RpcClient();
 
         Console.WriteLine(" [x] Requesting fib({0})", n);
         var response = await rpcClient.CallAsync(n);
         Console.WriteLine(" [.] Got '{0}'", response);
-
-        rpcClient.Close();
     }
 }
