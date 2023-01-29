@@ -10,7 +10,9 @@ channel.ExchangeDeclare(exchange: "logs", type: ExchangeType.Fanout);
 
 // declare a server-named queue
 var queueName = channel.QueueDeclare().QueueName;
-channel.QueueBind(queue: queueName, exchange: "logs", routingKey: string.Empty);
+channel.QueueBind(queue: queueName,
+                  exchange: "logs",
+                  routingKey: string.Empty);
 
 Console.WriteLine(" [*] Waiting for logs.");
 
@@ -21,7 +23,9 @@ consumer.Received += (model, ea) =>
     var message = Encoding.UTF8.GetString(body);
     Console.WriteLine($" [x] {message}");
 };
-channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
+channel.BasicConsume(queue: queueName,
+                     autoAck: true,
+                     consumer: consumer);
 
 Console.WriteLine(" Press [enter] to exit.");
 Console.ReadLine();

@@ -30,10 +30,9 @@ public class RpcClient : IDisposable
             tcs.TrySetResult(response);
         };
 
-        channel.BasicConsume(
-          consumer: consumer,
-          queue: replyQueueName,
-          autoAck: true);
+        channel.BasicConsume(consumer: consumer,
+                             queue: replyQueueName,
+                             autoAck: true);
     }
 
     public Task<string> CallAsync(string message, CancellationToken cancellationToken = default)
@@ -46,11 +45,10 @@ public class RpcClient : IDisposable
         var tcs = new TaskCompletionSource<string>();
         callbackMapper.TryAdd(correlationId, tcs);
 
-        channel.BasicPublish(
-            exchange: string.Empty,
-            routingKey: QUEUE_NAME,
-            basicProperties: props,
-            body: messageBytes);
+        channel.BasicPublish(exchange: string.Empty,
+                             routingKey: QUEUE_NAME,
+                             basicProperties: props,
+                             body: messageBytes);
 
         cancellationToken.Register(() => callbackMapper.TryRemove(correlationId, out _));
         return tcs.Task;

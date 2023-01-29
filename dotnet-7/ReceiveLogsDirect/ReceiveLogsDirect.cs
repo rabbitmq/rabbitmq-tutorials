@@ -13,7 +13,8 @@ var queueName = channel.QueueDeclare().QueueName;
 
 if (args.Length < 1)
 {
-    Console.Error.WriteLine("Usage: {0} [info] [warning] [error]", Environment.GetCommandLineArgs()[0]);
+    Console.Error.WriteLine("Usage: {0} [info] [warning] [error]",
+                            Environment.GetCommandLineArgs()[0]);
     Console.WriteLine(" Press [enter] to exit.");
     Console.ReadLine();
     Environment.ExitCode = 1;
@@ -22,7 +23,9 @@ if (args.Length < 1)
 
 foreach (var severity in args)
 {
-    channel.QueueBind(queue: queueName, exchange: "direct_logs", routingKey: severity);
+    channel.QueueBind(queue: queueName,
+                      exchange: "direct_logs",
+                      routingKey: severity);
 }
 
 Console.WriteLine(" [*] Waiting for messages.");
@@ -35,7 +38,9 @@ consumer.Received += (model, ea) =>
     var routingKey = ea.RoutingKey;
     Console.WriteLine($" [x] Received '{routingKey}':'{message}'");
 };
-channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
+channel.BasicConsume(queue: queueName,
+                     autoAck: true,
+                     consumer: consumer);
 
 Console.WriteLine(" Press [enter] to exit.");
 Console.ReadLine();

@@ -6,10 +6,16 @@ var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
-channel.QueueDeclare(queue: "rpc_queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
-channel.BasicQos(0, 1, false);
+channel.QueueDeclare(queue: "rpc_queue",
+                     durable: false,
+                     exclusive: false,
+                     autoDelete: false,
+                     arguments: null);
+channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 var consumer = new EventingBasicConsumer(channel);
-channel.BasicConsume(queue: "rpc_queue", autoAck: false, consumer: consumer);
+channel.BasicConsume(queue: "rpc_queue",
+                     autoAck: false,
+                     consumer: consumer);
 Console.WriteLine(" [x] Awaiting RPC requests");
 
 consumer.Received += (model, ea) =>
@@ -36,7 +42,10 @@ consumer.Received += (model, ea) =>
     finally
     {
         var responseBytes = Encoding.UTF8.GetBytes(response);
-        channel.BasicPublish(exchange: string.Empty, routingKey: props.ReplyTo, basicProperties: replyProps, body: responseBytes);
+        channel.BasicPublish(exchange: string.Empty,
+                             routingKey: props.ReplyTo,
+                             basicProperties: replyProps,
+                             body: responseBytes);
         channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
     }
 };
