@@ -37,6 +37,7 @@ The following ports are available:
  * [Haskell](./haskell)
  * [JavaScript (with Node and amqplib)](./javascript-nodejs) (using callbacks)
  * [JavaScript (with Node and amqplib)](https://github.com/amqp-node/amqplib) (using promises/futures)
+ * [Java with Gradle](./java-gradle)
  * [Java with Maven](./java-mvn)
  * [Java (with IntelliJ IDEA)](./java-idea)
  * [Java](./java) (with manual dependency management)
