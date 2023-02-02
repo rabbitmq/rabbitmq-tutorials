@@ -1,0 +1,1 @@
+copy ..\java\*.java src\main\java\
