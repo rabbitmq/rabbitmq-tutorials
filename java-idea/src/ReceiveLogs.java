@@ -1,1 +1,0 @@
-../../java/ReceiveLogs.java
