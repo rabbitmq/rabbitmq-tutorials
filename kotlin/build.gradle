@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.31'
+    ext.kotlin_version = '1.8.10'
 
     repositories {
         mavenCentral()
@@ -19,9 +19,9 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile "com.rabbitmq:amqp-client:latest.release"
-    compile "org.slf4j:slf4j-simple:1.7.25"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "com.rabbitmq:amqp-client:latest.release"
+    implementation "org.slf4j:slf4j-simple:1.7.25"
 }
 
 compileKotlin {
