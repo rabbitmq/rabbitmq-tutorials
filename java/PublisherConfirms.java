@@ -129,7 +129,7 @@ public class PublisherConfirms {
         int waited = 0;
         while (!condition.getAsBoolean() && waited < timeout.toMillis()) {
             Thread.sleep(100L);
-            waited = +100;
+            waited += 100;
         }
         return condition.getAsBoolean();
     }
