@@ -1,11 +1,11 @@
-# Rust code for RabbitMQ tutorials
+# Rust code for RabbitMQ tutorials (using amqprs)
 
 Here you can find the Rust code examples for [RabbitMQ
 tutorials](https://www.rabbitmq.com/getstarted.html).
 
-The examples use [lapin](https://github.com/CleverCloud/lapin) client library.
+The examples use [amqprs](https://github.com/gftea/amqprs) client library.
 
-You should have a RabbitMQ server running on default port.
+These tutorials assume a RabbitMQ server node running locally using default ports.
 
 ## Requirements
 

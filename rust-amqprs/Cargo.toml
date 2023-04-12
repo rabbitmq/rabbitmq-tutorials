@@ -1,0 +1,9 @@
+[package]
+name = "rabbitmq-tutorials"
+version = "1.0.0"
+authors = ["Michael Klishin <michael@rabbitmq.com>"]
+edition = "2021"
+
+[dependencies]
+amqprs = "1.2"
+tokio = "1"
