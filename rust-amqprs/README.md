@@ -38,8 +38,3 @@ Each cargo command should be launched in a separate shell.
 
     cargo run --bin receive_logs_topic kern.* # specify topic filter
     cargo run --bin emit_log_topic kern.mem "No memory left!" # specify topic and message
-
-#### [Tutorial six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-python.html)
-
-    cargo run --bin rpc_server
-    cargo run --bin rpc_client
