@@ -6,6 +6,7 @@ erlang/rabbit_common*
 erlang/recon*
 python/venv
 dotnet/*.exe
+dotnet/*/bin/*
 dotnet/lib
 java/*.class
 java/*.jar
@@ -23,7 +24,8 @@ java*/.idea/encodings.xml
 
 .vscode/
 obj/
-bin/
+bin/*
+!src/bin/*
 target/
 .DS_Store
 *.iml
