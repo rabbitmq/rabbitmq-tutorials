@@ -56,6 +56,7 @@ public class RpcClient : IDisposable
 
     public void Dispose()
     {
+        channel.Close();
         connection.Close();
     }
 }
