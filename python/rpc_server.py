@@ -21,7 +21,7 @@ def fib(n):
 def on_request(ch, method, props, body):
     n = int(body)
 
-    print(" [.] fib(%s)" % n)
+    print(f" [.] fib({n})")
     response = fib(n)
 
     ch.basic_publish(exchange='',
