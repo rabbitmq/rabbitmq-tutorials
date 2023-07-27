@@ -24,7 +24,7 @@ def main():
 
 
     def callback(ch, method, properties, body):
-        print(" [x] %r:%r" % (method.routing_key, body.decode()))
+        print(f" [x] {method.routing_key}:{body.decode()}")
 
 
     channel.basic_consume(
