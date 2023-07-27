@@ -14,7 +14,7 @@ def main():
     channel.queue_bind(exchange='logs', queue=queue_name)
 
     def callback(ch, method, properties, body):
-        print(" [x] %r" % body.decode())
+        print(f" [x] {body.decode()}")
 
     print(' [*] Waiting for logs. To exit press CTRL+C')
     channel.basic_consume(
