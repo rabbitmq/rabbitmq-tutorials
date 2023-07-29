@@ -45,4 +45,4 @@ fibonacci_rpc = FibonacciRpcClient()
 
 print(" [x] Requesting fib(30)")
 response = fibonacci_rpc.call(30)
-print(" [.] Got %r" % response)
+print(f" [.] Got {response}")

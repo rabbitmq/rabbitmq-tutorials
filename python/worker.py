@@ -11,7 +11,7 @@ print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
 def callback(ch, method, properties, body):
-    print(" [x] Received %r" % body.decode())
+    print(f" [x] Received {body.decode()}")
     time.sleep(body.count(b'.'))
     print(" [x] Done")
     ch.basic_ack(delivery_tag=method.delivery_tag)
