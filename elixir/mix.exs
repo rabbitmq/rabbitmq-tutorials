@@ -3,8 +3,8 @@ defmodule RabbitmqTutorials.Mixfile do
 
   def project do
     [app: :rabbitmq_tutorials,
-     version: "0.0.1",
-     elixir: "~> 1.1",
+     version: "1.0.0",
+     elixir: "~> 1.5",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps()]
@@ -28,7 +28,7 @@ defmodule RabbitmqTutorials.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:amqp, "~> 1.1"},
+      {:amqp, "~> 3.3"},
     ]
   end
 end
