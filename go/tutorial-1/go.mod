@@ -1,4 +1,4 @@
-module github.com/mateusmlo/rabbitmq-tutorials/go/tutorial-1
+module github.com/rabbitmq/rabbitmq-tutorials/go/tutorial-1
 
 go 1.21.0
 
