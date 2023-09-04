@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/mateusmlo/rabbitmq-tutorials/go/tutorial-1/receive"
-	"github.com/mateusmlo/rabbitmq-tutorials/go/tutorial-1/send"
+	"github.com/rabbitmq/rabbitmq-tutorials/go/tutorial-1/receive"
+	"github.com/rabbitmq/rabbitmq-tutorials/go/tutorial-1/send"
 )
 
 func main() {
