@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-import pika
 import uuid
+
+import pika
 
 
 class FibonacciRpcClient(object):

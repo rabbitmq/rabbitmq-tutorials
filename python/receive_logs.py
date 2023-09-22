@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-import pika, sys, os
+import os
+import pika
+import sys
+
 
 def main():
     connection = pika.BlockingConnection(
