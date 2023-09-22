@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-import pika, sys, os
+import os
+import pika
+import sys
+
 
 def main():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
@@ -14,6 +17,7 @@ def main():
 
     print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
+
 
 if __name__ == '__main__':
     try:
