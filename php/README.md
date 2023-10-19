@@ -7,12 +7,12 @@ To successfully use the examples you will need a running RabbitMQ server.
 
 ## Requirements
 
-### PHP 7.0+
+### PHP 7.2+
 
-You need `PHP 7.0` and `php-amqplib`. To get these
+You need `PHP 7.2` and `php-amqplib`. To get these
 dependencies on Ubuntu type:
 
-    sudo apt-get install git-core php5-cli
+    sudo apt-get install git-core php-cli
 
 
 ### Composer
@@ -27,11 +27,11 @@ Then you can install `php-amqplib` using [Composer](https://getcomposer.org).
 To do that install Composer and add it to your path, then run the following command
 inside this project folder:
 
-    composer.phar install
+    php composer.phar install
     
 Or you can require it to the existing project using a command:
 
-    composer.phar require php-amqplib/php-amqplib
+    php composer.phar require php-amqplib/php-amqplib
 
 ## Code
 

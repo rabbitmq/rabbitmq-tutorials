@@ -45,7 +45,7 @@ class FibonacciRpcClient
     public function onResponse($rep)
     {
         if ($rep->get('correlation_id') == $this->corr_id) {
-            $this->response = $rep->body;
+            $this->response = $rep->getBody();
         }
     }
 
