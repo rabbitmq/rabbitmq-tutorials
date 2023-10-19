@@ -1,5 +1,5 @@
 {
     "require": {
-        "php-amqplib/php-amqplib": ">=3.0"
+        "php-amqplib/php-amqplib": "^3.2"
     }
 }
