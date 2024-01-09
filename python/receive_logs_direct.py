@@ -16,7 +16,7 @@ def main():
 
     severities = sys.argv[1:]
     if not severities:
-        sys.stderr.write("Usage: %s [info] [warning] [error]\n" % sys.argv[0])
+        sys.stderr.write('Usage: %s [info] [warning] [error]\n' % sys.argv[0])
         sys.exit(1)
 
     for severity in severities:
@@ -26,7 +26,7 @@ def main():
     print(' [*] Waiting for logs. To exit press CTRL+C')
 
     def callback(ch, method, properties, body):
-        print(f" [x] {method.routing_key}:{body.decode()}")
+        print(f' [x] {method.routing_key}:{body.decode()}')
 
     channel.basic_consume(
         queue=queue_name, on_message_callback=callback, auto_ack=True)

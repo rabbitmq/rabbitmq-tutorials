@@ -44,6 +44,6 @@ class FibonacciRpcClient(object):
 
 fibonacci_rpc = FibonacciRpcClient()
 
-print(" [x] Requesting fib(30)")
+print(' [x] Requesting fib(30)')
 response = fibonacci_rpc.call(30)
-print(f" [.] Got {response}")
+print(f' [.] Got {response}')
