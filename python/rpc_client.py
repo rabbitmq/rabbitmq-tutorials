@@ -8,7 +8,8 @@ class FibonacciRpcClient(object):
 
     def __init__(self):
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
+            pika.ConnectionParameters(host='localhost'),
+        )
 
         self.channel = self.connection.channel()
 
@@ -18,7 +19,8 @@ class FibonacciRpcClient(object):
         self.channel.basic_consume(
             queue=self.callback_queue,
             on_message_callback=self.on_response,
-            auto_ack=True)
+            auto_ack=True,
+        )
 
         self.response = None
         self.corr_id = None
@@ -37,7 +39,8 @@ class FibonacciRpcClient(object):
                 reply_to=self.callback_queue,
                 correlation_id=self.corr_id,
             ),
-            body=str(n))
+            body=str(n),
+        )
         self.connection.process_data_events(time_limit=None)
         return int(self.response)
 
