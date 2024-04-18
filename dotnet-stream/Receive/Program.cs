@@ -15,11 +15,10 @@ await streamSystem.CreateStream(new StreamSpec("hello-stream")
 var consumer = await Consumer.Create(new ConsumerConfig(streamSystem, "hello-stream")
 {
     OffsetSpec = new OffsetTypeFirst(),
-    MessageHandler = async (stream, _, context, message) =>
+    MessageHandler = async (stream, _, _, message) =>
     {
         Console.WriteLine($"Stream: {stream} - " +
-                          $"Received message: {Encoding.UTF8.GetString(message.Data.Contents)} - " +
-                          $"Offset: {context.Offset}");
+                          $"Received message: {Encoding.UTF8.GetString(message.Data.Contents)}");
         await Task.CompletedTask;
     }
 });

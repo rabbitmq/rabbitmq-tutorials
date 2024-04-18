@@ -9,40 +9,11 @@ await streamSystem.CreateStream(new StreamSpec("hello-stream")
     MaxLengthBytes = 5_000_000_000
 });
 
-var producer = await Producer.Create(new ProducerConfig(streamSystem, "hello-stream")
-{
-    ConfirmationHandler = async confirmation =>
-    {
-        switch (confirmation.Status)
-        {
-            case ConfirmationStatus.Confirmed:
-                foreach (var message in confirmation.Messages)
-                {
-                    Console.WriteLine(
-                        $"Stream: {confirmation.Stream}, " +
-                        $"message: {Encoding.UTF8.GetString(message.Data.Contents)} confirmed");
-                };
-                break;
-            default:
-                foreach (var message in confirmation.Messages)
-                {
-                    Console.WriteLine(
-                        $"Stream: {confirmation.Stream}, " +
-                        $"message: {Encoding.UTF8.GetString(message.Data.Contents)} not confirmed " +
-                        $"with status {confirmation.Status}");
-                };
-                break;
-        }
-        await Task.CompletedTask;
-    }
-});
+var producer = await Producer.Create(new ProducerConfig(streamSystem, "hello-stream"));
 
-for (var i = 0; i < 100; i++)
-{
-    await producer.Send(new Message(Encoding.UTF8.GetBytes($"Hello, World - {i}")));
-}
 
-await Task.Delay(500);
+await producer.Send(new Message(Encoding.UTF8.GetBytes($"Hello, World")));
+Console.WriteLine(" [x] Sent 'Hello, World'");
 
 Console.WriteLine(" [x] Press any key to exit");
 Console.ReadKey();
