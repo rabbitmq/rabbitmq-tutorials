@@ -18,3 +18,4 @@ Console.WriteLine(" [x] Sent 'Hello, World'");
 Console.WriteLine(" [x] Press any key to exit");
 Console.ReadKey();
 await producer.Close();
+await streamSystem.Close();

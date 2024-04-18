@@ -27,3 +27,4 @@ Console.WriteLine(" [x] Press any key to exit");
 Console.ReadKey();
 
 await consumer.Close();
+await streamSystem.Close();
