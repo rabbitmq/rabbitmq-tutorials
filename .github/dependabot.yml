@@ -9,6 +9,12 @@ updates:
     open-pull-requests-limit: 20
     target-branch: "main"
   - package-ecosystem: "maven"
+    directory: "/java-stream-mvn"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    target-branch: "main"
+  - package-ecosystem: "maven"
     directory: "/spring-amqp"
     schedule:
       interval: "daily"
