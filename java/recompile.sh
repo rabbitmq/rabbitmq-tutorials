@@ -1,3 +1,3 @@
 #!/bin/sh
 
-javac -cp .:amqp-client-5.7.1.jar:slf4j-api-1.7.26.jar:slf4j-simple-1.7.26.jar *.java
+javac -cp .:amqp-client-5.21.0.jar:slf4j-api-2.0.13.jar:slf4j-simple-2.0.13.jar *.java
