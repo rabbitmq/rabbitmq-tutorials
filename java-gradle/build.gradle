@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
     implementation 'com.rabbitmq:amqp-client:5.16.0'
-    implementation 'org.slf4j:slf4j-simple:2.0.5'
+    implementation 'org.slf4j:slf4j-simple:2.0.13'
     testImplementation 'org.assertj:assertj-core:3.21.0'
     testImplementation 'org.mockito:mockito-core:4.3.1'
     testImplementation 'io.dropwizard.metrics:metrics-core:3.1.2'
