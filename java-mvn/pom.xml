@@ -22,6 +22,13 @@
             <artifactId>amqp-client</artifactId>
             <version>5.21.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.13</version>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -70,6 +77,9 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <argLine>${test-arguments}</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -87,5 +97,21 @@
             </plugin>
         </plugins>
     </build>
+
+
+    <profiles>
+
+        <profile>
+            <id>jvm-test-arguments-java-21-and-more</id>
+            <activation>
+                <jdk>[21,)</jdk>
+            </activation>
+            <properties>
+                <test-arguments>-XX:+EnableDynamicAgentLoading</test-arguments>
+            </properties>
+        </profile>
+
+
+    </profiles>
 
 </project>
