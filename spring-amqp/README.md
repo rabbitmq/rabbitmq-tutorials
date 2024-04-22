@@ -43,21 +43,21 @@ For tutorials 1-5, run the consumer (receiver) followed by the publisher (sender
 
 ```
 # shell 1
-java -jar target/rabbit-tutorials-*.jar --spring.profiles.active=work-queues,receiver
+java -jar target/rabbitmq-tutorials.jar --spring.profiles.active=work-queues,receiver
 
 # shell 2
-java -jar target/rabbit-tutorials-*.jar --spring.profiles.active=work-queues,sender
+java -jar target/rabbitmq-tutorials.jar --spring.profiles.active=work-queues,sender
 ```
 
 For tutorial 6, run the server followed by the client.
 
-##C onfiguration
+## Configuration
 
 When running receivers/servers it's useful to set the duration the app runs to a longer time.  Do this by setting
 the `tutorial.client.duration` property.
 
 ```
-java -jar rabbitmq-tutorials.jar --spring.profiles.active=tut2,receiver,remote --tutorial.client.duration=60000
+java -jar target/rabbitmq-tutorials.jar --spring.profiles.active=tut2,receiver,remote --tutorial.client.duration=60000
 ```
 
 By default, Spring AMQP uses localhost to connect to RabbitMQ.  In the

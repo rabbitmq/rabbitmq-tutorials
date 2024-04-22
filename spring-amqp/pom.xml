@@ -21,7 +21,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -40,6 +39,14 @@
                     <mainClass>org.springframework.amqp.tutorials.RabbitAmqpTutorialsApplication</mainClass>
                     <finalName>rabbitmq-tutorials</finalName>
                     <layout>ZIP</layout>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>21</release>
                 </configuration>
             </plugin>
         </plugins>
