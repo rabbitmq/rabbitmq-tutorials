@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Tutorial for the nodejs Rabbitqm stream client",
   "scripts": {
-    "publish": "node publish.js",
+    "publish": "node send.js",
     "receive": "node receive.js"
   },
   "dependencies": {
