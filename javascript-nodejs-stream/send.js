@@ -13,7 +13,8 @@ async function main() {
     });
 
     console.log("Making sure the stream exists...");
-    await client.createStream({ stream: streamName, arguments: {} });
+    const streamSizeRetention = 2 * 1e9
+    await client.createStream({ stream: streamName, arguments: { "max-length-bytes": streamSizeRetention } });
 
     console.log("Creating the publisher...");
     const publisher = await client.declarePublisher({ stream: streamName });

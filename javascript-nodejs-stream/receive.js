@@ -15,7 +15,8 @@ async function main() {
     })
 
     console.log("Making sure the stream exists...");
-    await client.createStream({ stream: streamName, arguments: {} })
+    const streamSizeRetention = 2 * 1e9
+    await client.createStream({ stream: streamName, arguments: { "max-length-bytes": streamSizeRetention } });
 
     console.log("Declaring the consumer with offset...");
     await client.declareConsumer({ stream: streamName, offset: rabbit.Offset.first() }, (message) => {
