@@ -9,8 +9,8 @@ async function main() {
     const client = await rabbit.connect({
         hostname: "localhost",
         port: 5552,
-        username: "rabbit",
-        password: "rabbit",
+        username: "guest",
+        password: "guest",
         vhost: "/",
     })
 

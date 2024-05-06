@@ -8,8 +8,8 @@ async function main() {
         vhost: "/",
         port: 5552,
         hostname: "localhost",
-        username: "rabbit",
-        password: "rabbit",
+        username: "guest",
+        password: "guest",
     });
 
     console.log("Making sure the stream exists...");
