@@ -15,7 +15,7 @@ async function main() {
     })
 
     console.log("Making sure the stream exists...");
-    const streamSizeRetention = 2 * 1e9
+    const streamSizeRetention = 5 * 1e9
     await client.createStream({ stream: streamName, arguments: { "max-length-bytes": streamSizeRetention } });
 
     console.log("Declaring the consumer with offset...");
