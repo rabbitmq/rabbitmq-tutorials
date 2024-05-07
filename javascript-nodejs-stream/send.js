@@ -1,7 +1,7 @@
 const rabbit = require("rabbitmq-stream-js-client");
 
 async function main() {
-    const streamName = "test-queue-stream";
+    const streamName = "hello-nodejs-stream";
 
     console.log("Connecting...");
     const client = await rabbit.connect({

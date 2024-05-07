@@ -3,7 +3,7 @@ const rabbit = require("rabbitmq-stream-js-client")
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 async function main() {
-    const streamName = "test-queue-stream"
+    const streamName = "hello-nodejs-stream"
 
     console.log("Connecting...");
     const client = await rabbit.connect({
