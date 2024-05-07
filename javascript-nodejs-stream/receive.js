@@ -1,7 +1,5 @@
 const rabbit = require("rabbitmq-stream-js-client")
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
-
 async function main() {
     const streamName = "hello-nodejs-stream"
 
@@ -23,14 +21,12 @@ async function main() {
         console.log(`Received message ${message.content.toString()}`)
     })
 
-    await sleep(2000)
-
-    console.log("Closing the connection...");
-    await client.close()
 }
 
 main()
-    .then(() => console.log("done!"))
+    .then(async () => {
+        await new Promise(function () { })
+    })
     .catch((res) => {
         console.log("Error while receiving message!", res)
         process.exit(-1)
