@@ -1,0 +1,12 @@
+{
+  "name": "rabbitmq-stream-node-tutorial",
+  "version": "1.0.0",
+  "description": "Tutorial for the nodejs RabbitMQ stream client",
+  "scripts": {
+    "send": "node send.js",
+    "receive": "node receive.js"
+  },
+  "dependencies": {
+    "rabbitmq-stream-js-client": "^0.3.1"
+  }
+}
