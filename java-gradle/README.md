@@ -16,7 +16,7 @@ To successfully use the examples you will need a RabbitMQ node running locally.
 - Run pull-source-files.bat to replace symbolic link to the actual source file.
 
 ```shell
-.\pull-source-files.bat
+./pull-source-files.bat
 ```
 
 ## Code
@@ -25,82 +25,91 @@ To successfully use the examples you will need a RabbitMQ node running locally.
 
 ```shell
 # terminal tab 1
-gradle -Pmain=Recv run
+./gradlew -Pmain=Recv run
 
 # terminal tab 2
-gradle -Pmain=Send run
+./gradlew -Pmain=Send run
 ```
 
 #### [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorials/tutorial-two-java.html):
 
 ```shell
 # terminal tab 1
-gradle -Pmain=Worker run
-gradle -Pmain=Worker run
+./gradlew -Pmain=Worker run
+./gradlew -Pmain=Worker run
 
 # terminal tab 2
-gradle -Pmain=NewTask run --args "First Message"
-gradle -Pmain=NewTask run --args "Second Message"
-gradle -Pmain=NewTask run --args "Third Message"
-gradle -Pmain=NewTask run --args "Fourth Message"
-gradle -Pmain=NewTask run --args "Fifth Message"
+./gradlew -Pmain=NewTask run --args "First Message"
+./gradlew -Pmain=NewTask run --args "Second Message"
+./gradlew -Pmain=NewTask run --args "Third Message"
+./gradlew -Pmain=NewTask run --args "Fourth Message"
+./gradlew -Pmain=NewTask run --args "Fifth Message"
 ```
 
 #### [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorials/tutorial-three-java.html)
 
 ```shell
 # terminal tab 1
-gradle -Pmain=ReceiveLogs run
+./gradlew -Pmain=ReceiveLogs run
 
 # terminal tab 2
-gradle -Pmain=EmitLog run
+./gradlew -Pmain=ReceiveLogs run
+
+# terminal tab 3
+./gradlew -Pmain=EmitLog run
 ```
 
 #### [Tutorial four: Routing](https://www.rabbitmq.com/tutorials/tutorial-four-java.html)
 
 ```shell
 # terminal tab 1
-gradle -Pmain=ReceiveLogsDirect run --args "warning error"
+./gradlew -Pmain=ReceiveLogsDirect run --args "warning error"
 
 # terminal tab 2
-gradle -Pmain=ReceiveLogsDirect run --args "info warning error"
+./gradlew -Pmain=ReceiveLogsDirect run --args "info warning error"
 
 # terminal tab 3
-gradle -Pmain=EmitLogDirect run --args "error Run. Run. Or it will explode"
+./gradlew -Pmain=EmitLogDirect run --args 'info "Run. Run. Or it will explode"'
+./gradlew -Pmain=EmitLogDirect run --args 'warning "Run. Run. Or it will explode"'
+./gradlew -Pmain=EmitLogDirect run --args 'error "Run. Run. Or it will explode"'
 ```
 
 #### [Tutorial five: Topics](https://www.rabbitmq.com/tutorials/tutorial-five-java.html)
 
 ```shell
+# terminal tab 1
 # To receive all the logs:
-gradle -Pmain=ReceiveLogsTopic run --args "#"
+./gradlew -Pmain=ReceiveLogsTopic run --args "#"
 
 # To receive all logs from the facility "kern":
-gradle -Pmain=ReceiveLogsTopic run --args "kern.*"
+./gradlew -Pmain=ReceiveLogsTopic run --args "kern.*"
 
 # Or if you want to hear only about "critical" logs:
-gradle -Pmain=ReceiveLogsTopic run --args "*.critical"
+./gradlew -Pmain=ReceiveLogsTopic run --args "*.critical"
 
 # You can create multiple bindings:
-gradle -Pmain=ReceiveLogsTopic run --args "kern.* *.critical"
+./gradlew -Pmain=ReceiveLogsTopic run --args "kern.* *.critical"
 
+# terminal tab 2
 # And to emit a log with a routing key "kern.critical" type:
-gradle -Pmain=EmitLogTopic run --args "kern.critical A critical kernel error"
+./gradlew -Pmain=EmitLogTopic run --args "kern.critical A critical kernel error"
 ```
 
 #### [Tutorial six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-java.html)
 
 ```shell
+# terminal tab 1
 # Our RPC service is now ready. We can start the server:
-gradle -Pmain=RPCServer run
+./gradlew -Pmain=RPCServer run
 
+# terminal tab 2
 # To request a fibonacci number run the client:
-gradle -Pmain=RPCClient run
+./gradlew -Pmain=RPCClient run
 ```
 
 #### [Tutorial seven: Publisher Confirms](https://www.rabbitmq.com/tutorials/tutorial-seven-java.html)
 
 ```shell
-#
-gradle -Pmain=PublisherConfirms run
+# terminal tab 1
+./gradlew -Pmain=PublisherConfirms run
 ```
