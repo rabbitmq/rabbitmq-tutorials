@@ -26,8 +26,6 @@ more about various [installation options](https://www.rabbitmq.com/download.html
 The following ports are available:
 
  * [C#](./dotnet)
- * [C# (with Visual Studio)](./dotnet-visual-studio)
- * [C# (.NET 6.0)](./dotnet-6)
  * [Clojure](./clojure)
  * [Common Lisp](./common-lisp)
  * [Dart](./dart)
