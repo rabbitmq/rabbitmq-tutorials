@@ -28,34 +28,95 @@ of the tutorial directory.
 
 #### [Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorials/tutorial-one-dotnet.html)
 
-    dotnet run --project Receive/Receive.csproj
-    dotnet run --project Send/Send.csproj
+```bash
+# terminal tab 1
+dotnet run --project Receive/Receive.csproj
+
+# terminal tab 2
+dotnet run --project Send/Send.csproj
+```
 
 #### [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorials/tutorial-two-dotnet.html)
 
-    dotnet run --project Worker/Worker.csproj
-    dotnet run --project NewTask/NewTask.csproj
+```bash
+# terminal tab 1
+dotnet run --project Worker/Worker.csproj
+
+# terminal tab 2
+dotnet run --project Worker/Worker.csproj
+
+# terminal tab 3
+dotnet run --project NewTask/NewTask.csproj "First Message"
+dotnet run --project NewTask/NewTask.csproj "Second Message"
+dotnet run --project NewTask/NewTask.csproj "Third Message"
+dotnet run --project NewTask/NewTask.csproj "Fourth Message"
+dotnet run --project NewTask/NewTask.csproj "Fifth Message"
+```
 
 #### [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorials/tutorial-three-dotnet.html)
 
-    dotnet run --project ReceiveLogs/ReceiveLogs.csproj
-    dotnet run --project EmitLog/EmitLog.csproj
+```bash
+# terminal tab 1
+dotnet run --project ReceiveLogs/ReceiveLogs.csproj
+
+# terminal tab 2
+dotnet run --project ReceiveLogs/ReceiveLogs.csproj
+
+# terminal tab 3
+dotnet run --project EmitLog/EmitLog.csproj
+```
 
 #### [Tutorial four: Routing](https://www.rabbitmq.com/tutorials/tutorial-four-dotnet.html)
 
-    dotnet run --project ReceiveLogsDirect/ReceiveLogsDirect.csproj info
-    dotnet run --project EmitLogDirect/EmitLogDirect.csproj
+```bash
+# terminal tab 1
+dotnet run --project ReceiveLogsDirect/ReceiveLogsDirect.csproj warning error
+
+# terminal tab 2
+dotnet run --project ReceiveLogsDirect/ReceiveLogsDirect.csproj info warning error
+
+# terminal tab 3
+dotnet run --project EmitLogDirect/EmitLogDirect.csproj info "Run. Run. Or it will explode."
+dotnet run --project EmitLogDirect/EmitLogDirect.csproj warning "Run. Run. Or it will explode."
+dotnet run --project EmitLogDirect/EmitLogDirect.csproj error "Run. Run. Or it will explode."
+```
 
 #### [Tutorial five: Topics](https://www.rabbitmq.com/tutorials/tutorial-five-dotnet.html)
 
-    dotnet run --project ReceiveLogsTopic/ReceiveLogsTopic.csproj anonymous.info
-    dotnet run --project EmitLogTopic/EmitLogTopic.csproj
+```bash
+# terminal tab 1
+# To receive all the logs:
+dotnet run --project ReceiveLogsTopic/ReceiveLogsTopic.csproj "#"
+
+# To receive all logs from the facility "kern":
+dotnet run --project ReceiveLogsTopic/ReceiveLogsTopic.csproj "kern.*"
+
+# Or if you want to hear only about "critical" logs:
+dotnet run --project ReceiveLogsTopic/ReceiveLogsTopic.csproj "*.critical"
+
+# You can create multiple bindings:
+dotnet run --project ReceiveLogsTopic/ReceiveLogsTopic.csproj "kern.*" "*.critical"
+
+# terminal tab 2
+# And to emit a log with a routing key "kern.critical" type:
+dotnet run --project EmitLogTopic/EmitLogTopic.csproj kern.critical "A critical kernel error"
+```
 
 #### [Tutorial six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-dotnet.html)
 
-    dotnet run --project RPCServer/RPCServer.csproj
-    dotnet run --project RPCClient/RPCClient.csproj
+```bash
+# terminal tab 1
+# Our RPC service is now ready. We can start the server:
+dotnet run --project RPCServer/RPCServer.csproj
+
+# terminal tab 2
+# To request a fibonacci number run the client:
+dotnet run --project RPCClient/RPCClient.csproj
+```
 
 #### [Tutorial seven: Publisher Confirms](https://www.rabbitmq.com/tutorials/tutorial-seven-dotnet.html)
 
-    dotnet run --project PublisherConfirms/PublisherConfirms.csproj
+```bash
+# terminal tab 1
+dotnet run --project PublisherConfirms/PublisherConfirms.csproj
+```
