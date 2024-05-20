@@ -27,55 +27,55 @@ You can easily set this up by [installing RabbitMQ](https://www.rabbitmq.com/doc
 
 ```shell
 # terminal tab 1
-./gradlew -Pmain=Recv run
+./mvnw compile exec:java -D"exec.mainClass=Recv"
 
 # terminal tab 2
-./gradlew -Pmain=Send run
+./mvnw compile exec:java -D"exec.mainClass=Send"
 ```
 
 #### [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorials/tutorial-two-java.html):
 
 ```shell
 # terminal tab 1
-./gradlew -Pmain=Worker run
+./mvnw compile exec:java -D"exec.mainClass=Worker"
 
 # terminal tab 2
-./gradlew -Pmain=Worker run
+./mvnw compile exec:java -D"exec.mainClass=Worker"
 
 # terminal tab 3
-./gradlew -Pmain=NewTask run --args "First Message"
-./gradlew -Pmain=NewTask run --args "Second Message"
-./gradlew -Pmain=NewTask run --args "Third Message"
-./gradlew -Pmain=NewTask run --args "Fourth Message"
-./gradlew -Pmain=NewTask run --args "Fifth Message"
+./mvnw compile exec:java -D"exec.mainClass=NewTask" -D"exec.args='First Message'"
+./mvnw compile exec:java -D"exec.mainClass=NewTask" -D"exec.args='Second Message'"
+./mvnw compile exec:java -D"exec.mainClass=NewTask" -D"exec.args='Third Message'"
+./mvnw compile exec:java -D"exec.mainClass=NewTask" -D"exec.args='Fourth Message'"
+./mvnw compile exec:java -D"exec.mainClass=NewTask" -D"exec.args='Fifth Message'"
 ```
 
 #### [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorials/tutorial-three-java.html)
 
 ```shell
 # terminal tab 1
-./gradlew -Pmain=ReceiveLogs run
+./mvnw compile exec:java -D"exec.mainClass=ReceiveLogs"
 
 # terminal tab 2
-./gradlew -Pmain=ReceiveLogs run
+./mvnw compile exec:java -D"exec.mainClass=ReceiveLogs"
 
 # terminal tab 3
-./gradlew -Pmain=EmitLog run
+./mvnw compile exec:java -D"exec.mainClass=EmitLog"
 ```
 
 #### [Tutorial four: Routing](https://www.rabbitmq.com/tutorials/tutorial-four-java.html)
 
 ```shell
 # terminal tab 1
-./gradlew -Pmain=ReceiveLogsDirect run --args "warning error"
+./mvnw compile exec:java -D"exec.mainClass=ReceiveLogsDirect" -D"exec.args=warning error"
 
 # terminal tab 2
-./gradlew -Pmain=ReceiveLogsDirect run --args "info warning error"
+./mvnw compile exec:java -D"exec.mainClass=ReceiveLogsDirect" -D"exec.args=info warning error"
 
 # terminal tab 3
-./gradlew -Pmain=EmitLogDirect run --args "info 'Run. Run. Or it will explode'"
-./gradlew -Pmain=EmitLogDirect run --args "warning 'Run. Run. Or it will explode'"
-./gradlew -Pmain=EmitLogDirect run --args "error 'Run. Run. Or it will explode'"
+./mvnw compile exec:java -D"exec.mainClass=EmitLogDirect" -D"exec.args=info 'Run. Run. Or it will explode'"
+./mvnw compile exec:java -D"exec.mainClass=EmitLogDirect" -D"exec.args=warning 'Run. Run. Or it will explode'"
+./mvnw compile exec:java -D"exec.mainClass=EmitLogDirect" -D"exec.args=error 'Run. Run. Or it will explode'"
 ```
 
 #### [Tutorial five: Topics](https://www.rabbitmq.com/tutorials/tutorial-five-java.html)
@@ -83,20 +83,20 @@ You can easily set this up by [installing RabbitMQ](https://www.rabbitmq.com/doc
 ```shell
 # terminal tab 1
 # To receive all the logs:
-./gradlew -Pmain=ReceiveLogsTopic run --args "#"
+./mvnw compile exec:java -D"exec.mainClass=ReceiveLogsTopic" -D"exec.args=#"
 
 # To receive all logs from the facility "kern":
-./gradlew -Pmain=ReceiveLogsTopic run --args "kern.*"
+./mvnw compile exec:java -D"exec.mainClass=ReceiveLogsTopic" -D"exec.args=kern.*"
 
 # Or if you want to hear only about "critical" logs:
-./gradlew -Pmain=ReceiveLogsTopic run --args "*.critical"
+./mvnw compile exec:java -D"exec.mainClass=ReceiveLogsTopic" -D"exec.args=*.critical"
 
 # You can create multiple bindings:
-./gradlew -Pmain=ReceiveLogsTopic run --args "kern.* *.critical"
+./mvnw compile exec:java -D"exec.mainClass=ReceiveLogsTopic" -D"exec.args=kern.* *.critical"
 
 # terminal tab 2
 # And to emit a log with a routing key "kern.critical" type:
-./gradlew -Pmain=EmitLogTopic run --args "kern.critical A critical kernel error"
+./mvnw compile exec:java -D"exec.mainClass=EmitLogTopic" -D"exec.args=kern.critical A critical kernel error"
 ```
 
 #### [Tutorial six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-java.html)
@@ -104,16 +104,16 @@ You can easily set this up by [installing RabbitMQ](https://www.rabbitmq.com/doc
 ```shell
 # terminal tab 1
 # Our RPC service is now ready. We can start the server:
-./gradlew -Pmain=RPCServer run
+./mvnw compile exec:java -D"exec.mainClass=RPCServer"
 
 # terminal tab 2
 # To request a fibonacci number run the client:
-./gradlew -Pmain=RPCClient run
+./mvnw compile exec:java -D"exec.mainClass=RPCClient"
 ```
 
 #### [Tutorial seven: Publisher Confirms](https://www.rabbitmq.com/tutorials/tutorial-seven-java.html)
 
 ```shell
 # terminal tab 1
-./gradlew -Pmain=PublisherConfirms run
+./mvnw compile exec:java -D"exec.mainClass=PublisherConfirms"
 ```
