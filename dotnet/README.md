@@ -7,6 +7,8 @@ You will also find a solution file for Visual Studio 2022.
 
 To successfully use the examples you will need a running RabbitMQ server.
 
+You can easily set this up by [installing RabbitMQ](https://www.rabbitmq.com/docs/download).
+
 ## Requirements
 
 ### Requirements on Windows

@@ -5,6 +5,8 @@ tutorials](https://www.rabbitmq.com/getstarted.html).
 
 To successfully use the examples you will need a RabbitMQ node running locally.
 
+You can easily set this up by [installing RabbitMQ](https://www.rabbitmq.com/docs/download).
+
 ## Requirements
 
 ### Linux
@@ -36,9 +38,11 @@ To successfully use the examples you will need a RabbitMQ node running locally.
 ```shell
 # terminal tab 1
 ./gradlew -Pmain=Worker run
-./gradlew -Pmain=Worker run
 
 # terminal tab 2
+./gradlew -Pmain=Worker run
+
+# terminal tab 3
 ./gradlew -Pmain=NewTask run --args "First Message"
 ./gradlew -Pmain=NewTask run --args "Second Message"
 ./gradlew -Pmain=NewTask run --args "Third Message"
@@ -69,9 +73,9 @@ To successfully use the examples you will need a RabbitMQ node running locally.
 ./gradlew -Pmain=ReceiveLogsDirect run --args "info warning error"
 
 # terminal tab 3
-./gradlew -Pmain=EmitLogDirect run --args 'info "Run. Run. Or it will explode"'
-./gradlew -Pmain=EmitLogDirect run --args 'warning "Run. Run. Or it will explode"'
-./gradlew -Pmain=EmitLogDirect run --args 'error "Run. Run. Or it will explode"'
+./gradlew -Pmain=EmitLogDirect run --args "info 'Run. Run. Or it will explode'"
+./gradlew -Pmain=EmitLogDirect run --args "warning 'Run. Run. Or it will explode'"
+./gradlew -Pmain=EmitLogDirect run --args "error 'Run. Run. Or it will explode'"
 ```
 
 #### [Tutorial five: Topics](https://www.rabbitmq.com/tutorials/tutorial-five-java.html)
