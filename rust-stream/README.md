@@ -7,7 +7,7 @@ The examples use [rabbitmq-stream-client](https://github.com/rabbitmq/rabbitmq-s
 
 These tutorials assume a RabbitMQ server node running locally using default ports and the [stream plugin enabled](https://www.rabbitmq.com/docs/stream#enabling-plugin).
 
-You can easily set this up by [starting RabbitMQ with Streams Enabled](https://www.rabbitmq.com/blog/2021/07/19/rabbitmq-streams-first-application).
+See [First Application With RabbitMQ Streams](https://www.rabbitmq.com/blog/2021/07/19/rabbitmq-streams-first-application), [Stream plugin documentation](https://www.rabbitmq.com/docs/stream) and [how to preconfigure plugins](https://www.rabbitmq.com/docs/plugins#enabled-plugins-file).
 
 ## Requirements
 
