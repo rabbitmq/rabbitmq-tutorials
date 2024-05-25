@@ -1,8 +1,10 @@
 # Go code for RabbitMQ tutorials
 
-
 Here you can find Go code examples from [RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.html).
 
+To successfully use the examples you will need a running RabbitMQ server with the [stream plugin enabled](https://www.rabbitmq.com/docs/stream#enabling-plugin).
+
+You can easily set this up by [starting RabbitMQ with Streams Enabled](https://www.rabbitmq.com/blog/2021/07/19/rabbitmq-streams-first-application).
 
 ## Requirements
 
