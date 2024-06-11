@@ -19,8 +19,8 @@ Remove the `-q` flag to get more information in case an example does not behave 
 [Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorials/tutorial-one-java-stream.html):
 
 ```
-./mvnw -q compile exec:java -Dexec.mainClass="Send"
-./mvnw -q compile exec:java -Dexec.mainClass="Receive"
+./mvnw -q compile exec:java '-Dexec.mainClass=Send'
+./mvnw -q compile exec:java '-Dexec.mainClass=Receive'
 ```
 
 To learn more, see [`rabbitmq/rabbitmq-stream-java-client`](https://github.com/rabbitmq/rabbitmq-stream-java-client).
