@@ -35,3 +35,7 @@ target/
 *.log
 .packages
 .python-version
+
+.classpath
+.project
+.settings
