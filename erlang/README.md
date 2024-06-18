@@ -4,18 +4,18 @@ Here you can find a Erlang code examples from [RabbitMQ
 tutorials](https://www.rabbitmq.com/getstarted.html).
 
 This code is using [RabbitMQ Erlang
-Client](https://hg.rabbitmq.com/rabbitmq-erlang-client/) ([User
+Client](https://github.com/rabbitmq/rabbitmq-server/tree/main/deps/amqp_client) ([User
 Guide](https://www.rabbitmq.com/erlang-client-user-guide.html)).
 
 ## Requirements
 
 To run this code you need at least [Erlang
-R13B03](https://www.erlang.org/download.html), on Ubuntu you can get it
+R13B03](https://www.erlang.org/downloads), on Ubuntu you can get it
 using apt:
 
     sudo apt-get install erlang
 
-You also need rebar3: https://rebar3.readme.io/docs/getting-started
+You also need rebar3: https://www.rebar3.org/docs/getting-started/
 
 You need Erlang Client binaries:
 
