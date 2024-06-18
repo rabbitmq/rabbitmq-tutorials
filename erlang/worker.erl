@@ -1,5 +1,5 @@
 #!/usr/bin/env escript
-%%! -pz ./_build/default/lib/amqp_client/ebin ./_build/default/lib/credentials_obfuscation/ebin ./_build/default/lib/jsx/ebin ./_build/default/lib/rabbit_common/ebin ./_build/default/lib/recon/ebin
+%%! -pz ./_build/default/lib/amqp_client/ebin ./_build/default/lib/credentials_obfuscation/ebin ./_build/default/lib/thoas/ebin ./_build/default/lib/rabbit_common/ebin ./_build/default/lib/recon/ebin
 
 -include_lib("amqp_client/include/amqp_client.hrl").
 
