@@ -47,3 +47,8 @@ You need Erlang Client binaries:
 
     rebar3 shell --eval 'receive_logs_topic:start(["*.rabbit"]), init:stop().'
     rebar3 shell --eval 'emit_log_topic:start(["red.rabbit", "Hello"]), init:stop().'
+
+[Tutorial Six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-python.html):
+
+    rebar3 shell --eval 'rpc_server:start(), init:stop().'
+    rebar3 shell --eval 'rpc_client:start(["10"]), init:stop().'

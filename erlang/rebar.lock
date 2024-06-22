@@ -3,9 +3,17 @@
  {<<"credentials_obfuscation">>,
   {pkg,<<"credentials_obfuscation">>,<<"3.4.0">>},
   1},
+ {<<"quickrand">>,
+  {git,"https://github.com/okeuday/quickrand.git",
+       {ref,"65332de501998764f437c3ffe05d744f582d7622"}},
+  1},
  {<<"rabbit_common">>,{pkg,<<"rabbit_common">>,<<"3.12.2">>},1},
  {<<"recon">>,{pkg,<<"recon">>,<<"2.5.3">>},2},
- {<<"thoas">>,{pkg,<<"thoas">>,<<"1.0.0">>},2}]}.
+ {<<"thoas">>,{pkg,<<"thoas">>,<<"1.0.0">>},2},
+ {<<"uuid">>,
+  {git,"https://github.com/okeuday/uuid.git",
+       {ref,"7c2d1320c8e61e0fe25a66ecf4761e4b5b5803d6"}},
+  0}]}.
 [
 {pkg_hash,[
  {<<"amqp_client">>, <<"19770F1075FE697BEA8AA77E29DF38BD8A439F8D9F1D8A8FCCB56AE0C7AF73CD">>},
