@@ -25,30 +25,30 @@ You need Erlang Client binaries:
 
 [Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorials/tutorial-one-python.html):
 
-    rebar3 shell --eval 'send:start(), init:stop().'
-    rebar3 shell --eval 'recv:start(), init:stop().'
+    rebar3 send
+    rebar3 recv
 
 [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorials/tutorial-two-python.html):
 
-    rebar3 shell --eval 'new_task:start(["A very hard task which takes two seconds"]), init:stop().'
-    rebar3 shell --eval 'worker:start(), init:stop().'
+    rebar3 new_task
+    rebar3 worker
 
 [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorials/tutorial-three-python.html):
 
-    rebar3 shell --eval 'receive_logs:start(), init:stop().'
-    rebar3 shell --eval 'emit_log:start(["Info: This is the log message"]), init:stop().'
+    rebar3 receive_logs
+    rebar3 emit_log
 
 [Tutorial four: Routing](https://www.rabbitmq.com/tutorials/tutorial-four-python.html):
 
-    rebar3 shell --eval 'receive_logs_direct:start(["info"]), init:stop().'
-    rebar3 shell --eval 'emit_log_direct:start(["info", "Hello"]), init:stop().'
+    rebar3 receive_logs_direct
+    rebar3 emit_log_direct
 
 [Tutorial five: Topics](https://www.rabbitmq.com/tutorials/tutorial-five-python.html):
 
-    rebar3 shell --eval 'receive_logs_topic:start(["*.rabbit"]), init:stop().'
-    rebar3 shell --eval 'emit_log_topic:start(["red.rabbit", "Hello"]), init:stop().'
+    rebar3 receive_logs_topic
+    rebar3 emit_log_topic
 
 [Tutorial Six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-python.html):
 
-    rebar3 shell --eval 'rpc_server:start(), init:stop().'
-    rebar3 shell --eval 'rpc_client:start(["10"]), init:stop().'
+    rebar3 rpc_server
+    rebar3 rpc_client
