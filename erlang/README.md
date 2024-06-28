@@ -19,31 +19,36 @@ You also need rebar3: https://www.rebar3.org/docs/getting-started/
 
 You need Erlang Client binaries:
 
-    make all
+    rebar3 compile
 
 ## Code
 
 [Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorials/tutorial-one-python.html):
 
-    ./send.erl
-    ./receive.erl
+    rebar3 send
+    rebar3 recv
 
 [Tutorial two: Work Queues](https://www.rabbitmq.com/tutorials/tutorial-two-python.html):
 
-    ./new_task.erl "A very hard task which takes two seconds.."
-    ./worker.erl
+    rebar3 new_task
+    rebar3 worker
 
 [Tutorial three: Publish/Subscribe](https://www.rabbitmq.com/tutorials/tutorial-three-python.html):
 
-    ./receive_logs.erl
-    ./emit_log.erl "info: This is the log message"
+    rebar3 receive_logs
+    rebar3 emit_log
 
 [Tutorial four: Routing](https://www.rabbitmq.com/tutorials/tutorial-four-python.html):
 
-    ./receive_logs_direct.erl info
-    ./emit_log_direct.erl info Hello
+    rebar3 receive_logs_direct
+    rebar3 emit_log_direct
 
 [Tutorial five: Topics](https://www.rabbitmq.com/tutorials/tutorial-five-python.html):
 
-    ./receive_logs_topic.erl "*.rabbit"
-    ./emit_log_topic.erl red.rabbit Hello
+    rebar3 receive_logs_topic
+    rebar3 emit_log_topic
+
+[Tutorial Six: RPC](https://www.rabbitmq.com/tutorials/tutorial-six-python.html):
+
+    rebar3 rpc_server
+    rebar3 rpc_client

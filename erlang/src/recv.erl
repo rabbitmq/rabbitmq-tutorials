@@ -1,9 +1,9 @@
-#!/usr/bin/env escript
-%%! -pz ./_build/default/lib/amqp_client/ebin ./_build/default/lib/credentials_obfuscation/ebin ./_build/default/lib/thoas/ebin ./_build/default/lib/rabbit_common/ebin ./_build/default/lib/recon/ebin 
+-module(recv).
+-export([start/0]).
 
 -include_lib("amqp_client/include/amqp_client.hrl").
 
-main(_) ->
+start() ->
     {ok, Connection} =
         amqp_connection:start(#amqp_params_network{host = "localhost", heartbeat = 30}),
     {ok, Channel} = amqp_connection:open_channel(Connection),
