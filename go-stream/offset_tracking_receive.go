@@ -1,11 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"github.com/rabbitmq/rabbitmq-stream-go-client/pkg/amqp"
-	"github.com/rabbitmq/rabbitmq-stream-go-client/pkg/stream"
 	"os"
 	"sync/atomic"
+
+	"github.com/rabbitmq/rabbitmq-stream-go-client/pkg/amqp"
+	"github.com/rabbitmq/rabbitmq-stream-go-client/pkg/stream"
 )
 
 func main() {
@@ -34,7 +36,6 @@ func main() {
 		}
 		if atomic.AddInt64(&messageCount, 1)%10 == 0 {
 			consumerContext.Consumer.StoreOffset()
-			fmt.Println("storing offset")
 		}
 		if string(message.GetData()) == "marker" {
 			lastOffset.Store(consumerContext.Consumer.GetOffset())
@@ -44,11 +45,20 @@ func main() {
 		}
 	}
 
+	consumerName := "offset-tracking-tutorial"
+	var offsetSpecification stream.OffsetSpecification
+	storedOffset, err := env.QueryOffset(consumerName, streamName)
+	if errors.Is(err, stream.OffsetNotFoundError) {
+		offsetSpecification = stream.OffsetSpecification{}.First()
+	} else {
+		offsetSpecification = stream.OffsetSpecification{}.Offset(storedOffset + 1)
+	}
+
 	_, err = env.NewConsumer(streamName, messagesHandler,
 		stream.NewConsumerOptions().
 			SetManualCommit().
-			SetConsumerName("offset-tracking-tutorial").
-			SetOffset(stream.OffsetSpecification{}.LastConsumed()))
+			SetConsumerName(consumerName).
+			SetOffset(offsetSpecification))
 	CheckErrReceive(err)
 	fmt.Println("Started consuming...")
 	_ = <-ch
