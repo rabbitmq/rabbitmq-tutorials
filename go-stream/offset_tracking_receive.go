@@ -35,12 +35,11 @@ func main() {
 			fmt.Println("First message received.")
 		}
 		if atomic.AddInt64(&messageCount, 1)%10 == 0 {
-			consumerContext.Consumer.StoreOffset()
+			_ = consumerContext.Consumer.StoreOffset()
 		}
 		if string(message.GetData()) == "marker" {
 			lastOffset.Store(consumerContext.Consumer.GetOffset())
-			consumerContext.Consumer.StoreOffset()
-			consumerContext.Consumer.Close()
+			_ = consumerContext.Consumer.StoreOffset()
 			ch <- true
 		}
 	}
@@ -54,7 +53,7 @@ func main() {
 		offsetSpecification = stream.OffsetSpecification{}.Offset(storedOffset + 1)
 	}
 
-	_, err = env.NewConsumer(streamName, messagesHandler,
+	consumer, err := env.NewConsumer(streamName, messagesHandler,
 		stream.NewConsumerOptions().
 			SetManualCommit().
 			SetConsumerName(consumerName).
@@ -62,7 +61,7 @@ func main() {
 	CheckErrReceive(err)
 	fmt.Println("Started consuming...")
 	_ = <-ch
-
+	_ = consumer.Close()
 	fmt.Printf("Done consuming, first offset %d, last offset %d.\n", firstOffset, lastOffset.Load())
 }
 
