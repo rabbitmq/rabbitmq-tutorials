@@ -3,11 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
-	"os"
-	"sync/atomic"
-
 	"github.com/rabbitmq/rabbitmq-stream-go-client/pkg/amqp"
 	"github.com/rabbitmq/rabbitmq-stream-go-client/pkg/stream"
+	"os"
+	"sync/atomic"
 )
 
 func main() {
@@ -27,7 +26,8 @@ func main() {
 	)
 	CheckErrReceive(err)
 
-	var firstOffset, messageCount int64 = -1, 0
+	var firstOffset int64 = -1
+	var messageCount int64 = -1
 	var lastOffset atomic.Int64
 	ch := make(chan bool)
 	messagesHandler := func(consumerContext stream.ConsumerContext, message *amqp.Message) {
@@ -45,8 +45,8 @@ func main() {
 		}
 	}
 
-	consumerName := "offset-tracking-tutorial"
 	var offsetSpecification stream.OffsetSpecification
+	consumerName := "offset-tracking-tutorial"
 	storedOffset, err := env.QueryOffset(consumerName, streamName)
 	if errors.Is(err, stream.OffsetNotFoundError) {
 		offsetSpecification = stream.OffsetSpecification{}.First()
@@ -64,8 +64,6 @@ func main() {
 	_ = <-ch
 
 	fmt.Printf("Done consuming, first offset %d, last offset %d.\n", firstOffset, lastOffset.Load())
-	CheckErrReceive(err)
-
 }
 
 func CheckErrReceive(err error) {

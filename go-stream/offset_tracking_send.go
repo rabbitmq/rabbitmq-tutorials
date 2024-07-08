@@ -28,8 +28,8 @@ func main() {
 	CheckErrSend(err)
 
 	messageCount := 100
-	ch := make(chan bool)
 	chPublishConfirm := producer.NotifyPublishConfirmation()
+	ch := make(chan bool)
 	handlePublishConfirm(chPublishConfirm, messageCount, ch)
 
 	fmt.Printf("Publishing %d messages\n", messageCount)
@@ -44,7 +44,7 @@ func main() {
 		CheckErrSend(err)
 	}
 	_ = <-ch
-	fmt.Println("Messages confirmed")
+	fmt.Println("Messages confirmed.")
 
 	err = producer.Close()
 	CheckErrSend(err)
