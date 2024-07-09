@@ -40,6 +40,7 @@ func main() {
 		if string(message.GetData()) == "marker" {
 			lastOffset.Store(consumerContext.Consumer.GetOffset())
 			_ = consumerContext.Consumer.StoreOffset()
+            _ = consumerContext.Consumer.Close()
 			ch <- true
 		}
 	}
@@ -53,7 +54,7 @@ func main() {
 		offsetSpecification = stream.OffsetSpecification{}.Offset(storedOffset + 1)
 	}
 
-	consumer, err := env.NewConsumer(streamName, messagesHandler,
+	_, err = env.NewConsumer(streamName, messagesHandler,
 		stream.NewConsumerOptions().
 			SetManualCommit().
 			SetConsumerName(consumerName).
@@ -61,7 +62,6 @@ func main() {
 	CheckErrReceive(err)
 	fmt.Println("Started consuming...")
 	_ = <-ch
-	_ = consumer.Close()
 	fmt.Printf("Done consuming, first offset %d, last offset %d.\n", firstOffset, lastOffset.Load())
 }
 
