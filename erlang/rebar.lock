@@ -1,0 +1,30 @@
+{"1.2.0",
+[{<<"amqp_client">>,{pkg,<<"amqp_client">>,<<"3.12.2">>},0},
+ {<<"credentials_obfuscation">>,
+  {pkg,<<"credentials_obfuscation">>,<<"3.4.0">>},
+  1},
+ {<<"quickrand">>,
+  {git,"https://github.com/okeuday/quickrand.git",
+       {ref,"65332de501998764f437c3ffe05d744f582d7622"}},
+  1},
+ {<<"rabbit_common">>,{pkg,<<"rabbit_common">>,<<"3.12.2">>},1},
+ {<<"recon">>,{pkg,<<"recon">>,<<"2.5.3">>},2},
+ {<<"thoas">>,{pkg,<<"thoas">>,<<"1.0.0">>},2},
+ {<<"uuid">>,
+  {git,"https://github.com/okeuday/uuid.git",
+       {ref,"7c2d1320c8e61e0fe25a66ecf4761e4b5b5803d6"}},
+  0}]}.
+[
+{pkg_hash,[
+ {<<"amqp_client">>, <<"19770F1075FE697BEA8AA77E29DF38BD8A439F8D9F1D8A8FCCB56AE0C7AF73CD">>},
+ {<<"credentials_obfuscation">>, <<"34E18B126B3AEFD6E8143776FBE1CECEEA6792307C99AC5EE8687911F048CFD7">>},
+ {<<"rabbit_common">>, <<"FA46F2954F6F5E28D69AFDEFB10F15C4782402411FAC743BC2459A07DCF83B4C">>},
+ {<<"recon">>, <<"739107B9050EA683C30E96DE050BC59248FD27EC147696F79A8797FF9FA17153">>},
+ {<<"thoas">>, <<"567C03902920827A18A89F05B79A37B5BF93553154B883E0131801600CF02CE0">>}]},
+{pkg_hash_ext,[
+ {<<"amqp_client">>, <<"004BBF9A4129751195660D5347FD89675564C298979C834189E9B24677AFAE94">>},
+ {<<"credentials_obfuscation">>, <<"738ACE0ED5545D2710D3F7383906FC6F6B582D019036E5269C4DBD85DBCED566">>},
+ {<<"rabbit_common">>, <<"33FE4EB510B1E72A2734B9C3D081F76059A07ED7D76C9B9403276AF9D5AFC1B1">>},
+ {<<"recon">>, <<"6C6683F46FD4A1DFD98404B9F78DCABC7FCD8826613A89DCB984727A8C3099D7">>},
+ {<<"thoas">>, <<"FC763185B932ECB32A554FB735EE03C3B6B1B31366077A2427D2A97F3BD26735">>}]}
+].
