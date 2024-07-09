@@ -40,7 +40,7 @@ func main() {
 		if string(message.GetData()) == "marker" {
 			lastOffset.Store(consumerContext.Consumer.GetOffset())
 			_ = consumerContext.Consumer.StoreOffset()
-            _ = consumerContext.Consumer.Close()
+			_ = consumerContext.Consumer.Close()
 			ch <- true
 		}
 	}

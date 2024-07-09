@@ -23,7 +23,11 @@ public class OffsetTrackingSend {
       IntStream.range(0, messageCount).forEach(i -> {
         String body = i == messageCount - 1 ? "marker" : "hello";
         producer.send(producer.messageBuilder().addData(body.getBytes(UTF_8)).build(),
-            ctx -> confirmedLatch.countDown());
+            ctx -> {
+              if (ctx.isConfirmed()) {
+                confirmedLatch.countDown();
+              }
+            });
       });
 
       boolean completed = confirmedLatch.await(60, TimeUnit.SECONDS);
