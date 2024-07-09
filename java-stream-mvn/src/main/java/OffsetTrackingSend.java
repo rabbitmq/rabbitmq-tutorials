@@ -19,7 +19,7 @@ public class OffsetTrackingSend {
 
       int messageCount = 100;
       CountDownLatch confirmedLatch = new CountDownLatch(messageCount);
-      System.out.printf("Publishing %d messages%n", messageCount);
+      System.out.printf("Publishing %d messages...%n", messageCount);
       IntStream.range(0, messageCount).forEach(i -> {
         String body = i == messageCount - 1 ? "marker" : "hello";
         producer.send(producer.messageBuilder().addData(body.getBytes(UTF_8)).build(),

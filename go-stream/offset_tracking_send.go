@@ -32,7 +32,7 @@ func main() {
 	ch := make(chan bool)
 	handlePublishConfirm(chPublishConfirm, messageCount, ch)
 
-	fmt.Printf("Publishing %d messages\n", messageCount)
+	fmt.Printf("Publishing %d messages...\n", messageCount)
 	for i := 0; i < messageCount; i++ {
 		var body string
 		if i == messageCount-1 {
