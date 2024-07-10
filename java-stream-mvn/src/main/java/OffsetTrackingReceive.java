@@ -21,7 +21,7 @@ public class OffsetTrackingReceive {
       AtomicLong firstOffset = new AtomicLong(-1);
       AtomicLong lastOffset = new AtomicLong(0);
       AtomicLong messageCount = new AtomicLong(0);
-      CountDownLatch consumeLatch = new CountDownLatch(1);
+      CountDownLatch consumedLatch = new CountDownLatch(1);
       environment.consumerBuilder().stream(stream)
           .offset(offsetSpecification)
           .name("offset-tracking-tutorial")
@@ -39,13 +39,13 @@ public class OffsetTrackingReceive {
                   lastOffset.set(ctx.offset());
                   ctx.storeOffset();
                   ctx.consumer().close();
-                  consumeLatch.countDown();
+                  consumedLatch.countDown();
                 }
               })
           .build();
       System.out.println("Started consuming...");
 
-      consumeLatch.await(60, TimeUnit.MINUTES);
+      consumedLatch.await(60, TimeUnit.MINUTES);
 
       System.out.printf("Done consuming, first offset %d, last offset %d.%n",
           firstOffset.get(), lastOffset.get());
