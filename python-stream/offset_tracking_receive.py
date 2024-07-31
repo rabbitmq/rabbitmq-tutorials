@@ -1,5 +1,4 @@
 import asyncio
-import signal
 
 from rstream import (
     AMQPMessage,
@@ -57,55 +56,59 @@ async def on_message(msg: AMQPMessage, message_context: MessageContext):
 
 
 async def consume():
+    global first_offset
     consumer = Consumer(
         host="localhost",
         port=5552,
         username="guest",
         password="guest",
     )
-    await consumer.start()
 
-    loop = asyncio.get_event_loop()
-    loop.add_signal_handler(
-        signal.SIGINT, lambda: asyncio.create_task(consumer.close())
-    )
-    print("Starting consuming Press control +C to close")
-    global first_offset
-    first_offset = -1
     try:
-        # will raise an exception if store_offset wasn't invoked before
-        first_offset = await consumer.query_offset(
-            stream=STREAM, subscriber_name="subscriber_1"
+        await consumer.start()
+
+        print("Starting consuming Press control +C to close")
+        first_offset = -1
+        try:
+            # will raise an exception if store_offset wasn't invoked before
+            first_offset = await consumer.query_offset(
+                stream=STREAM, subscriber_name="subscriber_1"
+            )
+        except OffsetNotFound as offset_exception:
+            print(f"Offset not previously stored: {offset_exception}")
+
+        except StreamDoesNotExist as stream_exception:
+            print(f"Stream does not exist: {stream_exception}")
+            exit(1)
+
+        except ServerError as server_error:
+            print(f"Server error: {server_error}")
+            exit(1)
+
+        # if no offset was previously stored start from the first offset
+        await consumer.subscribe(
+            stream=STREAM,
+            subscriber_name="subscriber_1",
+            callback=on_message,
+            decoder=amqp_decoder,
+            offset_specification=ConsumerOffsetSpecification(
+                OffsetType.OFFSET, first_offset+1
+            ),
         )
-    except OffsetNotFound as offset_exception:
-        print(f"Offset not previously stored: {offset_exception}")
+        await consumer.run()
+        # give time to the consumer task to close the consumer
 
-    except StreamDoesNotExist as stream_exception:
-        print(f"Stream does not exist: {stream_exception}")
-        exit(1)
+        await asyncio.sleep(1)
 
-    except ServerError as server_error:
-        print(f"Server error: {server_error}")
-        exit(1)
-
-    # if no offset was previously stored start from the first offset
-    await consumer.subscribe(
-        stream=STREAM,
-        subscriber_name="subscriber_1",
-        callback=on_message,
-        decoder=amqp_decoder,
-        offset_specification=ConsumerOffsetSpecification(
-            OffsetType.OFFSET, first_offset+1
-        ),
-    )
-    await consumer.run()
-    # give time to the consumer task to close the consumer
-    print(
-        "Done consuming first_offset: {} last_offset {} ".format(
-            first_offset+1, last_offset
+    except (KeyboardInterrupt, asyncio.exceptions.CancelledError):
+        print(
+            "Done consuming first_offset: {} last_offset {} ".format(
+                first_offset+1, last_offset
+            )
         )
-    )
-    await asyncio.sleep(1)
+
+        await consumer.close()
 
 
-asyncio.run(consume())
+with asyncio.Runner() as runner:
+    runner.run(consume())
