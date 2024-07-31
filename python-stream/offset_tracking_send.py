@@ -4,8 +4,8 @@ from rstream import AMQPMessage, ConfirmationStatus, Producer
 
 STREAM = "stream-offset-tracking-python"
 MESSAGES = 100
-# 5GB
-STREAM_RETENTION = 5000000000
+# 2GB
+STREAM_RETENTION = 2000000000
 confirmed_messages = 0
 all_confirmed_messages_cond = asyncio.Condition()
 
@@ -52,7 +52,7 @@ async def publish():
         async with all_confirmed_messages_cond:
             await all_confirmed_messages_cond.wait()
 
-        print("Messages confirmed.")
+        print("Messages confirmed: true")
 
 
 asyncio.run(publish())

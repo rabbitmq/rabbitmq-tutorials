@@ -21,5 +21,10 @@ Code examples are executed via `python3`:
     python3 send.py
     python3 receive.py
 
+[Tutorial two: "Offset tracking"]():
+
+    python3 offset_tracking_send.py
+    python3 offset_tracking_receive.py
+
 
 To learn more, see [`rqweeze/rstream`](https://github.com/qweeze/rstream).
