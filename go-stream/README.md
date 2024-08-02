@@ -23,4 +23,9 @@ Code examples are executed via `go run`:
     go run receive.go
 
 
+[Tutorial two: Offset Tracking](https://www.rabbitmq.com/tutorials/tutorial-two-go-stream.html):
+
+    go run offset_tracking_send.go
+    go run offset_tracking_receive.go
+
 To learn more, see [`rabbitmq/rabbitmq-stream-go-client`](https://github.com/rabbitmq/rabbitmq-stream-go-client).
