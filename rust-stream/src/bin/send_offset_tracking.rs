@@ -60,7 +60,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     notify_on_send.notified().await;
-    println!("Messages confirmed.");
+    println!("Messages confirmed: True");
     producer.close().await?;
     Ok(())
 }
