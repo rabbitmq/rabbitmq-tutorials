@@ -1,9 +1,9 @@
 use futures::StreamExt;
 use rabbitmq_stream_client::error::StreamCreateError;
 use rabbitmq_stream_client::types::{ByteCapacity, OffsetSpecification, ResponseCode};
-use std::io::stdin;
 use std::sync::atomic::{AtomicI64, Ordering};
 use std::sync::Arc;
+use tokio::sync::Notify;
 use tokio::task;
 
 #[tokio::main]
@@ -14,6 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let received_messages = Arc::new(AtomicI64::new(-1));
     let first_offset = Arc::new(AtomicI64::new(-1));
     let last_offset = Arc::new(AtomicI64::new(-1));
+    let notify_on_close = Arc::new(Notify::new());
     let create_response = environment
         .stream_creator()
         .max_length(ByteCapacity::GB(2))
@@ -41,8 +42,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .unwrap();
 
-    println!("Starting consuming");
-    println!("Press any key to close the consumer");
+    println!("Started consuming");
 
     let mut stored_offset: u64 = consumer.query_offset().await.unwrap_or_else(|_| 0);
 
@@ -59,13 +59,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let first_cloned_offset = first_offset.clone();
     let last_cloned_offset = last_offset.clone();
+    let notify_on_close_cloned = notify_on_close.clone();
 
     task::spawn(async move {
         while let Some(delivery) = consumer.next().await {
             let d = delivery.unwrap();
 
             if first_offset.load(Ordering::Relaxed) == -1 {
-                println!("consuming first message");
+                println!("First message received");
                 _ = first_offset.compare_exchange(
                     first_offset.load(Ordering::Relaxed),
                     d.offset() as i64,
@@ -85,13 +86,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     last_offset.store(d.offset() as i64, Ordering::Relaxed);
                     let handle = consumer.handle();
                     _ = handle.close().await;
+                    notify_on_close_cloned.notify_one();
 
                 }
             }
         }
     });
 
-    _ = stdin().read_line(&mut "".to_string());
+    notify_on_close.notified().await;
 
     if first_cloned_offset.load(Ordering::Relaxed) != -1 {
         println!(
