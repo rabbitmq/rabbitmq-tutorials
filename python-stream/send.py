@@ -22,7 +22,6 @@ async def send():
         print(" [x] Hello, World! message sent")
 
         input(" [x] Press Enter to close the producer  ...")
-        await producer.close()
 
 with asyncio.Runner() as runner:
     runner.run(send())
