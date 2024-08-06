@@ -1,5 +1,4 @@
 import asyncio
-import signal
 
 from rstream import (
     AMQPMessage,
@@ -15,30 +14,28 @@ STREAM_RETENTION = 5000000000
 
 
 async def receive():
-    consumer = Consumer(host="localhost", username="guest", password="guest")
-    await consumer.create_stream(
-        STREAM_NAME, exists_ok=True, arguments={"MaxLengthBytes": STREAM_RETENTION}
-    )
+    async with Consumer(host="localhost", username="guest", password="guest") as consumer:
+        await consumer.create_stream(
+            STREAM_NAME, exists_ok=True, arguments={"max-length-bytes": STREAM_RETENTION}
+        )
 
-    loop = asyncio.get_event_loop()
-    loop.add_signal_handler(
-        signal.SIGINT, lambda: asyncio.create_task(consumer.close())
-    )
+        async def on_message(msg: AMQPMessage, message_context: MessageContext):
+            stream = message_context.consumer.get_stream(message_context.subscriber_name)
+            print("Got message: {} from stream {}".format(msg, stream))
 
-    async def on_message(msg: AMQPMessage, message_context: MessageContext):
-        stream = message_context.consumer.get_stream(message_context.subscriber_name)
-        print("Got message: {} from stream {}".format(msg, stream))
-
-    print("Press control +C to close")
-    await consumer.start()
-    await consumer.subscribe(
-        stream=STREAM_NAME,
-        callback=on_message,
-        offset_specification=ConsumerOffsetSpecification(OffsetType.FIRST, None),
-    )
-    await consumer.run()
-    # give time to the consumer task to close the consumer
-    await asyncio.sleep(1)
+        print("Press control + C to close")
+        await consumer.start()
+        await consumer.subscribe(
+            stream=STREAM_NAME,
+            callback=on_message,
+            offset_specification=ConsumerOffsetSpecification(OffsetType.FIRST, None),
+        )
+        try:
+            await consumer.run()
+        except (KeyboardInterrupt, asyncio.CancelledError):
+            print("Closing Consumer...")
+            return
 
 
-asyncio.run(receive())
+with asyncio.Runner() as runner:
+    runner.run(receive())

@@ -14,7 +14,7 @@ async def send():
         password="guest",
     ) as producer:
         await producer.create_stream(
-            STREAM_NAME, exists_ok=True, arguments={"MaxLengthBytes": STREAM_RETENTION}
+            STREAM_NAME, exists_ok=True, arguments={"max-length-bytes": STREAM_RETENTION}
         )
 
         await producer.send(stream=STREAM_NAME, message=b"Hello, World!")
@@ -23,5 +23,5 @@ async def send():
 
         input(" [x] Press Enter to close the producer  ...")
 
-
-asyncio.run(send())
+with asyncio.Runner() as runner:
+    runner.run(send())
