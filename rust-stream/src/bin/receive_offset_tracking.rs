@@ -11,7 +11,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     use rabbitmq_stream_client::Environment;
     let environment = Environment::builder().build().await?;
     let stream = "stream-offset-tracking-rust";
-    let received_messages = Arc::new(AtomicI64::new(-1));
     let first_offset = Arc::new(AtomicI64::new(-1));
     let last_offset = Arc::new(AtomicI64::new(-1));
     let notify_on_close = Arc::new(Notify::new());
@@ -46,7 +45,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut stored_offset: u64 = consumer.query_offset().await.unwrap_or_else(|_| 0);
 
-    if stored_offset >  0 {
+    if stored_offset > 0 {
         stored_offset += 1;
     }
     consumer = environment
@@ -62,6 +61,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let notify_on_close_cloned = notify_on_close.clone();
 
     task::spawn(async move {
+        let mut received_messages = -1;
         while let Some(delivery) = consumer.next().await {
             let d = delivery.unwrap();
 
@@ -74,8 +74,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     Ordering::Relaxed,
                 );
             }
-
-            if received_messages.fetch_add(1, Ordering::Relaxed) % 10 == 0
+            received_messages = received_messages + 1;
+            if received_messages % 10 == 0
                 || String::from_utf8_lossy(d.message().data().unwrap()).contains("marker")
             {
                 let _ = consumer
@@ -87,7 +87,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let handle = consumer.handle();
                     _ = handle.close().await;
                     notify_on_close_cloned.notify_one();
-
                 }
             }
         }
