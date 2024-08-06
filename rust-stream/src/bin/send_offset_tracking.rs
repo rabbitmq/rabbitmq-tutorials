@@ -8,7 +8,7 @@ use tokio::sync::Notify;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     use rabbitmq_stream_client::Environment;
     let environment = Environment::builder().build().await?;
-    let stream = "stream-offset-tracking-rust";
+    let stream = "pippo";
     let message_count = 100;
     let confirmed_messages = Arc::new(AtomicU32::new(0));
     let notify_on_send = Arc::new(Notify::new());

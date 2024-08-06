@@ -542,9 +542,9 @@ dependencies = [
 
 [[package]]
 name = "rabbitmq-stream-client"
-version = "0.4.2"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88174e13a7d829a79af91437e439722bd6b095c819f7f2973c25e6ff2b94e173"
+checksum = "38019b93705e3371296fe57a10740a2ea669fee1a210ad7ff647a26e8ccd697e"
 dependencies = [
  "async-trait",
  "bytes",
