@@ -87,6 +87,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let handle = consumer.handle();
                     _ = handle.close().await;
                     notify_on_close_cloned.notify_one();
+                    break;
                 }
             }
         }
