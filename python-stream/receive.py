@@ -4,8 +4,8 @@ import signal
 from rstream import (
     AMQPMessage,
     Consumer,
-    MessageContext,
     ConsumerOffsetSpecification,
+    MessageContext,
     OffsetType,
 )
 
