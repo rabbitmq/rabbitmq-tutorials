@@ -20,3 +20,8 @@ Each cargo command should be launched in a separate shell.
 
     cargo run --bin receive
     cargo run --bin send
+
+#### [Tutorial one: "Offset tracking!"](https://www.rabbitmq.com/tutorials/tutorial-one-rust-stream.html)
+
+    cargo run --bin send_offset_tracking
+    cargo run --bin receive_offset_tracking
