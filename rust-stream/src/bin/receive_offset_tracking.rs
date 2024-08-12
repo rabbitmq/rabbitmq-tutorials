@@ -7,8 +7,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     use rabbitmq_stream_client::Environment;
     let environment = Environment::builder().build().await?;
     let stream = "stream-offset-tracking-rust";
-    let mut first_offset: i64 = -1;
-    let mut last_offset: i64 = -1;
+    let mut first_offset: Option<u64> = None;
+    let mut last_offset: Option<u64> = None;
     let create_response = environment
         .stream_creator()
         .max_length(ByteCapacity::GB(2))
@@ -55,8 +55,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     while let Some(delivery) = consumer.next().await {
         let d = delivery.unwrap();
 
-        if first_offset == -1 {
-            first_offset = d.offset() as i64;
+        if !first_offset.is_some()  {
+            println!("First message received");
+            first_offset = Some(d.offset());
         }
         received_messages = received_messages + 1;
         if received_messages % 10 == 0
@@ -67,7 +68,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .await
                 .unwrap_or_else(|e| println!("Err: {}", e));
             if String::from_utf8_lossy(d.message().data().unwrap()).contains("marker") {
-                last_offset = d.offset() as i64;
+                last_offset = Some(d.offset());
                 let handle = consumer.handle();
                 _ = handle.close().await;
                 break;
@@ -75,11 +76,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    if first_offset != -1 {
+    if first_offset.is_some() {
         println!(
-            "Done consuming first_offset: {:?} last_offset: {:?}  ",
-            first_offset, last_offset
-        );
+            "Done consuming first_offset: {:?} last_offset: {:?}  ", first_offset.unwrap(), last_offset.unwrap())
     }
 
     Ok(())
