@@ -30,6 +30,7 @@ The following ports are available:
  * [Common Lisp](./common-lisp)
  * [Dart](./dart)
  * [Elixir](./elixir) 
+ * [Elixir (Streams)](./elixir-stream) 
  * [Erlang](./erlang)
  * [Go](./go)
  * [Haskell](./haskell)

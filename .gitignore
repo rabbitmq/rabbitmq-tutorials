@@ -18,6 +18,10 @@ ruby*/gems/
 venv/*
 ruby*/rubygems*
 
+elixir-stream/deps
+elixir-stream/_build
+elixir-stream/.elixir_ls
+
 java*/.idea/workspace.xml
 java*/.idea/encodings.xml
 *~
