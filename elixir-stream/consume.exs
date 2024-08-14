@@ -9,7 +9,9 @@ Mix.install([
 # First we start a Connection to the RabbitMQ Server
 {:ok, connection} = RabbitMQStream.Connection.start_link()
 
-# We can assume the stream already exists as this sample is meant to be run after the 'publish.exs' sample
+# We can assume the stream doesn't exist yet, and attempt to create it. If it already exists,
+# it should be still be good to go.
+RabbitMQStream.Connection.create_stream(connection, "my_stream")
 
 # Now we can subscribe to the stream, receiving up to 1 chunk.
 {:ok, subscription_id} =

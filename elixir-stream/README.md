@@ -14,7 +14,12 @@ Code examples are executed via `elixir`:
 
 Tutorial one: "Hello World!":
 
-    elixir publish.exs
-    elixir consume.exs
+``` shell
+# run the publisher
+elixir publish.exs
+
+# run the consumer
+elixir consume.exs
+```
 
 To learn more, see [`VictorGaiva/rabbitmq-stream`](https://github.com/VictorGaiva/rabbitmq-stream).
