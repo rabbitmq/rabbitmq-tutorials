@@ -21,7 +21,7 @@ Code examples are executed via `python3`:
     python3 send.py
     python3 receive.py
 
-[Tutorial two: "Offset tracking"]():
+[Tutorial two: "Offset tracking"](https://www.rabbitmq.com/tutorials/tutorial-two-python-stream):
 
     python3 offset_tracking_send.py
     python3 offset_tracking_receive.py
