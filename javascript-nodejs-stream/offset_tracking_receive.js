@@ -19,8 +19,7 @@ async function main() {
   let offsetSpecification = rabbit.Offset.first();
   try {
     const offset = await client.queryOffset({ reference: consumerRef, stream: streamName });
-    firstOffset = offset + 1n;
-    offsetSpecification = rabbit.Offset.offset(firstOffset);
+    offsetSpecification = rabbit.Offset.offset(offset + 1n);
   } catch (e) {}
 
   let lastOffset = offsetSpecification.value;
@@ -34,7 +33,6 @@ async function main() {
         console.log("First message received");
       }
       if (messageCount % 10 === 0) {
-        console.log("Storing offset");
         await consumer.storeOffset(message.offset);
       }
       if (message.content.toString() === "marker") {
@@ -43,6 +41,7 @@ async function main() {
         await consumer.storeOffset(message.offset);
         console.log(`Done consuming, first offset was ${firstOffset}, last offset was ${lastOffset}`);
         await consumer.close(true);
+        process.exit(0);
       }
     }
   );

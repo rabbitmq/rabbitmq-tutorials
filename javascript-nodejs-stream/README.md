@@ -14,7 +14,18 @@ Apart from [Node.js](https://nodejs.org/en/download/), these examples use the [`
 
 Code examples are executed via `npm`:
 
-    npm run publish
-    npm run receive
+[Tutorial one: "Hello World!"](https://www.rabbitmq.com/tutorials/tutorial-one-javascript-stream):
+
+```shell
+npm run send
+npm run receive
+```
+
+[Tutorial two: Offset Tracking](https://www.rabbitmq.com/tutorials/tutorial-two-javascript-stream):
+
+```shell
+npm run offset-tracking-publish
+npm run offset-tracking-receive
+```
 
 To learn more, see [`coders51/rabbitmq-stream-js-client`](https://github.com/coders51/rabbitmq-stream-js-client).
