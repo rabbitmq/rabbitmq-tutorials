@@ -39,15 +39,15 @@ async function main() {
         console.log("Marker found");
         lastOffset = message.offset;
         await consumer.storeOffset(message.offset);
-        console.log(`Done consuming, first offset was ${firstOffset}, last offset was ${lastOffset}`);
         await consumer.close(true);
-        process.exit(0);
       }
     }
   );
 
   console.log(`Start consuming...`);
   await sleep(2000);
+  console.log(`Done consuming, first offset was ${firstOffset}, last offset was ${lastOffset}`);
+  process.exit(0);
 }
 
 main()
