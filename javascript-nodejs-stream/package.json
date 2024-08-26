@@ -9,6 +9,6 @@
     "receive": "node receive.js"
   },
   "dependencies": {
-    "rabbitmq-stream-js-client": "^0.4.1"
+    "rabbitmq-stream-js-client": "^0.4.2"
   }
 }
