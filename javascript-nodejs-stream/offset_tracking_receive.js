@@ -3,8 +3,6 @@ const rabbit = require("rabbitmq-stream-js-client");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
-  const streamName = "stream-offset-tracking-javascript";
-
   console.log("Connecting...");
   const client = await rabbit.connect({
     hostname: "localhost",
@@ -13,6 +11,10 @@ async function main() {
     password: "guest",
     vhost: "/",
   });
+
+  console.log("Making sure the stream exists...");
+  const streamName = "stream-offset-tracking-javascript";
+  await client.createStream({ stream: streamName, arguments: {} });
 
   const consumerRef = "offset-tracking-tutorial";
   let firstOffset = undefined;
@@ -47,13 +49,10 @@ async function main() {
   console.log(`Start consuming...`);
   await sleep(2000);
   console.log(`Done consuming, first offset was ${firstOffset}, last offset was ${lastOffset}`);
-  process.exit(0);
 }
 
 main()
-  .then(async () => {
-    await new Promise(function () {});
-  })
+  .then(async () => process.exit(0))
   .catch((res) => {
     console.log("Error while receiving message!", res);
     process.exit(-1);
