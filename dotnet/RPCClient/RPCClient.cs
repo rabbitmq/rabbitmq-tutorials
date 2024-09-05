@@ -1,63 +1,99 @@
-using System.Collections.Concurrent;
-using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Collections.Concurrent;
+using System.Text;
 
-public class RpcClient : IDisposable
+public class RpcClient : IAsyncDisposable
 {
     private const string QUEUE_NAME = "rpc_queue";
 
-    private readonly IConnection connection;
-    private readonly IModel channel;
-    private readonly string replyQueueName;
-    private readonly ConcurrentDictionary<string, TaskCompletionSource<string>> callbackMapper = new();
+    private readonly IConnectionFactory _connectionFactory;
+    private readonly ConcurrentDictionary<string, TaskCompletionSource<string>> _callbackMapper
+        = new();
+
+    private IConnection? _connection;
+    private IChannel? _channel;
+    private string? _replyQueueName;
 
     public RpcClient()
     {
-        var factory = new ConnectionFactory { HostName = "localhost" };
+        _connectionFactory = new ConnectionFactory { HostName = "localhost" };
+    }
 
-        connection = factory.CreateConnection();
-        channel = connection.CreateModel();
+    public async Task StartAsync()
+    {
+        _connection = await _connectionFactory.CreateConnectionAsync();
+        _channel = await _connection.CreateChannelAsync();
+
         // declare a server-named queue
-        replyQueueName = channel.QueueDeclare().QueueName;
-        var consumer = new EventingBasicConsumer(channel);
-        consumer.Received += (model, ea) =>
+        QueueDeclareOk queueDeclareResult = await _channel.QueueDeclareAsync();
+        _replyQueueName = queueDeclareResult.QueueName;
+        var consumer = new AsyncEventingBasicConsumer(_channel);
+
+        consumer.ReceivedAsync += (model, ea) =>
         {
-            if (!callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out var tcs))
-                return;
-            var body = ea.Body.ToArray();
-            var response = Encoding.UTF8.GetString(body);
-            tcs.TrySetResult(response);
+            string? correlationId = ea.BasicProperties.CorrelationId;
+
+            if (false == string.IsNullOrEmpty(correlationId))
+            {
+                if (_callbackMapper.TryRemove(correlationId, out var tcs))
+                {
+                    var body = ea.Body.ToArray();
+                    var response = Encoding.UTF8.GetString(body);
+                    tcs.TrySetResult(response);
+                }
+            }
+
+            return Task.CompletedTask;
         };
 
-        channel.BasicConsume(consumer: consumer,
-                             queue: replyQueueName,
-                             autoAck: true);
+        await _channel.BasicConsumeAsync(_replyQueueName, true, consumer);
     }
 
-    public Task<string> CallAsync(string message, CancellationToken cancellationToken = default)
+    public async Task<string> CallAsync(string message,
+        CancellationToken cancellationToken = default)
     {
-        IBasicProperties props = channel.CreateBasicProperties();
-        var correlationId = Guid.NewGuid().ToString();
-        props.CorrelationId = correlationId;
-        props.ReplyTo = replyQueueName;
+        if (_channel is null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        string correlationId = Guid.NewGuid().ToString();
+        var props = new BasicProperties
+        {
+            CorrelationId = correlationId,
+            ReplyTo = _replyQueueName
+        };
+
+        var tcs = new TaskCompletionSource<string>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+        _callbackMapper.TryAdd(correlationId, tcs);
+
         var messageBytes = Encoding.UTF8.GetBytes(message);
-        var tcs = new TaskCompletionSource<string>();
-        callbackMapper.TryAdd(correlationId, tcs);
+        await _channel.BasicPublishAsync(exchange: string.Empty, routingKey: QUEUE_NAME,
+            mandatory: true, basicProperties: props, body: messageBytes);
 
-        channel.BasicPublish(exchange: string.Empty,
-                             routingKey: QUEUE_NAME,
-                             basicProperties: props,
-                             body: messageBytes);
+        using CancellationTokenRegistration ctr =
+            cancellationToken.Register(() =>
+            {
+                _callbackMapper.TryRemove(correlationId, out _);
+                tcs.SetCanceled();
+            });
 
-        cancellationToken.Register(() => callbackMapper.TryRemove(correlationId, out _));
-        return tcs.Task;
+        return await tcs.Task;
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        channel.Close();
-        connection.Close();
+        if (_channel is not null)
+        {
+            await _channel.CloseAsync();
+        }
+
+        if (_connection is not null)
+        {
+            await _connection.CloseAsync();
+        }
     }
 }
 
@@ -75,7 +111,8 @@ public class Rpc
 
     private static async Task InvokeAsync(string n)
     {
-        using var rpcClient = new RpcClient();
+        var rpcClient = new RpcClient();
+        await rpcClient.StartAsync();
 
         Console.WriteLine(" [x] Requesting fib({0})", n);
         var response = await rpcClient.CallAsync(n);
