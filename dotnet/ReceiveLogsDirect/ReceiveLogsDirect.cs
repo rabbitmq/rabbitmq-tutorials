@@ -1,15 +1,6 @@
-using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-
-var factory = new ConnectionFactory { HostName = "localhost" };
-
-using var connection = factory.CreateConnection();
-using var channel = connection.CreateModel();
-
-channel.ExchangeDeclare(exchange: "direct_logs", type: ExchangeType.Direct);
-// declare a server-named queue
-var queueName = channel.QueueDeclare().QueueName;
+using System.Text;
 
 if (args.Length < 1)
 {
@@ -21,26 +12,35 @@ if (args.Length < 1)
     return;
 }
 
-foreach (var severity in args)
+var factory = new ConnectionFactory { HostName = "localhost" };
+
+using var connection = await factory.CreateConnectionAsync();
+using var channel = await connection.CreateChannelAsync();
+
+await channel.ExchangeDeclareAsync(exchange: "direct_logs", type: ExchangeType.Direct);
+
+// declare a server-named queue
+var queueDeclareResult = await channel.QueueDeclareAsync();
+string queueName = queueDeclareResult.QueueName;
+
+foreach (string? severity in args)
 {
-    channel.QueueBind(queue: queueName,
-                      exchange: "direct_logs",
-                      routingKey: severity);
+    await channel.QueueBindAsync(queue: queueName, exchange: "direct_logs", routingKey: severity);
 }
 
 Console.WriteLine(" [*] Waiting for messages.");
 
-var consumer = new EventingBasicConsumer(channel);
+var consumer = new AsyncEventingBasicConsumer(channel);
 consumer.Received += (model, ea) =>
 {
     var body = ea.Body.ToArray();
     var message = Encoding.UTF8.GetString(body);
     var routingKey = ea.RoutingKey;
     Console.WriteLine($" [x] Received '{routingKey}':'{message}'");
+    return Task.CompletedTask;
 };
-channel.BasicConsume(queue: queueName,
-                     autoAck: true,
-                     consumer: consumer);
+
+await channel.BasicConsumeAsync(queueName, autoAck: true, consumer: consumer);
 
 Console.WriteLine(" Press [enter] to exit.");
 Console.ReadLine();

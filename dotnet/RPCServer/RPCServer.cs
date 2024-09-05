@@ -1,31 +1,31 @@
-using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Text;
 
 var factory = new ConnectionFactory { HostName = "localhost" };
-using var connection = factory.CreateConnection();
-using var channel = connection.CreateModel();
+using var connection = await factory.CreateConnectionAsync();
+using var channel = await connection.CreateChannelAsync();
 
-channel.QueueDeclare(queue: "rpc_queue",
-                     durable: false,
-                     exclusive: false,
-                     autoDelete: false,
-                     arguments: null);
-channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
-var consumer = new EventingBasicConsumer(channel);
-channel.BasicConsume(queue: "rpc_queue",
-                     autoAck: false,
-                     consumer: consumer);
+await channel.QueueDeclareAsync(queue: "rpc_queue", durable: false, exclusive: false,
+    autoDelete: false, arguments: null);
+
+await channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false);
+
+var consumer = new AsyncEventingBasicConsumer(channel);
+await channel.BasicConsumeAsync("rpc_queue", false, consumer);
 Console.WriteLine(" [x] Awaiting RPC requests");
 
-consumer.Received += (model, ea) =>
+consumer.Received += async (object sender, BasicDeliverEventArgs ea) =>
 {
+    IChannel ch = (IChannel)sender;
     string response = string.Empty;
 
-    var body = ea.Body.ToArray();
-    var props = ea.BasicProperties;
-    var replyProps = channel.CreateBasicProperties();
-    replyProps.CorrelationId = props.CorrelationId;
+    byte[] body = ea.Body.ToArray();
+    IReadOnlyBasicProperties props = ea.BasicProperties;
+    var replyProps = new BasicProperties
+    {
+        CorrelationId = props.CorrelationId
+    };
 
     try
     {
@@ -42,11 +42,9 @@ consumer.Received += (model, ea) =>
     finally
     {
         var responseBytes = Encoding.UTF8.GetBytes(response);
-        channel.BasicPublish(exchange: string.Empty,
-                             routingKey: props.ReplyTo,
-                             basicProperties: replyProps,
-                             body: responseBytes);
-        channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+        await ch.BasicPublishAsync(exchange: string.Empty, routingKey: props.ReplyTo!,
+            mandatory: true, basicProperties: replyProps, body: responseBytes);
+        await ch.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
     }
 };
 
@@ -54,7 +52,8 @@ Console.WriteLine(" Press [enter] to exit.");
 Console.ReadLine();
 
 // Assumes only valid positive integer input.
-// Don't expect this one to work for big numbers, and it's probably the slowest recursive implementation possible.
+// Don't expect this one to work for big numbers,
+// and it's probably the slowest recursive implementation possible.
 static int Fib(int n)
 {
     if (n is 0 or 1)
