@@ -58,14 +58,18 @@ public class RpcClient : IAsyncDisposable
             throw new InvalidOperationException();
         }
 
-        var props = new BasicProperties();
-        var correlationId = Guid.NewGuid().ToString();
-        props.CorrelationId = correlationId;
-        props.ReplyTo = _replyQueueName;
-        var messageBytes = Encoding.UTF8.GetBytes(message);
-        var tcs = new TaskCompletionSource<string>();
+        string correlationId = Guid.NewGuid().ToString();
+        var props = new BasicProperties
+        {
+            CorrelationId = correlationId,
+            ReplyTo = _replyQueueName
+        };
+
+        var tcs = new TaskCompletionSource<string>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
         _callbackMapper.TryAdd(correlationId, tcs);
 
+        var messageBytes = Encoding.UTF8.GetBytes(message);
         await _channel.BasicPublishAsync(exchange: string.Empty, routingKey: QUEUE_NAME,
             mandatory: true, basicProperties: props, body: messageBytes);
 

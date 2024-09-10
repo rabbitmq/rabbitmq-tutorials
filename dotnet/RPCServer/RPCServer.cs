@@ -2,22 +2,22 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
+const string QUEUE_NAME = "rpc_queue";
+
 var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = await factory.CreateConnectionAsync();
 using var channel = await connection.CreateChannelAsync();
 
-await channel.QueueDeclareAsync(queue: "rpc_queue", durable: false, exclusive: false,
+await channel.QueueDeclareAsync(queue: QUEUE_NAME, durable: false, exclusive: false,
     autoDelete: false, arguments: null);
 
 await channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false);
 
 var consumer = new AsyncEventingBasicConsumer(channel);
-await channel.BasicConsumeAsync("rpc_queue", false, consumer);
-Console.WriteLine(" [x] Awaiting RPC requests");
-
 consumer.Received += async (object sender, BasicDeliverEventArgs ea) =>
 {
-    IChannel ch = (IChannel)sender;
+    AsyncEventingBasicConsumer cons = (AsyncEventingBasicConsumer)sender;
+    IChannel ch = cons.Channel;
     string response = string.Empty;
 
     byte[] body = ea.Body.ToArray();
@@ -48,6 +48,8 @@ consumer.Received += async (object sender, BasicDeliverEventArgs ea) =>
     }
 };
 
+await channel.BasicConsumeAsync(QUEUE_NAME, false, consumer);
+Console.WriteLine(" [x] Awaiting RPC requests");
 Console.WriteLine(" Press [enter] to exit.");
 Console.ReadLine();
 
