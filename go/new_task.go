@@ -43,7 +43,7 @@ func main() {
 		"",     // exchange
 		q.Name, // routing key
 		false,  // mandatory
-		false,
+		false,  // immediate
 		amqp.Publishing{
 			DeliveryMode: amqp.Persistent,
 			ContentType:  "text/plain",
