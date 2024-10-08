@@ -1,31 +1,31 @@
-using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Text;
 
 var factory = new ConnectionFactory { HostName = "localhost" };
-using var connection = factory.CreateConnection();
-using var channel = connection.CreateModel();
+using var connection = await factory.CreateConnectionAsync();
+using var channel = await connection.CreateChannelAsync();
 
-channel.ExchangeDeclare(exchange: "logs", type: ExchangeType.Fanout);
+await channel.ExchangeDeclareAsync(exchange: "logs",
+    type: ExchangeType.Fanout);
 
 // declare a server-named queue
-var queueName = channel.QueueDeclare().QueueName;
-channel.QueueBind(queue: queueName,
-                  exchange: "logs",
-                  routingKey: string.Empty);
+QueueDeclareOk queueDeclareResult = await channel.QueueDeclareAsync();
+string queueName = queueDeclareResult.QueueName;
+await channel.QueueBindAsync(queue: queueName, exchange: "logs", routingKey: string.Empty);
 
 Console.WriteLine(" [*] Waiting for logs.");
 
-var consumer = new EventingBasicConsumer(channel);
+var consumer = new AsyncEventingBasicConsumer(channel);
 consumer.Received += (model, ea) =>
 {
     byte[] body = ea.Body.ToArray();
     var message = Encoding.UTF8.GetString(body);
     Console.WriteLine($" [x] {message}");
+    return Task.CompletedTask;
 };
-channel.BasicConsume(queue: queueName,
-                     autoAck: true,
-                     consumer: consumer);
+
+await channel.BasicConsumeAsync(queueName, autoAck: true, consumer: consumer);
 
 Console.WriteLine(" Press [enter] to exit.");
 Console.ReadLine();
