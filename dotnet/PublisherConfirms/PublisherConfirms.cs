@@ -1,133 +1,220 @@
-﻿using System.Collections.Concurrent;
+﻿using RabbitMQ.Client;
 using System.Diagnostics;
 using System.Text;
-using RabbitMQ.Client;
 
 const int MESSAGE_COUNT = 50_000;
 
-PublishMessagesIndividually();
-PublishMessagesInBatch();
+await PublishMessagesIndividuallyAsync();
+await PublishMessagesInBatchAsync();
 await HandlePublishConfirmsAsynchronously();
 
-static IConnection CreateConnection()
+static Task<IConnection> CreateConnectionAsync()
 {
     var factory = new ConnectionFactory { HostName = "localhost" };
-    return factory.CreateConnection();
+    return factory.CreateConnectionAsync();
 }
 
-static void PublishMessagesIndividually()
+static async Task PublishMessagesIndividuallyAsync()
 {
-    using var connection = CreateConnection();
-    using var channel = connection.CreateModel();
+    Console.WriteLine($"{DateTime.Now} [INFO] publishing {MESSAGE_COUNT:N0} messages individually " +
+                       "and handling confirms all at once");
+
+    using IConnection connection = await CreateConnectionAsync();
+    using IChannel channel = await connection.CreateChannelAsync();
 
     // declare a server-named queue
-    var queueName = channel.QueueDeclare().QueueName;
-    channel.ConfirmSelect();
+    QueueDeclareOk queueDeclareResult = await channel.QueueDeclareAsync();
+    string queueName = queueDeclareResult.QueueName;
+    await channel.ConfirmSelectAsync();
 
-    var startTime = Stopwatch.GetTimestamp();
+    var sw = new Stopwatch();
+    sw.Start();
 
     for (int i = 0; i < MESSAGE_COUNT; i++)
     {
-        var body = Encoding.UTF8.GetBytes(i.ToString());
-        channel.BasicPublish(exchange: string.Empty, routingKey: queueName, basicProperties: null, body: body);
-        channel.WaitForConfirmsOrDie(TimeSpan.FromSeconds(5));
+        byte[] body = Encoding.UTF8.GetBytes(i.ToString());
+        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, body: body);
     }
 
-    var endTime = Stopwatch.GetTimestamp();
+    await channel.WaitForConfirmsOrDieAsync();
 
-    Console.WriteLine($"Published {MESSAGE_COUNT:N0} messages individually in {Stopwatch.GetElapsedTime(startTime, endTime).TotalMilliseconds:N0} ms");
+    sw.Stop();
+
+    Console.WriteLine($"{DateTime.Now} [INFO] published {MESSAGE_COUNT:N0} messages individually " +
+                      $"in {sw.ElapsedMilliseconds:N0} ms");
 }
 
-static void PublishMessagesInBatch()
+static async Task PublishMessagesInBatchAsync()
 {
-    using var connection = CreateConnection();
-    using var channel = connection.CreateModel();
+    Console.WriteLine($"{DateTime.Now} [INFO] publishing {MESSAGE_COUNT:N0} messages and handling " +
+                      $"confirms in batches");
+
+    using IConnection connection = await CreateConnectionAsync();
+    using IChannel channel = await connection.CreateChannelAsync();
 
     // declare a server-named queue
-    var queueName = channel.QueueDeclare().QueueName;
-    channel.ConfirmSelect();
+    QueueDeclareOk queueDeclareResult = await channel.QueueDeclareAsync();
+    string queueName = queueDeclareResult.QueueName;
+    await channel.ConfirmSelectAsync();
 
-    var batchSize = 100;
-    var outstandingMessageCount = 0;
+    int batchSize = 100;
+    int outstandingMessageCount = 0;
 
-    var startTime = Stopwatch.GetTimestamp();
+    var sw = new Stopwatch();
+    sw.Start();
 
+    var publishTasks = new List<Task>();
     for (int i = 0; i < MESSAGE_COUNT; i++)
     {
-        var body = Encoding.UTF8.GetBytes(i.ToString());
-        channel.BasicPublish(exchange: string.Empty, routingKey: queueName, basicProperties: null, body: body);
+        byte[] body = Encoding.UTF8.GetBytes(i.ToString());
+        var pt = channel.BasicPublishAsync(exchange: string.Empty,
+                                           routingKey: queueName, body: body);
+        publishTasks.Add(pt.AsTask());
         outstandingMessageCount++;
 
         if (outstandingMessageCount == batchSize)
         {
-            channel.WaitForConfirmsOrDie(TimeSpan.FromSeconds(5));
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            await Task.WhenAll(publishTasks).WaitAsync(cts.Token);
+            publishTasks.Clear();
+
+            await channel.WaitForConfirmsOrDieAsync(cts.Token);
             outstandingMessageCount = 0;
         }
     }
 
     if (outstandingMessageCount > 0)
-        channel.WaitForConfirmsOrDie(TimeSpan.FromSeconds(5));
+    {
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        await channel.WaitForConfirmsOrDieAsync(cts.Token);
+    }
 
-    var endTime = Stopwatch.GetTimestamp();
-
-    Console.WriteLine($"Published {MESSAGE_COUNT:N0} messages in batch in {Stopwatch.GetElapsedTime(startTime, endTime).TotalMilliseconds:N0} ms");
+    sw.Stop();
+    Console.WriteLine($"{DateTime.Now} [INFO] published {MESSAGE_COUNT:N0} messages in batch in " +
+                      $"{sw.ElapsedMilliseconds:N0} ms");
 }
 
-static async Task HandlePublishConfirmsAsynchronously()
+async Task HandlePublishConfirmsAsynchronously()
 {
-    using var connection = CreateConnection();
-    using var channel = connection.CreateModel();
+    Console.WriteLine($"{DateTime.Now} [INFO] publishing {MESSAGE_COUNT:N0} messages and " +
+                      $"handling confirms asynchronously");
+
+    using IConnection connection = await CreateConnectionAsync();
+    using IChannel channel = await connection.CreateChannelAsync();
 
     // declare a server-named queue
-    var queueName = channel.QueueDeclare().QueueName;
-    channel.ConfirmSelect();
+    QueueDeclareOk queueDeclareResult = await channel.QueueDeclareAsync();
+    string queueName = queueDeclareResult.QueueName;
 
-    var outstandingConfirms = new ConcurrentDictionary<ulong, string>();
+    // NOTE: setting trackConfirmations to false because this program
+    // is tracking them itself.
+    await channel.ConfirmSelectAsync(trackConfirmations: false);
 
-    void CleanOutstandingConfirms(ulong sequenceNumber, bool multiple)
+    bool publishingCompleted = false;
+    var allMessagesConfirmedTcs =
+        new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+    var outstandingConfirms = new LinkedList<ulong>();
+    var semaphore = new SemaphoreSlim(1, 1);
+    void CleanOutstandingConfirms(ulong deliveryTag, bool multiple)
     {
-        if (multiple)
+        semaphore.Wait();
+        try
         {
-            var confirmed = outstandingConfirms.Where(k => k.Key <= sequenceNumber);
-            foreach (var entry in confirmed)
-                outstandingConfirms.TryRemove(entry.Key, out _);
+            if (multiple)
+            {
+                do
+                {
+                    LinkedListNode<ulong>? node = outstandingConfirms.First;
+                    if (node is null)
+                    {
+                        break;
+                    }
+                    if (node.Value <= deliveryTag)
+                    {
+                        outstandingConfirms.RemoveFirst();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                } while (true);
+            }
+            else
+            {
+                outstandingConfirms.Remove(deliveryTag);
+            }
         }
-        else
-            outstandingConfirms.TryRemove(sequenceNumber, out _);
+        finally
+        {
+            semaphore.Release();
+        }
+
+        if (publishingCompleted && outstandingConfirms.Count == 0)
+        {
+            allMessagesConfirmedTcs.SetResult(true);
+        }
     }
 
     channel.BasicAcks += (sender, ea) => CleanOutstandingConfirms(ea.DeliveryTag, ea.Multiple);
     channel.BasicNacks += (sender, ea) =>
     {
-        outstandingConfirms.TryGetValue(ea.DeliveryTag, out string? body);
-        Console.WriteLine($"Message with body {body} has been nack-ed. Sequence number: {ea.DeliveryTag}, multiple: {ea.Multiple}");
+        Console.WriteLine($"{DateTime.Now} [WARNING] message sequence number: {ea.DeliveryTag} " +
+                          $"has been nacked (multiple: {ea.Multiple})");
         CleanOutstandingConfirms(ea.DeliveryTag, ea.Multiple);
     };
 
-    var startTime = Stopwatch.GetTimestamp();
+    var sw = new Stopwatch();
+    sw.Start();
 
+    var publishTasks = new List<ValueTask>();
     for (int i = 0; i < MESSAGE_COUNT; i++)
     {
-        var body = i.ToString();
-        outstandingConfirms.TryAdd(channel.NextPublishSeqNo, i.ToString());
-        channel.BasicPublish(exchange: string.Empty, routingKey: queueName, basicProperties: null, body: Encoding.UTF8.GetBytes(body));
+        string msg = i.ToString();
+        byte[] body = Encoding.UTF8.GetBytes(msg);
+        ulong nextPublishSeqNo = channel.NextPublishSeqNo;
+        if ((ulong)(i + 1) != nextPublishSeqNo)
+        {
+            Console.WriteLine($"{DateTime.Now} [WARNING] i {i + 1} does not equal next sequence " +
+                              $"number: {nextPublishSeqNo}");
+        }
+        await semaphore.WaitAsync();
+        try
+        {
+            outstandingConfirms.AddLast(nextPublishSeqNo);
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+        var pt = channel.BasicPublishAsync(exchange: string.Empty,
+                                           routingKey: queueName, body: body);
+        publishTasks.Add(pt);
     }
 
-    if (!await WaitUntil(60, () => outstandingConfirms.IsEmpty))
-        throw new Exception("All messages could not be confirmed in 60 seconds");
+    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
 
-    var endTime = Stopwatch.GetTimestamp();
-    Console.WriteLine($"Published {MESSAGE_COUNT:N0} messages and handled confirm asynchronously {Stopwatch.GetElapsedTime(startTime, endTime).TotalMilliseconds:N0} ms");
-}
-
-static async ValueTask<bool> WaitUntil(int numberOfSeconds, Func<bool> condition)
-{
-    int waited = 0;
-    while (!condition() && waited < numberOfSeconds * 1000)
+    try
     {
-        await Task.Delay(TimeSpan.FromMilliseconds(100));
-        waited += 100;
+        foreach (ValueTask pt in publishTasks)
+        {
+            await pt;
+            cts.Token.ThrowIfCancellationRequested();
+        }
+        publishingCompleted = true;
+        await allMessagesConfirmedTcs.Task.WaitAsync(cts.Token);
+    }
+    catch (OperationCanceledException)
+    {
+        Console.Error.WriteLine("{0} [ERROR] all messages could not be published and confirmed " +
+                                "within 10 seconds", DateTime.Now);
+    }
+    catch (TimeoutException)
+    {
+        Console.Error.WriteLine("{0} [ERROR] all messages could not be published and confirmed " +
+                                "within 10 seconds", DateTime.Now);
     }
 
-    return condition();
+    sw.Stop();
+    Console.WriteLine($"{DateTime.Now} [INFO] published {MESSAGE_COUNT:N0} messages and handled " +
+                      $"confirm asynchronously {sw.ElapsedMilliseconds:N0} ms");
 }
