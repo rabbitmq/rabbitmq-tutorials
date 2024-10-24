@@ -1,30 +1,24 @@
-using System.Text;
 using RabbitMQ.Client;
+using System.Text;
 
 var factory = new ConnectionFactory { HostName = "localhost" };
-using var connection = factory.CreateConnection();
-using var channel = connection.CreateModel();
+using var connection = await factory.CreateConnectionAsync();
+using var channel = await connection.CreateChannelAsync();
 
-channel.QueueDeclare(queue: "task_queue",
-                     durable: true,
-                     exclusive: false,
-                     autoDelete: false,
-                     arguments: null);
+await channel.QueueDeclareAsync(queue: "task_queue", durable: true, exclusive: false,
+    autoDelete: false, arguments: null);
 
 var message = GetMessage(args);
 var body = Encoding.UTF8.GetBytes(message);
 
-var properties = channel.CreateBasicProperties();
-properties.Persistent = true;
+var properties = new BasicProperties
+{
+    Persistent = true
+};
 
-channel.BasicPublish(exchange: string.Empty,
-                     routingKey: "task_queue",
-                     basicProperties: properties,
-                     body: body);
+await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "task_queue", mandatory: true,
+    basicProperties: properties, body: body);
 Console.WriteLine($" [x] Sent {message}");
-
-Console.WriteLine(" Press [enter] to exit.");
-Console.ReadLine();
 
 static string GetMessage(string[] args)
 {
