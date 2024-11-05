@@ -1,3 +1,5 @@
+[![Open in Codeanywhere](https://img.shields.io/badge/Open%20in-Codeanywhere-7f3f97)](https://app.codeanywhere.com/#https://github.com/rabbitmq/rabbitmq-tutorials)
+
 # RabbitMQ Tutorials
 
 This project contains code for [RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.html) with
