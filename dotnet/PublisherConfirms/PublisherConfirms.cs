@@ -1,7 +1,7 @@
-﻿using System.Buffers.Binary;
+﻿using RabbitMQ.Client;
+using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Text;
-using RabbitMQ.Client;
 
 const ushort MAX_OUTSTANDING_CONFIRMS = 256;
 
@@ -83,38 +83,31 @@ async Task PublishMessagesInBatchAsync()
     QueueDeclareOk queueDeclareResult = await channel.QueueDeclareAsync();
     string queueName = queueDeclareResult.QueueName;
 
-    int batchSize = MAX_OUTSTANDING_CONFIRMS / 2;
-    int outstandingMessageCount = 0;
+    int batchSize = Math.Max(1, MAX_OUTSTANDING_CONFIRMS / 2);
 
-    var sw = new Stopwatch();
-    sw.Start();
+    var sw = Stopwatch.StartNew();
 
     var publishTasks = new List<ValueTask>();
     for (int i = 0; i < MESSAGE_COUNT; i++)
     {
         byte[] body = Encoding.UTF8.GetBytes(i.ToString());
-        publishTasks.Add(channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, body: body, mandatory: true, basicProperties: props));
-        outstandingMessageCount++;
+        ValueTask publishTask = channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, body: body, mandatory: true, basicProperties: props);
+        publishTasks.Add(publishTask);
 
-        if (outstandingMessageCount == batchSize)
-        {
-            foreach (ValueTask pt in publishTasks)
-            {
-                try
-                {
-                    await pt;
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine($"{DateTime.Now} [ERROR] saw nack or return, ex: '{ex}'");
-                }
-            }
-            publishTasks.Clear();
-            outstandingMessageCount = 0;
-        }
+        await MaybeAwaitPublishes(publishTasks, batchSize);
     }
 
-    if (publishTasks.Count > 0)
+    // Await any remaining tasks in case message count was not
+    // evenly divisible by batch size.
+    await MaybeAwaitPublishes(publishTasks, 0);
+
+    sw.Stop();
+    Console.WriteLine($"{DateTime.Now} [INFO] published {MESSAGE_COUNT:N0} messages in batch in {sw.ElapsedMilliseconds:N0} ms");
+}
+
+static async Task MaybeAwaitPublishes(List<ValueTask> publishTasks, int batchSize)
+{
+    if (publishTasks.Count >= batchSize)
     {
         foreach (ValueTask pt in publishTasks)
         {
@@ -128,11 +121,7 @@ async Task PublishMessagesInBatchAsync()
             }
         }
         publishTasks.Clear();
-        outstandingMessageCount = 0;
     }
-
-    sw.Stop();
-    Console.WriteLine($"{DateTime.Now} [INFO] published {MESSAGE_COUNT:N0} messages in batch in {sw.ElapsedMilliseconds:N0} ms");
 }
 
 async Task HandlePublishConfirmsAsynchronously()
