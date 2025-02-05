@@ -83,20 +83,20 @@ async Task PublishMessagesInBatchAsync()
     QueueDeclareOk queueDeclareResult = await channel.QueueDeclareAsync();
     string queueName = queueDeclareResult.QueueName;
 
-    int batchSize = MAX_OUTSTANDING_CONFIRMS / 2;
-    int outstandingMessageCount = 0;
+    int batchSize = Math.Max(1, MAX_OUTSTANDING_CONFIRMS / 2);
 
-    var sw = new Stopwatch();
-    sw.Start();
+    var sw = Stopwatch.StartNew();
 
     var publishTasks = new List<ValueTask>();
     for (int i = 0; i < MESSAGE_COUNT; i++)
     {
         byte[] body = Encoding.UTF8.GetBytes(i.ToString());
-        publishTasks.Add(channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, body: body, mandatory: true, basicProperties: props));
-        outstandingMessageCount++;
+        ValueTask publishTask = channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, body: body, mandatory: true, basicProperties: props);
+        publishTasks.Add(publishTask);
 
-        if (outstandingMessageCount == batchSize)
+        // NOTE: [publishTasks] should be published after the final message has been added,
+        // even if the # of tasks it contains isn't equal to [batchSize].
+        if (publishTasks.Count == batchSize || i+1 == MESSAGE_COUNT)
         {
             foreach (ValueTask pt in publishTasks)
             {
@@ -110,25 +110,7 @@ async Task PublishMessagesInBatchAsync()
                 }
             }
             publishTasks.Clear();
-            outstandingMessageCount = 0;
         }
-    }
-
-    if (publishTasks.Count > 0)
-    {
-        foreach (ValueTask pt in publishTasks)
-        {
-            try
-            {
-                await pt;
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"{DateTime.Now} [ERROR] saw nack or return, ex: '{ex}'");
-            }
-        }
-        publishTasks.Clear();
-        outstandingMessageCount = 0;
     }
 
     sw.Stop();
