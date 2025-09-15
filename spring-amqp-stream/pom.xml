@@ -31,7 +31,7 @@
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-rabbit-stream</artifactId>
-            <version>3.2.6</version>
+            <version>3.2.7</version>
         </dependency>
     </dependencies>
 
