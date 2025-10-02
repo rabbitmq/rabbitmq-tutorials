@@ -4,6 +4,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import java.time.Duration;
+import java.util.LinkedList;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -21,10 +22,16 @@ public class PublisherConfirms {
         return cf.newConnection();
     }
 
+    static final int MAX_OUTSTANDING = 1000; // Confirmation window
+    static final int THROTTLING_PERCENTAGE = 50; // Start throttling at 50% capacity
+    static final int MAX_DELAY_MS = 1000; // Maximum delay in milliseconds
+
     public static void main(String[] args) throws Exception {
         publishMessagesIndividually();
         publishMessagesInBatch();
         handlePublishConfirmsAsynchronously();
+        handlePublishConfirmsWithWindow();
+        handlePublishConfirmsWithAdaptiveThrottling();
     }
 
     static void publishMessagesIndividually() throws Exception {
@@ -122,6 +129,124 @@ public class PublisherConfirms {
 
             long end = System.nanoTime();
             System.out.format("Published %,d messages and handled confirms asynchronously in %,d ms%n", MESSAGE_COUNT, Duration.ofNanos(end - start).toMillis());
+        }
+    }
+
+    static void handlePublishConfirmsWithWindow() throws Exception {
+        try (Connection connection = createConnection()) {
+            Channel ch = connection.createChannel();
+
+            String queue = UUID.randomUUID().toString();
+            ch.queueDeclare(queue, false, false, true, null);
+            ch.confirmSelect();
+
+            ConcurrentNavigableMap<Long, String> outstandingConfirms = new ConcurrentSkipListMap<>();
+
+            ConfirmCallback cleanOutstandingConfirms = (sequenceNumber, multiple) -> {
+                if (multiple) {
+                    outstandingConfirms.headMap(sequenceNumber, true).clear();
+                } else {
+                    outstandingConfirms.remove(sequenceNumber);
+                }
+                synchronized (outstandingConfirms) {
+                    outstandingConfirms.notifyAll();
+                }
+            };
+
+            ch.addConfirmListener(cleanOutstandingConfirms, (sequenceNumber, multiple) -> {
+                System.err.format("Message nacked. Sequence: %d, multiple: %b%n", sequenceNumber, multiple);
+                cleanOutstandingConfirms.handle(sequenceNumber, multiple);
+            });
+
+            long start = System.nanoTime();
+            for (int i = 0; i < MESSAGE_COUNT; i++) {
+                // Wait if window is full
+                synchronized (outstandingConfirms) {
+                    while (outstandingConfirms.size() >= MAX_OUTSTANDING) {
+                        outstandingConfirms.wait();
+                    }
+                }
+
+                String body = String.valueOf(i);
+                outstandingConfirms.put(ch.getNextPublishSeqNo(), body);
+                ch.basicPublish("", queue, null, body.getBytes());
+            }
+
+            // Wait for remaining confirmations
+            synchronized (outstandingConfirms) {
+                while (!outstandingConfirms.isEmpty()) {
+                    outstandingConfirms.wait();
+                }
+            }
+
+            long end = System.nanoTime();
+            System.out.format("Published %,d messages with confirmation window in %,d ms%n",
+                MESSAGE_COUNT, Duration.ofNanos(end - start).toMillis());
+        }
+    }
+
+    static void handlePublishConfirmsWithAdaptiveThrottling() throws Exception {
+        try (Connection connection = createConnection()) {
+            Channel ch = connection.createChannel();
+
+            String queue = UUID.randomUUID().toString();
+            ch.queueDeclare(queue, false, false, true, null);
+            ch.confirmSelect();
+
+            LinkedList<Long> outstandingConfirms = new LinkedList<>();
+            Object confirmLock = new Object();
+            int throttlingThreshold = MAX_OUTSTANDING * THROTTLING_PERCENTAGE / 100;
+
+            ConfirmCallback cleanOutstandingConfirms = (sequenceNumber, multiple) -> {
+                synchronized (confirmLock) {
+                    if (multiple) {
+                        outstandingConfirms.removeIf(seqNo -> seqNo <= sequenceNumber);
+                    } else {
+                        outstandingConfirms.removeFirstOccurrence(sequenceNumber);
+                    }
+                    confirmLock.notifyAll();
+                }
+            };
+
+            ch.addConfirmListener(cleanOutstandingConfirms, (sequenceNumber, multiple) -> {
+                System.err.format("Message nacked. Sequence: %d, multiple: %b%n", sequenceNumber, multiple);
+                cleanOutstandingConfirms.handle(sequenceNumber, multiple);
+            });
+
+            long start = System.nanoTime();
+            for (int i = 0; i < MESSAGE_COUNT; i++) {
+                String body = String.valueOf(i);
+
+                synchronized (confirmLock) {
+                    while (outstandingConfirms.size() >= MAX_OUTSTANDING) {
+                        confirmLock.wait();
+                    }
+
+                    int availablePermits = MAX_OUTSTANDING - outstandingConfirms.size();
+                    if (availablePermits < throttlingThreshold) {
+                        double percentageUsed = 1.0 - (availablePermits / (double) MAX_OUTSTANDING);
+                        int delay = (int) (percentageUsed * MAX_DELAY_MS);
+                        if (delay > 0) {
+                            confirmLock.wait(delay);
+                        }
+                    }
+
+                    long seqNo = ch.getNextPublishSeqNo();
+                    outstandingConfirms.addLast(seqNo);
+                }
+
+                ch.basicPublish("", queue, null, body.getBytes());
+            }
+
+            synchronized (confirmLock) {
+                while (!outstandingConfirms.isEmpty()) {
+                    confirmLock.wait();
+                }
+            }
+
+            long end = System.nanoTime();
+            System.out.format("Published %,d messages with adaptive throttling in %,d ms%n",
+                MESSAGE_COUNT, Duration.ofNanos(end - start).toMillis());
         }
     }
 
