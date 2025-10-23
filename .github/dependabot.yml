@@ -8,28 +8,52 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 20
     target-branch: "main"
+    ignore:
+      - dependency-name: "org.junit.jupiter:*"
+        versions: [ "[6.0,)" ]
+      - dependency-name: "org.junit.platform:*"
+        versions: [ "[6.0,)" ]
   - package-ecosystem: "maven"
     directory: "/java-stream-mvn"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 20
     target-branch: "main"
+    ignore:
+      - dependency-name: "org.junit.jupiter:*"
+        versions: [ "[6.0,)" ]
+      - dependency-name: "org.junit.platform:*"
+        versions: [ "[6.0,)" ]
   - package-ecosystem: "maven"
     directory: "/spring-amqp"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 20
     target-branch: "main"
+    ignore:
+      - dependency-name: "org.junit.jupiter:*"
+        versions: [ "[6.0,)" ]
+      - dependency-name: "org.junit.platform:*"
+        versions: [ "[6.0,)" ]
   - package-ecosystem: "maven"
     directory: "/spring-amqp-stream"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 20
     target-branch: "main"
+    ignore:
+      - dependency-name: "org.junit.jupiter:*"
+        versions: [ "[6.0,)" ]
+      - dependency-name: "org.junit.platform:*"
+        versions: [ "[6.0,)" ]
   - package-ecosystem: "gradle"
     directory: "/java-gradle"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 20
     target-branch: "main"
-
+    ignore:
+      - dependency-name: "org.junit.jupiter:*"
+        versions: [ "[6.0,)" ]
+      - dependency-name: "org.junit.platform:*"
+        versions: [ "[6.0,)" ]
