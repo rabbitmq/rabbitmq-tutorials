@@ -20,8 +20,7 @@ async def receive():
         )
 
         async def on_message(msg: AMQPMessage, message_context: MessageContext):
-            stream = message_context.consumer.get_stream(message_context.subscriber_name)
-            print("Got message: {} from stream {}".format(msg, stream))
+            print("Got message: {} from stream {}".format(msg, message_context.stream))
 
         print("Press control + C to close")
         await consumer.start()

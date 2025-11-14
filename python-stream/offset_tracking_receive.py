@@ -30,7 +30,7 @@ async def on_message(msg: AMQPMessage, message_context: MessageContext):
         first_offset = offset
 
     consumer = message_context.consumer
-    stream = message_context.consumer.get_stream(message_context.subscriber_name)
+    stream = message_context.stream
 
     # store the offset after every 10 messages received
     message_count = message_count + 1
