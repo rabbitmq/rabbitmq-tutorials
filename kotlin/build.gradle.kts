@@ -15,6 +15,11 @@ kotlin {
 
     applyDefaultHierarchyTemplate()
     sourceSets {
+        all {
+            languageSettings.apply {
+                optIn("kotlin.uuid.ExperimentalUuidApi")
+            }
+        }
         val commonMain by getting {
             dependencies {
                 api("dev.kourier:amqp-client:0.3.1")
