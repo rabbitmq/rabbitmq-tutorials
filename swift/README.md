@@ -1,52 +1,109 @@
 # Swift code for RabbitMQ tutorials
 
-Swift code examples for the [RabbitMQ tutorials](https://www.rabbitmq.com/getstarted.html).
+Swift code examples for the [RabbitMQ tutorials](https://www.rabbitmq.com/tutorials).
+
+These tutorials use [BunnySwift](https://github.com/michaelklishin/bunny-swift), a modern Swift 6 RabbitMQ client with async/await support.
 
 ## Requirements
 
-To run this code you need
-[Carthage](https://github.com/Carthage/Carthage) to pull down dependencies,
-which include the
-[Objective-C client](https://github.com/rabbitmq/rabbitmq-objc-client) itself.
+- Swift 6.0 or later
+- macOS 14+ (or iOS 17+, tvOS 17+, watchOS 10+, visionOS 1+)
+- A running RabbitMQ server on localhost
 
-If you have Homebrew installed, simply:
+## Building
 
-```sh
-brew install carthage
-```
-
-You also need a running RabbitMQ server on localhost.
-
-## Installation
-
-Each tutorial has its own Xcode project. Before the projects can be run, you
-need to download and build their dependencies.
-
-For example, to install tutorial 1:
+Build all tutorials:
 
 ```sh
-cd tutorial1
-carthage bootstrap --platform iOS
+swift build
 ```
 
-You should then be able to open [the project](tutorial1/tutorial1.xcodeproj) in Xcode and hit Run. Output is
-NSLogged.
+## Running the Tutorials
 
-See [ViewController.swift](tutorial1/tutorial1/ViewController.swift) for the
-implementation (each tutorial has its own `ViewController.swift`).
+### Tutorial 1: Hello World
 
-## Running the tutorials on master
+In one terminal, start the receiver:
 
-If you're QAing a change, or just want to run these tutorials on the master version of the client, follow these steps.
+```sh
+swift run Receive
+```
 
-### Edit `Cartfile`
+In another terminal, send a message:
 
-Change the version number to the word "master"
+```sh
+swift run Send
+```
 
-### Clear Carthage cache and update
+### Tutorial 2: Work Queues
 
-`rm -rf ~/Library/Caches/org.carthage.CarthageKit && carthage update --platform iOS`
+Start one or more workers:
 
-### Rebuild the project in Xcode
+```sh
+swift run Worker
+```
 
-If there have been breaking changes, you might now need to make changes to the tutorial.
+Send tasks with varying workloads (dots indicate seconds of work):
+
+```sh
+swift run NewTask "A simple task."
+swift run NewTask "A longer task..."
+swift run NewTask "A very long task....."
+```
+
+### Tutorial 3: Publish/Subscribe
+
+Start one or more log receivers:
+
+```sh
+swift run ReceiveLogs
+```
+
+Emit log messages:
+
+```sh
+swift run EmitLog "Hello subscribers!"
+```
+
+### Tutorial 4: Routing
+
+Subscribe to specific severity levels:
+
+```sh
+swift run ReceiveLogsDirect error warning
+```
+
+Emit logs with severity:
+
+```sh
+swift run EmitLogDirect info "Just an info message"
+swift run EmitLogDirect warning "This is a warning"
+swift run EmitLogDirect error "This is an error!"
+```
+
+### Tutorial 5: Topics
+
+Subscribe using topic patterns (`*` matches one word, `#` matches zero or more):
+
+```sh
+swift run ReceiveLogsTopic "kern.*"
+swift run ReceiveLogsTopic "*.critical"
+swift run ReceiveLogsTopic "#"
+```
+
+Emit logs with topic routing keys:
+
+```sh
+swift run EmitLogTopic "kern.info" "Kernel info"
+swift run EmitLogTopic "kern.critical" "Kernel critical error"
+swift run EmitLogTopic "auth.critical" "Authentication failure"
+```
+
+## Tutorial Source Files
+
+| Tutorial | Producer | Consumer |
+|----------|----------|----------|
+| 1. Hello World | [Send](Sources/Send/main.swift) | [Receive](Sources/Receive/main.swift) |
+| 2. Work Queues | [NewTask](Sources/NewTask/main.swift) | [Worker](Sources/Worker/main.swift) |
+| 3. Pub/Sub | [EmitLog](Sources/EmitLog/main.swift) | [ReceiveLogs](Sources/ReceiveLogs/main.swift) |
+| 4. Routing | [EmitLogDirect](Sources/EmitLogDirect/main.swift) | [ReceiveLogsDirect](Sources/ReceiveLogsDirect/main.swift) |
+| 5. Topics | [EmitLogTopic](Sources/EmitLogTopic/main.swift) | [ReceiveLogsTopic](Sources/ReceiveLogsTopic/main.swift) |
