@@ -17,8 +17,8 @@ struct Worker {
     try await channel.basicQos(prefetchCount: 1)
     print(" [*] Waiting for messages. To exit press CTRL+C")
 
-    let stream = try await channel.basicConsume(queue: queue.name)
-    for try await message in stream {
+    let consumer = try await channel.basicConsume(queue: queue.name)
+    for try await message in consumer {
       let body = message.bodyString ?? ""
       print(" [x] Received '\(body)'")
 

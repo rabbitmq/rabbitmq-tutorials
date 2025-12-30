@@ -27,11 +27,11 @@ struct ReceiveLogsDirect {
 
     print(" [*] Waiting for logs. To exit press CTRL+C")
 
-    let stream = try await channel.basicConsume(
+    let consumer = try await channel.basicConsume(
       queue: queue.name,
       acknowledgementMode: .automatic
     )
-    for try await message in stream {
+    for try await message in consumer {
       print(" [x] \(message.deliveryInfo.routingKey):\(message.bodyString ?? "")")
     }
   }
