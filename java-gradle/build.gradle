@@ -14,7 +14,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:2.0.17'
     testImplementation 'org.assertj:assertj-core:3.27.6'
     testImplementation 'org.mockito:mockito-core:5.21.0'
-    testImplementation 'io.dropwizard.metrics:metrics-core:4.2.37'
+    testImplementation 'io.dropwizard.metrics:metrics-core:4.2.38'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:6.0.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:6.0.0'
 }
