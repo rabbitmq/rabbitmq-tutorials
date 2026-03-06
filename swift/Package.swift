@@ -24,9 +24,7 @@ let package = Package(
   name: "RabbitMQTutorials",
   platforms: [.macOS(.v14), .iOS(.v17), .tvOS(.v17), .watchOS(.v10), .visionOS(.v1)],
   dependencies: [
-    // Use local path for development; switch to GitHub URL for release:
-    // .package(url: "https://github.com/michaelklishin/bunny-swift.git", branch: "main"),
-    .package(path: "../../bunny-swift.git")
+    .package(url: "https://github.com/michaelklishin/bunny-swift.git", from: "0.10.0")
   ],
   targets: [
     // Tutorial 1: Hello World
@@ -58,7 +56,12 @@ let package = Package(
     .executableTarget(
       name: "EmitLogTopic", dependencies: [.product(name: "BunnySwift", package: "bunny-swift")]),
     .executableTarget(
-      name: "ReceiveLogsTopic", dependencies: [.product(name: "BunnySwift", package: "bunny-swift")]
-    ),
+      name: "ReceiveLogsTopic", dependencies: [.product(name: "BunnySwift", package: "bunny-swift")]),
+
+    // Tutorial 6: RPC
+    .executableTarget(
+      name: "RPCClient", dependencies: [.product(name: "BunnySwift", package: "bunny-swift")]),
+    .executableTarget(
+      name: "RPCServer", dependencies: [.product(name: "BunnySwift", package: "bunny-swift")]),
   ]
 )
