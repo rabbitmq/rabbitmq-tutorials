@@ -25,10 +25,13 @@ public class Worker {
             System.out.println(" [x] Received '" + message + "'");
             try {
                 doWork(message);
-            } finally {
-                System.out.println(" [x] Done");
-                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+            } catch (Exception e) {
+                System.out.println(" [x] Error: " + e.getMessage());
+                channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, true);
+                return;
             }
+            System.out.println(" [x] Done");
+            channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
         };
         channel.basicConsume(TASK_QUEUE_NAME, false, deliverCallback, consumerTag -> { });
     }
