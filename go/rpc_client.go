@@ -41,7 +41,7 @@ func fibonacciRPC(n int) (res int, err error) {
 
 	q, err := ch.QueueDeclare(
 		"",    // name
-		false, // durable
+		false, // durability
 		false, // delete when unused
 		true,  // exclusive
 		false, // noWait

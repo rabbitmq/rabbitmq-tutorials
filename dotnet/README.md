@@ -1,7 +1,7 @@
 # Dotnet C# code for RabbitMQ tutorials
 
 Here you can find the C# code examples for [RabbitMQ
-tutorials](https://www.rabbitmq.com/getstarted.html) using .NET 7.0.
+tutorials](https://www.rabbitmq.com/tutorials) using .NET 8 and RabbitMQ.Client 7.2.x.
 
 You will also find a solution file for Visual Studio 2022.
 

@@ -19,7 +19,7 @@ async fn main() -> Result<(), Box<TError>> {
 
     let x_name = "logs";
     let x_type = "fanout";
-    let x_args = ExchangeDeclareArguments::new(x_name, x_type).durable(true).finish();
+    let x_args = ExchangeDeclareArguments::new(x_name, x_type).finish();
     ch.exchange_declare(x_args).await.unwrap();
 
     let args: Vec<_> = std::env::args().skip(1).collect();

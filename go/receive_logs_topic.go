@@ -25,7 +25,7 @@ func main() {
 	err = ch.ExchangeDeclare(
 		"logs_topic", // name
 		"topic",      // type
-		true,         // durable
+		false,        // durability
 		false,        // auto-deleted
 		false,        // internal
 		false,        // no-wait
@@ -35,7 +35,7 @@ func main() {
 
 	q, err := ch.QueueDeclare(
 		"",    // name
-		false, // durable
+		false, // durability
 		false, // delete when unused
 		true,  // exclusive
 		false, // no-wait

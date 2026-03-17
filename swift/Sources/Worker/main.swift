@@ -12,7 +12,7 @@ struct Worker {
   static func main() async throws {
     let connection = try await Connection.open()
     let channel = try await connection.openChannel()
-    let queue = try await channel.queue("task_queue", durable: true)
+    let queue = try await channel.queue("task_queue", type: .quorum, durable: true)
 
     try await channel.basicQos(prefetchCount: 1)
     print(" [*] Waiting for messages. To exit press CTRL+C")

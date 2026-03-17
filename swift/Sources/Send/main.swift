@@ -13,7 +13,7 @@ struct Send {
   static func main() async throws {
     let connection = try await Connection.open()
     let channel = try await connection.openChannel()
-    let queue = try await channel.queue("hello")
+    let queue = try await channel.queue("hello", type: .quorum, durable: true)
 
     try await channel.basicPublish(
       body: Data("Hello World!".utf8),

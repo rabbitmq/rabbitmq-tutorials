@@ -9,7 +9,7 @@ class FibonacciServer
   end
 
   def start(queue_name)
-    @queue = channel.queue(queue_name)
+    @queue = channel.quorum_queue(queue_name)
     @exchange = channel.default_exchange
     subscribe_to_queue
   end

@@ -2,6 +2,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import java.util.Map;
 
 public class Worker {
 
@@ -13,7 +14,7 @@ public class Worker {
         final Connection connection = factory.newConnection();
         final Channel channel = connection.createChannel();
 
-        channel.queueDeclare(TASK_QUEUE_NAME, true, false, false, null);
+        channel.queueDeclare(TASK_QUEUE_NAME, true, false, false, Map.of("x-queue-type", "quorum"));
         System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
         channel.basicQos(1);

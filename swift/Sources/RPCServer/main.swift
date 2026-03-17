@@ -19,7 +19,7 @@ struct RPCServer {
     let connection = try await Connection.open()
     let channel = try await connection.openChannel()
 
-    let queue = try await channel.queue("rpc_queue")
+    let queue = try await channel.queue("rpc_queue", type: .quorum, durable: true)
     try await channel.basicQos(prefetchCount: 1)
 
     print(" [x] Awaiting RPC requests")

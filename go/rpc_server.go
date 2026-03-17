@@ -36,11 +36,13 @@ func main() {
 
 	q, err := ch.QueueDeclare(
 		"rpc_queue", // name
-		false,       // durable
+		true,        // durability
 		false,       // delete when unused
 		false,       // exclusive
 		false,       // no-wait
-		nil,         // arguments
+		amqp.Table{
+			amqp.QueueTypeArg: amqp.QueueTypeQuorum,
+		},
 	)
 	failOnError(err, "Failed to declare a queue")
 

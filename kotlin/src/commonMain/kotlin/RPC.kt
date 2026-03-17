@@ -1,3 +1,4 @@
+import dev.kourier.amqp.Field
 import dev.kourier.amqp.connection.amqpConfig
 import dev.kourier.amqp.connection.createAMQPConnection
 import dev.kourier.amqp.properties
@@ -34,10 +35,10 @@ suspend fun rpcServer(coroutineScope: CoroutineScope) {
         // Declare the RPC queue
         channel.queueDeclare(
             "rpc_queue",
-            durable = false,
+            durable = true,
             exclusive = false,
             autoDelete = false,
-            arguments = emptyMap()
+            arguments = mapOf("x-queue-type" to Field.LongString("quorum"))
         )
 
         // Fair dispatch - don't give more than one message at a time

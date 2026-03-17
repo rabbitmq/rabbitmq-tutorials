@@ -172,6 +172,7 @@ dependencies = [
 name = "rabbitmq-tutorials"
 version = "1.0.0"
 dependencies = [
+ "amqp_serde",
  "amqprs",
  "tokio",
 ]

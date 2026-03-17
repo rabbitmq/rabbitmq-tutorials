@@ -6,7 +6,7 @@ connection = pika.BlockingConnection(
 )
 channel = connection.channel()
 
-channel.queue_declare(queue="rpc_queue")
+channel.queue_declare(queue="rpc_queue", durable=True, arguments={"x-queue-type": "quorum"})
 
 
 def fib(n):

@@ -11,7 +11,7 @@ def main():
     )
     channel = connection.channel()
 
-    channel.queue_declare(queue="hello")
+    channel.queue_declare(queue="hello", durable=True, arguments={"x-queue-type": "quorum"})
 
     def callback(ch, method, properties, body):
         print(f" [x] Received {body.decode()}")

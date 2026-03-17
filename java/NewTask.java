@@ -2,6 +2,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
+import java.util.Map;
 
 public class NewTask {
 
@@ -12,7 +13,7 @@ public class NewTask {
         factory.setHost("localhost");
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
-            channel.queueDeclare(TASK_QUEUE_NAME, true, false, false, null);
+            channel.queueDeclare(TASK_QUEUE_NAME, true, false, false, Map.of("x-queue-type", "quorum"));
 
             String message = String.join(" ", argv);
 

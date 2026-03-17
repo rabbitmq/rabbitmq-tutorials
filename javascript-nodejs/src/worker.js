@@ -7,7 +7,8 @@ amqp.connect('amqp://localhost', function(error, connection) {
         var queue = 'task_queue';
 
         channel.assertQueue(queue, {
-            durable: true
+            durable: true,
+            arguments: { 'x-queue-type': 'quorum' }
         });
         channel.prefetch(1);
         console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);

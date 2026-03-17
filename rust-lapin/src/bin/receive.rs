@@ -1,5 +1,5 @@
 use futures::StreamExt;
-use lapin::{Connection, ConnectionProperties, options::*, types::FieldTable};
+use lapin::{Connection, ConnectionProperties, options::*, types::{AMQPValue, FieldTable}};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -7,11 +7,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conn = Connection::connect(addr, ConnectionProperties::default()).await?;
     let channel = conn.create_channel().await?;
 
+    let mut args = FieldTable::default();
+    args.insert("x-queue-type".into(), AMQPValue::LongString("quorum".into()));
     channel
         .queue_declare(
             "hello",
-            QueueDeclareOptions::default(),
-            FieldTable::default(),
+            QueueDeclareOptions { durable: true, ..Default::default() },
+            args,
         )
         .await?;
 

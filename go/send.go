@@ -25,11 +25,13 @@ func main() {
 
 	q, err := ch.QueueDeclare(
 		"hello", // name
-		false,   // durable
+		true,    // durability
 		false,   // delete when unused
 		false,   // exclusive
 		false,   // no-wait
-		nil,     // arguments
+		amqp.Table{
+			amqp.QueueTypeArg: amqp.QueueTypeQuorum,
+		},
 	)
 	failOnError(err, "Failed to declare a queue")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

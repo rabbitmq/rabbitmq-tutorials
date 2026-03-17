@@ -1,7 +1,7 @@
 {:ok, connection} = AMQP.Connection.open
 {:ok, channel} = AMQP.Channel.open(connection)
 
-AMQP.Queue.declare(channel, "task_queue", durable: true)
+AMQP.Queue.declare(channel, "task_queue", durable: true, arguments: [{"x-queue-type", :longstr, "quorum"}])
 
 message = 
   case System.argv do

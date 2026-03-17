@@ -10,7 +10,7 @@ end
 
 {:ok, connection} = AMQP.Connection.open
 {:ok, channel} = AMQP.Channel.open(connection)
-AMQP.Queue.declare(channel, "hello")
+AMQP.Queue.declare(channel, "hello", durable: true, arguments: [{"x-queue-type", :longstr, "quorum"}])
 AMQP.Basic.consume(channel, "hello", nil, no_ack: true)
 IO.puts " [*] Waiting for messages. To exit press CTRL+C, CTRL+C"
 

@@ -5,7 +5,7 @@ connection = Bunny.new(automatically_recover: false)
 connection.start
 
 channel = connection.create_channel
-queue = channel.queue('task_queue', durable: true)
+queue = channel.quorum_queue('task_queue')
 
 message = ARGV.empty? ? 'Hello World!' : ARGV.join(' ')
 

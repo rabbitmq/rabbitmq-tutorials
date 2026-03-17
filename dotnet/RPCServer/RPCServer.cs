@@ -8,8 +8,8 @@ var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = await factory.CreateConnectionAsync();
 using var channel = await connection.CreateChannelAsync();
 
-await channel.QueueDeclareAsync(queue: QUEUE_NAME, durable: false, exclusive: false,
-    autoDelete: false, arguments: null);
+await channel.QueueDeclareAsync(queue: QUEUE_NAME, durable: true, exclusive: false,
+    autoDelete: false, arguments: new Dictionary<string, object?> { { "x-queue-type", "quorum" } });
 
 await channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false);
 

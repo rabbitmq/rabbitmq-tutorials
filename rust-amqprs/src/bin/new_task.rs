@@ -1,8 +1,10 @@
 use amqprs::{
     connection::{Connection, OpenConnectionArguments},
     callbacks::{DefaultConnectionCallback, DefaultChannelCallback},
-    channel::{QueueDeclareArguments, BasicPublishArguments}, BasicProperties
+    channel::{QueueDeclareArguments, BasicPublishArguments}, BasicProperties,
+    FieldTable,
 };
+use amqp_serde::types::{FieldValue, ShortStr};
 use tokio::{io::Error as TError};
 
 #[tokio::main]
@@ -18,7 +20,12 @@ async fn main() -> Result<(), Box<TError>> {
     ch.register_callback(DefaultChannelCallback).await.unwrap();
 
     let q_name = "task_queue";
-    let q_args = QueueDeclareArguments::new(q_name).durable(true).finish();
+    let mut args = FieldTable::new();
+    args.insert(
+        ShortStr::try_from("x-queue-type").unwrap(),
+        FieldValue::S("quorum".try_into().unwrap()),
+    );
+    let q_args = QueueDeclareArguments::new(q_name).durable(true).arguments(args).finish();
     let (_, _, _) = ch.queue_declare(q_args).await.unwrap().unwrap();
 
     let args: Vec<_> = std::env::args().skip(1).collect();

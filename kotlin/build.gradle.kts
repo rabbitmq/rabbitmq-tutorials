@@ -22,7 +22,7 @@ kotlin {
         }
         val commonMain by getting {
             dependencies {
-                api("dev.kourier:amqp-client:0.3.1")
+                api("dev.kourier:amqp-client:0.4.2")
             }
         }
         val commonTest by getting {

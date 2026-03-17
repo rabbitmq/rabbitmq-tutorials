@@ -6,4 +6,5 @@ edition = "2021"
 
 [dependencies]
 amqprs = "1.2"
+amqp_serde = "0.4"
 tokio = "1"

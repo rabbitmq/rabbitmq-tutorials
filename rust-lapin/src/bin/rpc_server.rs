@@ -1,7 +1,7 @@
 use std::convert::TryInto;
 use std::fmt::Display;
 use futures::StreamExt;
-use lapin::{BasicProperties, Connection, ConnectionProperties, options::*, types::FieldTable};
+use lapin::{BasicProperties, Connection, ConnectionProperties, options::*, types::{AMQPValue, FieldTable}};
 
 #[derive(Debug)]
 enum Error {
@@ -36,11 +36,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conn = Connection::connect(addr, ConnectionProperties::default()).await?;
     let channel = conn.create_channel().await?;
 
+    let mut args = FieldTable::default();
+    args.insert("x-queue-type".into(), AMQPValue::LongString("quorum".into()));
     channel
         .queue_declare(
             "rpc_queue",
-            QueueDeclareOptions::default(),
-            FieldTable::default(),
+            QueueDeclareOptions { durable: true, ..Default::default() },
+            args,
         )
         .await?;
 
@@ -70,7 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             );
             println!(" [.] fib({})", n);
             let response = fib(n);
-            let payload = response.to_be_bytes();
+            let payload = response.to_le_bytes();
 
             let routing_key = delivery
                 .properties

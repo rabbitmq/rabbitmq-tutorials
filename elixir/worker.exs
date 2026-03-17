@@ -19,7 +19,7 @@ end
 {:ok, connection} = AMQP.Connection.open
 {:ok, channel} = AMQP.Channel.open(connection)
 
-AMQP.Queue.declare(channel, "task_queue", durable: true)
+AMQP.Queue.declare(channel, "task_queue", durable: true, arguments: [{"x-queue-type", :longstr, "quorum"}])
 AMQP.Basic.qos(channel, prefetch_count: 1)
 
 AMQP.Basic.consume(channel, "task_queue")

@@ -42,7 +42,7 @@ func main() {
 
 	q, err := ch.QueueDeclare(
 		"",    // name
-		false, // durable
+		false, // durability
 		false, // delete when unused
 		false, // exclusive
 		false, // no-wait

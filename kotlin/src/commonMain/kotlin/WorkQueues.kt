@@ -1,3 +1,4 @@
+import dev.kourier.amqp.Field
 import dev.kourier.amqp.connection.amqpConfig
 import dev.kourier.amqp.connection.createAMQPConnection
 import dev.kourier.amqp.properties
@@ -19,7 +20,7 @@ suspend fun newTask(coroutineScope: CoroutineScope, message: String) {
         durable = true,        // Queue survives broker restart
         exclusive = false,
         autoDelete = false,
-        arguments = emptyMap()
+        arguments = mapOf("x-queue-type" to Field.LongString("quorum"))
     )
 
     // Mark messages as persistent (deliveryMode = 2)
@@ -54,7 +55,7 @@ suspend fun worker(coroutineScope: CoroutineScope, workerName: String) {
         durable = true,
         exclusive = false,
         autoDelete = false,
-        arguments = emptyMap()
+        arguments = mapOf("x-queue-type" to Field.LongString("quorum"))
     )
     println(" [$workerName] Waiting for messages. To exit press CTRL+C")
 

@@ -1,7 +1,9 @@
 use amqprs::{
     connection::{Connection, OpenConnectionArguments},
-    callbacks::{DefaultConnectionCallback, DefaultChannelCallback}, channel::{QueueDeclareArguments, BasicConsumeArguments}
+    callbacks::{DefaultConnectionCallback, DefaultChannelCallback}, channel::{QueueDeclareArguments, BasicConsumeArguments},
+    FieldTable,
 };
+use amqp_serde::types::{FieldValue, ShortStr};
 use tokio::{self, sync::Notify};
 use tokio::io::Error as TError;
 use std::str;
@@ -20,9 +22,15 @@ async fn main() -> Result<(), Box<TError>> {
     let ch = conn.open_channel(None).await.unwrap();
     ch.register_callback(DefaultChannelCallback).await.unwrap();
     
+    let mut args = FieldTable::new();
+    args.insert(
+        ShortStr::try_from("x-queue-type").unwrap(),
+        FieldValue::S("quorum".try_into().unwrap()),
+    );
     let q_args = QueueDeclareArguments::default()
         .queue(String::from("hello"))
         .durable(true)
+        .arguments(args)
         .finish();
     let (queue_name, _, _) = ch.queue_declare(q_args).await.unwrap().unwrap();
     let consumer_args = BasicConsumeArguments::new(&queue_name, "receive.rs");

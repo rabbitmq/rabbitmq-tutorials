@@ -8,7 +8,7 @@ connection = pika.BlockingConnection(
 )
 channel = connection.channel()
 
-channel.queue_declare(queue="task_queue", durable=True)
+channel.queue_declare(queue="task_queue", durable=True, arguments={"x-queue-type": "quorum"})
 
 message = " ".join(sys.argv[1:]) or "Hello World!"
 channel.basic_publish(

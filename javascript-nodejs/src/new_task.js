@@ -14,7 +14,8 @@ amqp.connect('amqp://localhost', function(error0, connection) {
         var msg = process.argv.slice(2).join(' ') || "Hello World!";
 
         channel.assertQueue(queue, {
-            durable: true
+            durable: true,
+            arguments: { 'x-queue-type': 'quorum' }
         });
         channel.sendToQueue(queue, Buffer.from(msg), {
             persistent: true

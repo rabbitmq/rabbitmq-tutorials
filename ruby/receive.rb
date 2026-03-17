@@ -5,7 +5,7 @@ connection = Bunny.new(automatically_recover: false)
 connection.start
 
 channel = connection.create_channel
-queue = channel.queue('hello')
+queue = channel.quorum_queue('hello')
 
 begin
   puts ' [*] Waiting for messages. To exit press CTRL+C'

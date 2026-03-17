@@ -28,7 +28,7 @@ func main() {
 	err = ch.ExchangeDeclare(
 		"logs_direct", // name
 		"direct",      // type
-		true,          // durable
+		false,         // durability
 		false,         // auto-deleted
 		false,         // internal
 		false,         // no-wait

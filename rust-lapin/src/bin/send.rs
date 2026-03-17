@@ -1,4 +1,4 @@
-use lapin::{options::*, types::FieldTable, BasicProperties, Connection, ConnectionProperties};
+use lapin::{options::*, types::{AMQPValue, FieldTable}, BasicProperties, Connection, ConnectionProperties};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -6,11 +6,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conn = Connection::connect(addr, ConnectionProperties::default()).await?;
     let channel = conn.create_channel().await?;
 
+    let mut args = FieldTable::default();
+    args.insert("x-queue-type".into(), AMQPValue::LongString("quorum".into()));
     channel
         .queue_declare(
             "hello",
-            QueueDeclareOptions::default(),
-            FieldTable::default(),
+            QueueDeclareOptions { durable: true, ..Default::default() },
+            args,
         )
         .await?;
 

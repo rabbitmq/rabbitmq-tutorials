@@ -28,7 +28,7 @@ async fn main() -> Result<(), Box<TError>> {
 
     let x_name = "direct_logs";
     let x_type = "direct";
-    let x_args = ExchangeDeclareArguments::new(x_name, x_type).durable(true).finish();
+    let x_args = ExchangeDeclareArguments::new(x_name, x_type).finish();
     ch.exchange_declare(x_args).await.unwrap();    
 
     let q_args = QueueDeclareArguments::new("").durable(false).exclusive(true).finish();

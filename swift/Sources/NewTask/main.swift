@@ -13,7 +13,7 @@ struct NewTask {
   static func main() async throws {
     let connection = try await Connection.open()
     let channel = try await connection.openChannel()
-    let queue = try await channel.queue("task_queue", durable: true)
+    let queue = try await channel.queue("task_queue", type: .quorum, durable: true)
 
     let args = CommandLine.arguments.dropFirst()
     let message = args.isEmpty ? "Hello World!" : args.joined(separator: " ")
