@@ -31,7 +31,7 @@ public class Tut2Config {
 
 	@Bean
 	public Queue hello() {
-		return QueueBuilder.durable("tut.hello").quorum().build();
+		return QueueBuilder.durable("task_queue").quorum().build();
 	}
 
 	@Profile("receiver")

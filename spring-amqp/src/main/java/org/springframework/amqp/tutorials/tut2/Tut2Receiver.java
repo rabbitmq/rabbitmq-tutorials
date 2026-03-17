@@ -23,7 +23,7 @@ import org.springframework.util.StopWatch;
  * @author Gary Russell
  * @author Scott Deeg
  */
-@RabbitListener(queues = "tut.hello")
+@RabbitListener(queues = "task_queue")
 public class Tut2Receiver {
 
 	private final int instance;
