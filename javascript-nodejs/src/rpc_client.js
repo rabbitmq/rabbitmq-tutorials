@@ -18,24 +18,23 @@ async function main() {
 
     console.log(' [x] Requesting fib(%d)', num);
 
-    // Consume from the Direct Reply-to pseudo-queue (noAck is mandatory)
-    channel.consume('amq.rabbitmq.reply-to', function(msg) {
-        if (msg.properties.correlationId === correlationId) {
-            console.log(' [.] Got %s', msg.content.toString());
-            setTimeout(function() {
-                connection.close();
-                process.exit(0);
-            }, 500);
-        }
-    }, {
-        noAck: true
+    const result = await new Promise((resolve) => {
+        // Consume from the Direct Reply-to pseudo-queue (noAck is mandatory)
+        channel.consume('amq.rabbitmq.reply-to', (msg) => {
+            if (msg.properties.correlationId === correlationId) {
+                resolve(msg.content.toString());
+            }
+        }, { noAck: true });
+
+        channel.sendToQueue('rpc_queue',
+            Buffer.from(num.toString()), {
+                correlationId: correlationId,
+                replyTo: 'amq.rabbitmq.reply-to'
+            });
     });
 
-    channel.sendToQueue('rpc_queue',
-        Buffer.from(num.toString()), {
-            correlationId: correlationId,
-            replyTo: 'amq.rabbitmq.reply-to'
-        });
+    console.log(' [.] Got %s', result);
+    await connection.close();
 }
 
 function generateUuid() {
