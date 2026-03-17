@@ -15,7 +15,7 @@ async function main() {
         durable: false
     });
     channel.publish(exchange, key, Buffer.from(msg));
-    console.log(" [x] Sent %s:'%s'", key, msg);
+    console.log(" [x] Sent %s: '%s'", key, msg);
 
     setTimeout(function() {
         connection.close();

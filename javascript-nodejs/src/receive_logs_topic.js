@@ -4,7 +4,7 @@ const amqp = require('amqplib');
 
 const args = process.argv.slice(2);
 
-if (args.length == 0) {
+if (args.length === 0) {
     console.log("Usage: receive_logs_topic.js <facility>.<severity>");
     process.exit(1);
 }
@@ -24,9 +24,9 @@ async function main() {
     });
     console.log(' [*] Waiting for logs. To exit press CTRL+C');
 
-    args.forEach(function(key) {
-        channel.bindQueue(q.queue, exchange, key);
-    });
+    for (const key of args) {
+        await channel.bindQueue(q.queue, exchange, key);
+    }
 
     channel.consume(q.queue, function(msg) {
         console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());

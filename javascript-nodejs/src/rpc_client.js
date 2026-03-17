@@ -4,7 +4,7 @@ const amqp = require('amqplib');
 
 const args = process.argv.slice(2);
 
-if (args.length == 0) {
+if (args.length === 0) {
     console.log("Usage: rpc_client.js num");
     process.exit(1);
 }
@@ -20,7 +20,7 @@ async function main() {
 
     // Consume from the Direct Reply-to pseudo-queue (noAck is mandatory)
     channel.consume('amq.rabbitmq.reply-to', function(msg) {
-        if (msg.properties.correlationId == correlationId) {
+        if (msg.properties.correlationId === correlationId) {
             console.log(' [.] Got %s', msg.content.toString());
             setTimeout(function() {
                 connection.close();
