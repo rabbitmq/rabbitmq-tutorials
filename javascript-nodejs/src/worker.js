@@ -1,27 +1,32 @@
 #!/usr/bin/env node
 
-var amqp = require('amqplib/callback_api');
+const amqp = require('amqplib');
 
-amqp.connect('amqp://localhost', function(error, connection) {
-    connection.createChannel(function(error, channel) {
-        var queue = 'task_queue';
+async function main() {
+    const connection = await amqp.connect('amqp://localhost');
+    const channel = await connection.createChannel();
 
-        channel.assertQueue(queue, {
-            durable: true,
-            arguments: { 'x-queue-type': 'quorum' }
-        });
-        channel.prefetch(1);
-        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
-        channel.consume(queue, function(msg) {
-            var secs = msg.content.toString().split('.').length - 1;
+    const queue = 'task_queue';
 
-            console.log(" [x] Received %s", msg.content.toString());
-            setTimeout(function() {
-                console.log(" [x] Done");
-                channel.ack(msg);
-            }, secs * 1000);
-        }, {
-            noAck: false
-        });
+    await channel.assertQueue(queue, {
+        durable: true,
+        arguments: { 'x-queue-type': 'quorum' }
     });
-});
+    channel.prefetch(1);
+    console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
+    channel.consume(queue, function(msg) {
+        const secs = msg.content.toString().split('.').length - 1;
+
+        console.log(" [x] Received %s", msg.content.toString());
+        setTimeout(function() {
+            console.log(" [x] Done");
+            channel.ack(msg);
+        }, secs * 1000);
+    }, {
+        // manual acknowledgment mode,
+        // see /docs/confirms for details
+        noAck: false
+    });
+}
+
+main();
