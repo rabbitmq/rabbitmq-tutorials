@@ -49,7 +49,7 @@ The following ports are available:
  * [Rust with amqprs](./rust-amqprs)
  * [Rust with Lapin](./rust-lapin)
  * [Scala](./scala)
- * [Swift](./swift)
+ * [Swift](./swift) (Swift 6 or later)
  * [Spring AMQP](./spring-amqp)
  * [SoapUI](./soapui)
  
