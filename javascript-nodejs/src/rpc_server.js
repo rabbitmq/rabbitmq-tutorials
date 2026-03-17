@@ -1,39 +1,34 @@
 #!/usr/bin/env node
 
-var amqp = require('amqplib/callback_api');
+const amqp = require('amqplib');
 
-amqp.connect('amqp://localhost', function(error0, connection) {
-    if (error0) {
-        throw error0;
-    }
-    connection.createChannel(function(error1, channel) {
-        if (error1) {
-            throw error1;
-        }
-        var queue = 'rpc_queue';
+async function main() {
+    const connection = await amqp.connect('amqp://localhost');
+    const channel = await connection.createChannel();
 
-        channel.assertQueue(queue, {
-            durable: true,
-            arguments: { 'x-queue-type': 'quorum' }
-        });
-        channel.prefetch(1);
-        console.log(' [x] Awaiting RPC requests');
-        channel.consume(queue, function reply(msg) {
-            var n = parseInt(msg.content.toString());
+    const queue = 'rpc_queue';
 
-            console.log(" [.] fib(%d)", n);
-
-            var r = fibonacci(n);
-
-            channel.sendToQueue(msg.properties.replyTo,
-                Buffer.from(r.toString()), {
-                    correlationId: msg.properties.correlationId
-                });
-
-            channel.ack(msg);
-        });
+    await channel.assertQueue(queue, {
+        durable: true,
+        arguments: { 'x-queue-type': 'quorum' }
     });
-});
+    channel.prefetch(1);
+    console.log(' [x] Awaiting RPC requests');
+    channel.consume(queue, function reply(msg) {
+        const n = parseInt(msg.content.toString());
+
+        console.log(" [.] fib(%d)", n);
+
+        const r = fibonacci(n);
+
+        channel.sendToQueue(msg.properties.replyTo,
+            Buffer.from(r.toString()), {
+                correlationId: msg.properties.correlationId
+            });
+
+        channel.ack(msg);
+    });
+}
 
 function fibonacci(n) {
     if (n === 0 || n === 1)
@@ -41,3 +36,5 @@ function fibonacci(n) {
     else
         return fibonacci(n - 1) + fibonacci(n - 2);
 }
+
+main();
