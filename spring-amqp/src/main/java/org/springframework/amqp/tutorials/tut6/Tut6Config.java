@@ -38,7 +38,7 @@ public class Tut6Config {
 
 		@Bean
 		public DirectExchange exchange() {
-			return new DirectExchange("tut.rpc");
+			return new DirectExchange("rpc");
 		}
 
 		@Bean
@@ -53,12 +53,12 @@ public class Tut6Config {
 
 		@Bean
 		public Queue queue() {
-			return QueueBuilder.durable("tut.rpc.requests").quorum().build();
+			return QueueBuilder.durable("rpc_queue").quorum().build();
 		}
 
 		@Bean
 		public DirectExchange exchange() {
-			return new DirectExchange("tut.rpc");
+			return new DirectExchange("rpc");
 		}
 
 		@Bean
