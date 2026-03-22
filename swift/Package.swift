@@ -24,7 +24,7 @@ let package = Package(
   name: "RabbitMQTutorials",
   platforms: [.macOS(.v14), .iOS(.v17), .tvOS(.v17), .watchOS(.v10), .visionOS(.v1)],
   dependencies: [
-    .package(url: "https://github.com/michaelklishin/bunny-swift.git", from: "0.12.0")
+    .package(url: "https://github.com/michaelklishin/bunny-swift.git", from: "0.13.0")
   ],
   targets: [
     // Tutorial 1: Hello World
