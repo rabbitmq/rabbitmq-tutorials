@@ -43,9 +43,12 @@ public class Tut4Sender {
 
 	@Scheduled(fixedDelay = 1000, initialDelay = 500)
 	public void send() {
-		StringBuilder builder = new StringBuilder("Hello to ");
+		StringBuilder builder = new StringBuilder("Hello to");
 		if (this.index.incrementAndGet() == 3) {
 			this.index.set(0);
+		}
+		for (int i = 0; i < this.index.get() + 1; i++) {
+			builder.append('.');
 		}
 		String key = keys[this.index.get()];
 		builder.append(key).append(' ');
