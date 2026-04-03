@@ -13,10 +13,9 @@ def publish_messages_individually(connection)
   MESSAGE_COUNT.times do |i|
     body = i.to_s
     channel.basic_publish(body, '', queue.name)
+    channel.wait_for_confirms
   end
   
-  # Wait for any remaining confirmations
-  channel.wait_for_confirms
   end_time = Time.now
 
   puts "Published #{MESSAGE_COUNT} messages individually in #{((end_time - start_time) * 1000).to_i} ms"
