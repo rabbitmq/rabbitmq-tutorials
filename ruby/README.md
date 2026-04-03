@@ -5,7 +5,7 @@ Here you can find Ruby code examples from
 
 ## Requirements
 
-These tutorials require Ruby 2.2 or later, [Bundler](https://bundler.io/) and [Bunny](http://rubybunny.info) to be installed.
+These tutorials require Ruby 3.1.0 or later, [Bundler](https://bundler.io/) and [Bunny](http://rubybunny.info) to be installed.
 
 To install Bunny with Bundler, do
 
@@ -56,6 +56,12 @@ bundle exec ruby emit_log_topic.rb
 ``` sh
 bundle exec ruby rpc_server.rb
 bundle exec ruby rpc_client.rb
+```
+
+[Tutorial seven: Publisher Confirms](https://www.rabbitmq.com/tutorials/tutorial-seven-ruby.html)
+
+``` sh
+bundle exec ruby publisher_confirms.rb
 ```
 
 To learn more, see [Bunny documentation](http://rubybunny.info).
