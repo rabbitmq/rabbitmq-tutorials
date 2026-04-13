@@ -43,3 +43,5 @@ target/
 .classpath
 .project
 .settings
+
+/.cursor/plans
