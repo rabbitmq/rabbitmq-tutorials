@@ -64,7 +64,7 @@ async Task RunServerAsync(CancellationToken cancellationToken)
             .RequestQueue(requestQueue)
             .Handler((ctx, request) =>
             {
-                string payload = Encoding.UTF8.GetString(request.Body()!);
+                string payload = request.BodyAsString();
                 object? mid = request.MessageId();
                 if (mid != null)
                 {
@@ -140,7 +140,7 @@ async Task RunClientAsync(CancellationToken cancellationToken)
                     continue;
                 }
 
-                string payload = Encoding.UTF8.GetString(reply.Body()!);
+                string payload = reply.BodyAsString();
                 Console.WriteLine($"RPC Client: Sent ping request ({requestId})");
                 Console.WriteLine($"RPC Client: Received reply - {payload}");
             }

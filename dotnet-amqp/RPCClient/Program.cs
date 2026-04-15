@@ -28,7 +28,7 @@ try
             Console.WriteLine($" [x] Requesting fib({iStr})");
             IMessage request = new AmqpMessage(Encoding.UTF8.GetBytes(iStr));
             IMessage reply = await requester.PublishAsync(request);
-            string response = Encoding.UTF8.GetString(reply.Body()!);
+            string response = reply.BodyAsString();
             Console.WriteLine($" [.] Got '{response}'");
         }
     }

@@ -29,7 +29,7 @@ try
             string response = "";
             try
             {
-                string message = Encoding.UTF8.GetString(request.Body()!);
+                string message = request.BodyAsString();
                 int n = int.Parse(message);
                 Console.WriteLine($" [.] fib({message})");
                 response += Fib(n);

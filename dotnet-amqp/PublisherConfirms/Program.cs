@@ -23,7 +23,7 @@ try
         .Queue(queueName)
         .MessageHandler((ctx, message) =>
         {
-            Console.WriteLine($"Received a message: {Encoding.UTF8.GetString(message.Body()!)}");
+            Console.WriteLine($"Received a message: {message.BodyAsString()}");
             ctx.Accept();
             return Task.CompletedTask;
         })
@@ -38,13 +38,16 @@ try
         {
             const string text = "hello";
             PublishResult pr = await publisher.PublishAsync(new AmqpMessage(Encoding.UTF8.GetBytes(text)));
-            if (pr.Outcome.State == OutcomeState.Accepted)
-            {
-                Console.WriteLine("Confirmed");
-            }
-            else
-            {
-                Console.WriteLine($"Unexpected outcome: {pr.Outcome.State}");
+            switch (pr.Outcome.State) {
+            case OutcomeState.Accepted:
+              Console.WriteLine($" Accepted Message: {pr.Message.BodyAsString()} confirmed");
+              break;
+            case OutcomeState.Released: // here the message is not routed
+              Console.WriteLine($" Released Message: {pr.Message.BodyAsString()} Released");
+              break;
+            case OutcomeState.Rejected: // here there is also the error: `pr.Outcome.Error` 
+              Console.WriteLine($"[Publisher] Message: {pr.Message.BodyAsString()} Rejected with error: {pr.Outcome.Error}");
+              break;
             }
 
             await Task.Delay(500);

@@ -1,5 +1,4 @@
-﻿using System.Text;
-using RabbitMQ.AMQP.Client;
+﻿using RabbitMQ.AMQP.Client;
 using RabbitMQ.AMQP.Client.Impl;
 
 const string brokerUri = "amqp://guest:guest@localhost:5672/%2f";
@@ -22,7 +21,7 @@ try
         .Queue("hello")
         .MessageHandler((ctx, message) =>
         {
-            Console.WriteLine($"Received a message: {Encoding.UTF8.GetString(message.Body()!)}");
+            Console.WriteLine($"Received a message: {message.BodyAsString()}");
             ctx.Accept();
             return Task.CompletedTask;
         })

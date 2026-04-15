@@ -1,5 +1,4 @@
-﻿using System.Text;
-using RabbitMQ.AMQP.Client;
+﻿using RabbitMQ.AMQP.Client;
 using RabbitMQ.AMQP.Client.Impl;
 
 const string brokerUri = "amqp://guest:guest@localhost:5672/%2f";
@@ -24,7 +23,7 @@ try
         .InitialCredits(1)
         .MessageHandler((ctx, message) =>
         {
-            string body = Encoding.UTF8.GetString(message.Body()!);
+            string body = message.BodyAsString();
             Console.WriteLine($" [x] Received '{body}'");
             try
             {
