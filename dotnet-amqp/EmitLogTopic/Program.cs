@@ -27,10 +27,22 @@ try
     {
         var amqpMessage = new AmqpMessage(Encoding.UTF8.GetBytes(message));
         PublishResult pr = await publisher.PublishAsync(amqpMessage);
-        if (pr.Outcome.State != OutcomeState.Accepted)
+        switch (pr.Outcome.State)
         {
+        case OutcomeState.Accepted:
+            break;
+        case OutcomeState.Released:
+            Console.Error.WriteLine($"Released message: {pr.Message.BodyAsString()}");
+            Environment.Exit(1);
+            break;
+        case OutcomeState.Rejected:
+            Console.Error.WriteLine($"[Publisher] Message: {pr.Message.BodyAsString()} rejected with error: {pr.Outcome.Error}");
+            Environment.Exit(1);
+            break;
+        default:
             Console.Error.WriteLine($"Unexpected publish outcome: {pr.Outcome.State}");
             Environment.Exit(1);
+            break;
         }
 
         Console.WriteLine($" [x] Sent '{routingKey}':'{message}'");

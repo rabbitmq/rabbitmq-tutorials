@@ -38,16 +38,23 @@ try
         {
             const string text = "hello";
             PublishResult pr = await publisher.PublishAsync(new AmqpMessage(Encoding.UTF8.GetBytes(text)));
-            switch (pr.Outcome.State) {
+            switch (pr.Outcome.State)
+            {
             case OutcomeState.Accepted:
-              Console.WriteLine($" Accepted Message: {pr.Message.BodyAsString()} confirmed");
-              break;
-            case OutcomeState.Released: // here the message is not routed
-              Console.WriteLine($" Released Message: {pr.Message.BodyAsString()} Released");
-              break;
-            case OutcomeState.Rejected: // here there is also the error: `pr.Outcome.Error` 
-              Console.WriteLine($"[Publisher] Message: {pr.Message.BodyAsString()} Rejected with error: {pr.Outcome.Error}");
-              break;
+                Console.WriteLine($" Accepted Message: {pr.Message.BodyAsString()} confirmed");
+                break;
+            case OutcomeState.Released:
+                Console.Error.WriteLine($"Released message: {pr.Message.BodyAsString()}");
+                Environment.Exit(1);
+                break;
+            case OutcomeState.Rejected:
+                Console.Error.WriteLine($"[Publisher] Message: {pr.Message.BodyAsString()} rejected with error: {pr.Outcome.Error}");
+                Environment.Exit(1);
+                break;
+            default:
+                Console.Error.WriteLine($"Unexpected publish outcome: {pr.Outcome.State}");
+                Environment.Exit(1);
+                break;
             }
 
             await Task.Delay(500);
