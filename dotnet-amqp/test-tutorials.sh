@@ -97,9 +97,9 @@ runproj() {
 	local proj=$1
 	shift
 	if command -v stdbuf >/dev/null 2>&1; then
-		stdbuf -oL -eL dotnet run --no-build -c Release --project "$ROOT/$proj/$proj.csproj" -- "$@"
+		stdbuf -oL -eL dotnet run --no-build -c Release -f net8.0 --project "$ROOT/$proj/$proj.csproj" -- "$@"
 	else
-		dotnet run --no-build -c Release --project "$ROOT/$proj/$proj.csproj" -- "$@"
+		dotnet run --no-build -c Release -f net8.0 --project "$ROOT/$proj/$proj.csproj" -- "$@"
 	fi
 }
 
