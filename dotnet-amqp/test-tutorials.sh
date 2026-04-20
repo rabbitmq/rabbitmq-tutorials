@@ -243,7 +243,7 @@ test_publisher_confirms() {
 	local log
 	log=$(mktemp)
 	run_timed "$log" 6 runproj PublisherConfirms
-	assert_file_contains "$log" "Confirmed" "PublisherConfirms sees accepted publish"
+	assert_file_contains "$log" "Accepted Message" "PublisherConfirms sees accepted publish"
 	assert_file_contains "$log" "Received a message" "PublisherConfirms consumer sees message"
 	rm -f "$log"
 }

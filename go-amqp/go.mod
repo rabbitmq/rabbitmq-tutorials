@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/Azure/go-amqp v1.5.1
-	github.com/rabbitmq/rabbitmq-amqp-go-client v0.7.0
+	github.com/rabbitmq/rabbitmq-amqp-go-client v1.0.0
 )
 
 require (
