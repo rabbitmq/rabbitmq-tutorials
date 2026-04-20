@@ -75,7 +75,13 @@ func publish(conn *rmq.AmqpConnection, qName, text string) {
 	switch res.Outcome.(type) {
 	case *rmq.StateAccepted:
 		log.Printf("Confirmed")
+	case *rmq.StateRejected:
+		log.Fatalf("Message was rejected: %v", res.Outcome)
+	case *rmq.StateReleased:
+		log.Fatalf("Message was released: %v", res.Outcome)
+	case *rmq.StateModified:
+		log.Fatalf("Message was modified: %v", res.Outcome)
 	default:
-		log.Printf("Unexpected outcome: %v", res.Outcome)
+		log.Fatalf("Unexpected publish outcome: %v", res.Outcome)
 	}
 }
