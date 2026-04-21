@@ -1,0 +1,6 @@
+*.dll
+*.exe
+*.lock.json
+packages/
+bin/
+obj/
