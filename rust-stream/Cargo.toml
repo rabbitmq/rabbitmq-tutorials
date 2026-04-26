@@ -9,3 +9,4 @@ edition = "2021"
 rabbitmq-stream-client = "0.4.4"
 tokio = { version = "1.43.1", features = ["rt", "rt-multi-thread", "macros"] }
 futures = "0.3.30"
+rustls-webpki = "0.103.13"
