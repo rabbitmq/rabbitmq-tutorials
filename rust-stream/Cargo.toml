@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rabbitmq-stream-client = "0.4.4"
+rabbitmq-stream-client = "0.11"
 tokio = { version = "1.43.1", features = ["rt", "rt-multi-thread", "macros"] }
 futures = "0.3.30"
 rustls-webpki = "0.103.13"
