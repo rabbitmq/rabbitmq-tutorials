@@ -1,0 +1,19 @@
+.{
+    .name = .rabbitmq_tutorials_zig,
+    .version = "0.1.0",
+    .minimum_zig_version = "0.16.0",
+    .fingerprint = 0x653ff08fc71cfa35,
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "AGENTS.md",
+        "README.md",
+    },
+    .dependencies = .{
+        .bunny = .{
+            .url = "git+https://github.com/michaelklishin/bunny-zig.git?ref=main#46f3790fa96a73b7ffe3b090c17e184297e0e0e5",
+            .hash = "bunny-0.7.0-nX26oe7EBwBZgAvMY3GZaCKz4485n3IrydQXhB6L_s6z",
+        },
+    },
+}
