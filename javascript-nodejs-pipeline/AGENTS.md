@@ -1,8 +1,15 @@
-# Agent Notes: Node.js Pipeline Example
+# Agent Notes: Node.js Pipeline Pattern
 
-This port is a Docker Compose-oriented Node.js pipeline example. Unlike the
-numbered `javascript-nodejs` tutorials, the scripts connect to
-`amqp://rabbitmq` because they are intended to run inside the Compose network.
+This port demonstrates a process that is both a RabbitMQ consumer and producer.
+Use it as the reference pattern when implementing a simple message pipeline:
+
+```text
+producer -> pipeline.input -> worker -> pipeline.output -> consumer
+```
+
+The worker consumes from `pipeline.input`, transforms each message, publishes
+the transformed message to `pipeline.output`, waits for broker confirmation,
+and only then acknowledges the original delivery.
 
 ## Running the Example
 
@@ -16,7 +23,25 @@ The `producer` exits after sending its batch. The `worker` and `consumer` are
 long-running services.
 
 Manual `node` runs require the hostname `rabbitmq` to resolve to a running
-RabbitMQ broker.
+RabbitMQ broker. The scripts intentionally use `amqp://rabbitmq` because the
+primary workflow is Docker Compose.
+
+## Implementing the Pattern
+
+ * Declare both input and output queues before consuming or publishing
+ * Use durable quorum queues for `pipeline.input` and `pipeline.output`
+ * Use manual acknowledgements on the input consumer
+ * Set `prefetch(1)` so each worker handles one unacknowledged delivery at a time
+ * Publish the transformed output message with `persistent: true`
+ * Use a confirm channel for publish-confirm-then-ack behavior
+ * Acknowledge the input delivery only after the output publish has been confirmed
+ * On publish failure, `nack` the input delivery with requeue enabled
+ * Keep the transformation small and visible in the worker
+
+This pattern preserves the original message until the broker has accepted the
+derived message. It can still produce duplicates if a worker crashes after the
+output publish is confirmed but before the input acknowledgement reaches the
+broker, so consumers should be prepared for duplicate messages in real systems.
 
 ## Code Guidelines
 
