@@ -65,3 +65,34 @@ node src/emit_log_topic.js red.rabbit Hello
 node src/rpc_server.js
 node src/rpc_client.js 30
 ```
+
+## Running with Docker Compose (optional)
+
+If you don't want to install RabbitMQ locally, you can alternatively run the
+tutorials inside containers using the included `docker-compose.yml`:
+
+``` shell
+docker compose up --build send receive
+```
+
+This starts a RabbitMQ broker (with the management UI on
+[http://localhost:15672](http://localhost:15672), default `guest`/`guest`
+credentials) and runs Tutorial 1 (`send` and `receive`).
+
+To run other tutorials with the same images, override the command on one of
+the existing services, for example:
+
+``` shell
+docker compose run --rm send node src/new_task.js "A very hard task..."
+docker compose run --rm receive node src/worker.js
+```
+
+The source files honor an optional `AMQP_URL` environment variable, falling
+back to `amqp://localhost`, so the same code runs unchanged against either a
+local broker or the broker started by Compose.
+
+To tear everything down, including the broker's volume:
+
+``` shell
+docker compose down -v
+```
