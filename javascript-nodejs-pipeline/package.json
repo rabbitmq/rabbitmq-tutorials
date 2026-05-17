@@ -1,0 +1,13 @@
+{
+  "name": "rabbitmq-node-pipeline-example",
+  "version": "1.0.0",
+  "description": "Hybrid consumer-and-producer pipeline example for RabbitMQ in Node.js",
+  "scripts": {
+    "producer": "node producer.js",
+    "worker": "node worker.js",
+    "consumer": "node consumer.js"
+  },
+  "dependencies": {
+    "amqplib": "0.10.9"
+  }
+}
