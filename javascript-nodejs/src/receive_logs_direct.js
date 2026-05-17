@@ -10,7 +10,7 @@ if (args.length === 0) {
 }
 
 async function main() {
-    const connection = await amqp.connect('amqp://localhost');
+    const connection = await amqp.connect(process.env.AMQP_URL || 'amqp://localhost');
     const channel = await connection.createChannel();
 
     const exchange = 'direct_logs';
