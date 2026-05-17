@@ -8,7 +8,7 @@ const amqp = require('amqplib');
 
 async function main() {
     const connection = await amqp.connect('amqp://rabbitmq');
-    const channel = await connection.createChannel();
+    const channel = await connection.createConfirmChannel();
 
     const inputQueue = 'pipeline.input';
     const outputQueue = 'pipeline.output';
@@ -25,13 +25,23 @@ async function main() {
     channel.prefetch(1);
     console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", inputQueue);
 
-    channel.consume(inputQueue, function(msg) {
+    channel.consume(inputQueue, async function(msg) {
+        if (msg === null) {
+            return;
+        }
+
         const body = msg.content.toString();
         const transformed = body.toUpperCase();
 
         console.log(" [x] Received '%s', forwarding '%s' to %s", body, transformed, outputQueue);
-        channel.sendToQueue(outputQueue, Buffer.from(transformed), { persistent: true });
-        channel.ack(msg);
+        try {
+            channel.sendToQueue(outputQueue, Buffer.from(transformed), { persistent: true });
+            await channel.waitForConfirms();
+            channel.ack(msg);
+        } catch (err) {
+            console.error(" [!] Failed to forward '%s': %s", body, err.message);
+            channel.nack(msg, false, true);
+        }
     }, {
         noAck: false
     });

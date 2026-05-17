@@ -4,7 +4,7 @@ const amqp = require('amqplib');
 
 async function main() {
     const connection = await amqp.connect('amqp://rabbitmq');
-    const channel = await connection.createChannel();
+    const channel = await connection.createConfirmChannel();
 
     const inputQueue = 'pipeline.input';
 
@@ -19,6 +19,7 @@ async function main() {
         channel.sendToQueue(inputQueue, Buffer.from(msg), { persistent: true });
         console.log(" [x] Sent '%s' to %s", msg, inputQueue);
     }
+    await channel.waitForConfirms();
 
     setTimeout(function() {
         connection.close();
