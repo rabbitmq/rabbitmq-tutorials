@@ -3,8 +3,8 @@
 A self-contained Node.js example showing a process that is **both a consumer
 and a producer** on the same channel. The worker reads messages from one
 queue, transforms each one, republishes the result to a second queue, and
-only then acknowledges the input message — so a message is never dropped in
-transit and never silently re-delivered after a successful republish.
+acknowledges the input message after the broker confirms the republished
+message.
 
 This is a complementary example to the numbered RabbitMQ tutorials, focused
 on the hybrid-node pattern that sits at the heart of most real pipelines,
@@ -17,17 +17,15 @@ producer --> pipeline.input --> worker (consumer + producer) --> pipeline.output
 ```
 
  - `producer` publishes input messages into `pipeline.input`
- - `worker` consumes from `pipeline.input` and, for each delivery, publishes a transformed message to `pipeline.output` before acknowledging the input
+ - `worker` consumes from `pipeline.input`, publishes a transformed message to `pipeline.output`, and then acknowledges the input
  - `consumer` reads from `pipeline.output`
 
-`pipeline.input` and `pipeline.output` are both declared as durable quorum
-queues, so the worker can be restarted at any point without losing in-flight
-work.
+`pipeline.input` and `pipeline.output` are both durable quorum queues.
 
 ## How the worker behaves
 
- - `prefetch(1)` — one unacknowledged delivery at a time, so the worker never holds more than one message in memory and load is naturally spread across multiple worker replicas
- - **Publish-then-ack** — the input delivery is acknowledged *after* the transformed message has been handed to `sendToQueue`. If the worker crashes mid-transform, the original message is redelivered by the broker
+ - `prefetch(1)` — one unacknowledged delivery at a time, so the worker never holds more than one message in memory and load is spread across multiple worker replicas
+ - **Publish-confirm-then-ack** — the input delivery is acknowledged *after* the transformed message has been confirmed by the broker. If the worker crashes mid-transform or before the confirm arrives, the broker redelivers the original message
  - **Persistent output** — the republished message is marked persistent and lands in a quorum queue, so it survives broker restarts
 
 The transformation used here is intentionally trivial (uppercase the body)
@@ -41,27 +39,17 @@ so the focus stays on the topology and the acknowledgement flow.
 
 ## Requirements
 
-[Node.js](https://nodejs.org/en/download/) and the
-[`amqplib`](https://github.com/amqp-node/amqplib) client. The example
-connects to RabbitMQ at `amqp://localhost`, matching the style of the
-numbered Node.js tutorials in [`../javascript-nodejs`](../javascript-nodejs).
+### Docker Compose
 
-## Run against a local RabbitMQ
+To run the complete example, you need Docker with Docker Compose. The Compose
+file starts RabbitMQ and all three pipeline processes.
 
-Install dependencies once:
+### Manual Node.js run
 
-``` shell
-npm install
-```
-
-Then, in three terminals (start the consumer and the worker before the
-producer so the live output is easier to follow):
-
-``` shell
-node consumer.js
-node worker.js
-node producer.js
-```
+To run the scripts outside Docker, you need [Node.js](https://nodejs.org/en/download/)
+and the [`amqplib`](https://github.com/amqp-node/amqplib) client. The scripts
+connect to RabbitMQ at `amqp://rabbitmq`, so that host name must resolve to a
+running broker.
 
 ## Run under Docker Compose
 
@@ -75,8 +63,28 @@ To stand the whole pipeline up:
 docker compose up --build consumer worker producer
 ```
 
+The producer publishes its batch and exits. The worker and consumer keep
+running so you can inspect the queues or send another producer batch.
+
 To tear everything down, including the broker's volume:
 
 ``` shell
 docker compose down -v
+```
+
+## Run the Node.js scripts manually
+
+Install dependencies once:
+
+``` shell
+npm install
+```
+
+Then, in three terminals, start the consumer and the worker before the
+producer. This requires `rabbitmq` to resolve to the broker host:
+
+``` shell
+node consumer.js
+node worker.js
+node producer.js
 ```
