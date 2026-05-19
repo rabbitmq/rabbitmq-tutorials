@@ -44,7 +44,7 @@ func main() {
 		"",    // name
 		false, // durability
 		false, // delete when unused
-		false, // exclusive
+		true, // exclusive
 		false, // no-wait
 		nil,   // arguments
 	)
