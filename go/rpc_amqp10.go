@@ -12,7 +12,7 @@ import (
 const (
 	amqpURL = "amqp://guest:guest@localhost:5672/"
 	// Request queue name for RPC requests
-	requestQueue = "rpc-requests"
+	requestQueue = "/queues/rpc-requests"
 )
 
 // RPC Server - handles ping requests and sends pong replies
