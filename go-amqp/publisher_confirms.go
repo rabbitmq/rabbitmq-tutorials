@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	rmq "github.com/rabbitmq/rabbitmq-amqp-go-client/pkg/rabbitmqamqp"
 )
@@ -32,7 +35,13 @@ func main() {
 	publish(conn, qInfo.Name(), "hello")
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	select {}
+	// Create a channel to receive OS signals
+	c := make(chan os.Signal, 1)
+	// Notify the channel for SIGINT (CTRL+C) and SIGTERM
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	// Block until a signal is received
+	<-c
+	log.Printf("Shutting down gracefully...")
 }
 
 func consume(conn *rmq.AmqpConnection, qName string) {
