@@ -18,7 +18,7 @@ const brokerURI = "amqp://guest:guest@localhost:5672/"
 func main() {
 	// Create a context that will be canceled on SIGINT (Ctrl+C) or SIGTERM.
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer cancel() // Ensure resources are freed
+	defer cancel()
 
 	env := rmq.NewEnvironment(brokerURI, nil)
 	conn, err := env.NewConnection(ctx)
