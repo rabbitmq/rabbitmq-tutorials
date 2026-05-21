@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
 	"os/signal"
@@ -13,7 +14,9 @@ import (
 const brokerURI = "amqp://guest:guest@localhost:5672/"
 
 func main() {
-	ctx := context.Background()
+	// Create a context that will be canceled on SIGINT (Ctrl+C) or SIGTERM.
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer cancel()
 	env := rmq.NewEnvironment(brokerURI, nil)
 	conn, err := env.NewConnection(ctx)
 	if err != nil {
@@ -31,21 +34,15 @@ func main() {
 		log.Panicf("Failed to declare a queue: %v", err)
 	}
 
-	consume(conn, qInfo.Name())
-	publish(conn, qInfo.Name(), "hello")
+	consume(ctx, conn, qInfo.Name())
+	publish(ctx, conn, qInfo.Name(), "hello")
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	// Create a channel to receive OS signals
-	c := make(chan os.Signal, 1)
-	// Notify the channel for SIGINT (CTRL+C) and SIGTERM
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	// Block until a signal is received
-	<-c
+	<-ctx.Done()
 	log.Printf("Shutting down gracefully...")
 }
 
-func consume(conn *rmq.AmqpConnection, qName string) {
-	ctx := context.Background()
+func consume(ctx context.Context, conn *rmq.AmqpConnection, qName string) {
 	consumer, err := conn.NewConsumer(ctx, qName, nil)
 	if err != nil {
 		log.Panicf("Failed to create consumer: %v", err)
@@ -55,8 +52,10 @@ func consume(conn *rmq.AmqpConnection, qName string) {
 		for {
 			delivery, err := consumer.Receive(ctx)
 			if err != nil {
-				log.Printf("consumer receive: %v", err)
-				return
+				if errors.Is(err, context.Canceled) {
+					return
+				}
+				log.Panicf("Failed to receive a message: %v", err)
 			}
 			msg := delivery.Message()
 			var body string
@@ -69,8 +68,7 @@ func consume(conn *rmq.AmqpConnection, qName string) {
 	}()
 }
 
-func publish(conn *rmq.AmqpConnection, qName, text string) {
-	ctx := context.Background()
+func publish(ctx context.Context, conn *rmq.AmqpConnection, qName, text string) {
 	publisher, err := conn.NewPublisher(ctx, &rmq.QueueAddress{Queue: qName}, nil)
 	if err != nil {
 		log.Panicf("Failed to create publisher: %v", err)
@@ -79,6 +77,9 @@ func publish(conn *rmq.AmqpConnection, qName, text string) {
 
 	res, err := publisher.Publish(ctx, rmq.NewMessage([]byte(text)))
 	if err != nil {
+		if errors.Is(err, context.Canceled) {
+			return
+		}
 		log.Panicf("Failed to publish a message: %v", err)
 	}
 	switch res.Outcome.(type) {
