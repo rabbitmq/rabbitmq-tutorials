@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/Azure/go-amqp"
@@ -227,6 +230,16 @@ func main() {
 	}()
 
 	// Wait for context cancellation (Ctrl+C or error)
+	// Create a channel to receive OS signals
+	c := make(chan os.Signal, 1)
+	// Notify the channel for SIGINT (CTRL+C) and SIGTERM
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		// Block until a signal is received
+		<-c
+		log.Println("\nReceived interrupt, shutting down...")
+		cancel()
+	}()
 	<-ctx.Done()
 	log.Println("Application shutting down...")
 }

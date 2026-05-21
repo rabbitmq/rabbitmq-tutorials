@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -44,7 +47,7 @@ func main() {
 		"",    // name
 		false, // durability
 		false, // delete when unused
-		true, // exclusive
+		true,  // exclusive
 		false, // no-wait
 		nil,   // arguments
 	)
@@ -54,8 +57,14 @@ func main() {
 	publish(ch, q.Name, "hello")
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	var forever chan struct{}
-	<-forever
+	// Create a channel to receive OS signals
+	c := make(chan os.Signal, 1)
+	// Notify the channel for SIGINT (CTRL+C) and SIGTERM
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	// Block until a signal is received
+	<-c
+	log.Printf("Shutting down gracefully...")
+	// Deferred conn.Close() and ch.Close() will execute!
 }
 
 func consume(ch *amqp.Channel, qName string) {

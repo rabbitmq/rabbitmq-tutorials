@@ -5,6 +5,8 @@ import (
 	"errors"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 
 	rmq "github.com/rabbitmq/rabbitmq-amqp-go-client/pkg/rabbitmqamqp"
 )
@@ -12,7 +14,10 @@ import (
 const brokerURI = "amqp://guest:guest@localhost:5672/"
 
 func main() {
-	ctx := context.Background()
+	// Create a context that will be canceled on SIGINT (Ctrl+C) or SIGTERM.
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer cancel()
+
 	env := rmq.NewEnvironment(brokerURI, nil)
 	conn, err := env.NewConnection(ctx)
 	if err != nil {
@@ -62,6 +67,7 @@ func main() {
 		delivery, err := consumer.Receive(ctx)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
+				log.Printf("Shutting down gracefully...")
 				return
 			}
 			log.Panicf("Failed to receive a message: %v", err)

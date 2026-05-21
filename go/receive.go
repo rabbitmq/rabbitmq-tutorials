@@ -2,6 +2,9 @@ package main
 
 import (
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -44,8 +47,6 @@ func main() {
 	)
 	failOnError(err, "Failed to register a consumer")
 
-	var forever chan struct{}
-
 	go func() {
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
@@ -53,5 +54,12 @@ func main() {
 	}()
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	// Create a channel to receive OS signals
+	c := make(chan os.Signal, 1)
+	// Notify the channel for SIGINT (CTRL+C) and SIGTERM
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	// Block until a signal is received
+	<-c
+	log.Printf("Shutting down gracefully...")
+	// Deferred conn.Close() and ch.Close() will execute!
 }
