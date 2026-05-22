@@ -190,8 +190,6 @@ func handlePublisherConfirmsAsynchronously(parentCtx context.Context, conn *amqp
 	}()
 
 	start := time.Now()
-	// seqNo starts tracking delivery tags on the channel
-	var seqNo uint64 = 1
 
 	for i := 0; i < MessageCount; i++ {
 		// Explicitly check if context is canceled
@@ -203,8 +201,7 @@ func handlePublisherConfirmsAsynchronously(parentCtx context.Context, conn *amqp
 			// Context is active, proceed
 		}
 		body := strconv.Itoa(i)
-		outstandingConfirms.Store(seqNo, body)
-		seqNo++
+		outstandingConfirms.Store(ch.GetNextPublishSeqNo(), body)
 
 		err = ch.PublishWithContext(ctx, "", q.Name, false, false, amqp.Publishing{
 			ContentType: "text/plain",
