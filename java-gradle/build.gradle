@@ -24,6 +24,6 @@ test {
 }
 
 application {
-    mainClassName = project.hasProperty("main") ?
+    mainClass = project.hasProperty("main") ?
             project.getProperty("main") : "NULL"
 }
