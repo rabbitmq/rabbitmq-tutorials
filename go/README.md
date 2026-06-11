@@ -45,6 +45,10 @@ Code examples are executed via `go run`:
     go run rpc_server.go
     go run rpc_client.go 10
 
+[Tutorial seven: Publisher Confirms](https://www.rabbitmq.com/tutorials/tutorial-seven-go.html)
+
+    go run publisher_confirms.go
+
 [AMQP 1.0 Direct Reply-To RPC](https://www.rabbitmq.com/docs/next/direct-reply-to)
 
     go run rpc_amqp10.go

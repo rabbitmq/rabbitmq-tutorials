@@ -15,6 +15,9 @@ import (
 
 const MessageCount = 50000
 
+// Per-wait confirmation timeout; must not be lower than the heartbeat timeout
+const confirmTimeout = 5 * time.Second
+
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Panicf("%s: %s", msg, err)
@@ -46,7 +49,8 @@ func main() {
 	handlePublisherConfirmsAsynchronously(ctx, conn)
 }
 
-// Handle publisher confirms individually (synchronous)
+// Handle publisher confirms individually (synchronous).
+// The slowest option, consider using other options instead.
 func handlePublisherConfirmsIndividually(parentCtx context.Context, conn *amqp.Connection) {
 	ch := openConfirmChannel(conn)
 	defer ch.Close()
@@ -54,101 +58,100 @@ func handlePublisherConfirmsIndividually(parentCtx context.Context, conn *amqp.C
 	q, err := ch.QueueDeclare("", false, false, true, false, nil)
 	failOnError(err, "Failed to declare a queue")
 
-	confirmDeferred := ch.NotifyPublish(make(chan amqp.Confirmation, 1))
-
-	ctx, cancel := context.WithTimeout(parentCtx, 60*time.Second)
-	defer cancel()
-
 	start := time.Now()
 	for i := 0; i < MessageCount; i++ {
 		body := strconv.Itoa(i)
-		err = ch.PublishWithContext(ctx, "", q.Name, false, false, amqp.Publishing{
-			ContentType: "text/plain",
+		confirm, err := ch.PublishWithDeferredConfirmWithContext(parentCtx, "", q.Name, false, false, amqp.Publishing{
+			ContentType: amqp.MimeTextPlain,
 			Body:        []byte(body),
 		})
-		failOnError(err, "Failed to publish a message")
+		if err != nil {
+			if parentCtx.Err() != nil {
+				log.Printf("Failed to publish message: %v", parentCtx.Err())
+				return // Exit gracefully on Ctrl+C
+			}
+			failOnError(err, "Failed to publish a message")
+		}
 
 		// Wait for confirmation
-		select {
-		case confirm := <-confirmDeferred:
-			if !confirm.Ack {
-				log.Printf("Message %d was nacked by the broker", confirm.DeliveryTag)
-			}
-		case <-ctx.Done():
-			log.Printf("Timeout waiting for confirmation: %v", ctx.Err())
+		ctx, cancel := context.WithTimeout(parentCtx, confirmTimeout)
+		acked, err := confirm.WaitContext(ctx)
+		cancel()
+		if err != nil {
+			log.Printf("Confirmation wait failed: %v", err)
 			return
+		}
+		if !acked {
+			log.Printf("Message %d was nacked by the broker", confirm.DeliveryTag)
 		}
 	}
 
-	duration := time.Since(start)
-	log.Printf("Published %d messages and handled confirms individually in %v\n", MessageCount, duration)
+	log.Printf("Published %d messages and handled confirms individually in %v", MessageCount, time.Since(start))
 }
 
-// Handle publisher confirms in batches (synchronous)
+// Handle publisher confirms in batches (synchronous).
+// Each `DeferredConfirmation` identifies the exact message nacked.
 func handlePublisherConfirmsInBatches(parentCtx context.Context, conn *amqp.Connection) {
 	ch := openConfirmChannel(conn)
 	defer ch.Close()
 
-	batchSize := 100
+	const batchSize = 100
 
 	q, err := ch.QueueDeclare("", false, false, true, false, nil)
 	failOnError(err, "Failed to declare a queue")
 
-	confirmDeferred := ch.NotifyPublish(make(chan amqp.Confirmation, batchSize))
+	waitForBatch := func(confirms []*amqp.DeferredConfirmation) bool {
+		ctx, cancel := context.WithTimeout(parentCtx, confirmTimeout)
+		defer cancel()
+		for _, confirm := range confirms {
+			acked, err := confirm.WaitContext(ctx)
+			if err != nil {
+				log.Printf("Batch confirmation wait failed: %v", err)
+				return false
+			}
+			if !acked {
+				log.Printf("Message %d in batch was nacked", confirm.DeliveryTag)
+			}
+		}
+		return true
+	}
 
-	ctx, cancel := context.WithTimeout(parentCtx, 10*time.Second)
-	defer cancel()
-
-	outstandingMessageCount := 0
+	confirms := make([]*amqp.DeferredConfirmation, 0, batchSize)
 	start := time.Now()
 
 	for i := 0; i < MessageCount; i++ {
 		body := strconv.Itoa(i)
-		err = ch.PublishWithContext(ctx, "", q.Name, false, false, amqp.Publishing{
-			ContentType: "text/plain",
+		confirm, err := ch.PublishWithDeferredConfirmWithContext(parentCtx, "", q.Name, false, false, amqp.Publishing{
+			ContentType: amqp.MimeTextPlain,
 			Body:        []byte(body),
 		})
-		failOnError(err, "Failed to publish a message")
-
-		outstandingMessageCount++
-
-		if outstandingMessageCount == batchSize {
-			// Wait for all confirms for this batch
-			for j := 0; j < batchSize; j++ {
-				select {
-				case confirm := <-confirmDeferred:
-					if !confirm.Ack {
-						log.Printf("Message %d in batch was nacked", confirm.DeliveryTag)
-					}
-				case <-ctx.Done():
-					log.Printf("Timeout waiting for batch confirmation: %v", ctx.Err())
-					return
-				}
+		if err != nil {
+			if parentCtx.Err() != nil {
+				log.Printf("Failed to publish message: %v", parentCtx.Err())
+				return // Exit gracefully on Ctrl+C
 			}
-			outstandingMessageCount = 0
+			failOnError(err, "Failed to publish a message")
+		}
+
+		confirms = append(confirms, confirm)
+		if len(confirms) == batchSize {
+			// Wait for all confirms for this batch
+			if !waitForBatch(confirms) {
+				return
+			}
+			confirms = confirms[:0]
 		}
 	}
 
 	// Wait for remaining confirms left over in the final uneven batch
-	if outstandingMessageCount > 0 {
-		for j := 0; j < outstandingMessageCount; j++ {
-			select {
-			case confirm := <-confirmDeferred:
-				if !confirm.Ack {
-					log.Printf("Message %d in batch was nacked", confirm.DeliveryTag)
-				}
-			case <-ctx.Done():
-				log.Printf("Timeout waiting for remaining batch confirmation: %v", ctx.Err())
-				return
-			}
-		}
+	if len(confirms) > 0 && !waitForBatch(confirms) {
+		return
 	}
 
-	duration := time.Since(start)
-	log.Printf("Published %d messages and handled confirms in batches in %v\n", MessageCount, duration)
+	log.Printf("Published %d messages and handled confirms in batches in %v", MessageCount, time.Since(start))
 }
 
-// Handle publisher confirms asynchronously
+// Handle publisher confirms asynchronously: use this option when possible.
 func handlePublisherConfirmsAsynchronously(parentCtx context.Context, conn *amqp.Connection) {
 	ch := openConfirmChannel(conn)
 	defer ch.Close()
@@ -156,34 +159,28 @@ func handlePublisherConfirmsAsynchronously(parentCtx context.Context, conn *amqp
 	q, err := ch.QueueDeclare("", false, false, true, false, nil)
 	failOnError(err, "Failed to declare a queue")
 
-	confirmDeferred := ch.NotifyPublish(make(chan amqp.Confirmation, MessageCount))
+	// A small buffer suffices: the goroutine below drains it continuously
+	confirms := ch.NotifyPublish(make(chan amqp.Confirmation, 100))
 
 	var outstandingConfirms sync.Map
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	ctx, cancel := context.WithTimeout(parentCtx, 10*time.Second)
-	defer cancel()
-
 	// Goroutine responsible for listening to incoming confirms asynchronously
 	go func() {
 		defer wg.Done()
-		confirmedCount := 0
-		for {
+		// The library expands multiple-acks into one Confirmation per message
+		for confirmed := 0; confirmed < MessageCount; confirmed++ {
 			select {
-			case confirm := <-confirmDeferred:
+			case confirm := <-confirms:
 				// Clean up map when confirms received
-				if body, exists := outstandingConfirms.LoadAndDelete(confirm.DeliveryTag); exists {
-					if !confirm.Ack {
-						log.Printf("Message with body %s has been nack-ed. Delivery tag: %d", body, confirm.DeliveryTag)
-					}
+				if body, ok := outstandingConfirms.LoadAndDelete(confirm.DeliveryTag); ok && !confirm.Ack {
+					log.Printf("Message with body %s was nacked. Delivery tag: %d", body, confirm.DeliveryTag)
 				}
-				confirmedCount++
-				if confirmedCount == MessageCount {
-					return
-				}
-			case <-ctx.Done():
-				log.Printf("Timeout waiting for asynchronous confirmation: %v", ctx.Err())
+			case <-time.After(confirmTimeout):
+				log.Printf("No confirmation received within %v, giving up", confirmTimeout)
+				return
+			case <-parentCtx.Done():
 				return
 			}
 		}
@@ -192,27 +189,25 @@ func handlePublisherConfirmsAsynchronously(parentCtx context.Context, conn *amqp
 	start := time.Now()
 
 	for i := 0; i < MessageCount; i++ {
-		// Explicitly check if context is canceled
-		select {
-		case <-ctx.Done():
-			wg.Wait() // Wait for the listener goroutine to exit
-			return
-		default:
-			// Context is active, proceed
-		}
 		body := strconv.Itoa(i)
+		// Correct only while a single goroutine publishes on this channel
 		outstandingConfirms.Store(ch.GetNextPublishSeqNo(), body)
 
-		err = ch.PublishWithContext(ctx, "", q.Name, false, false, amqp.Publishing{
-			ContentType: "text/plain",
+		err := ch.PublishWithContext(parentCtx, "", q.Name, false, false, amqp.Publishing{
+			ContentType: amqp.MimeTextPlain,
 			Body:        []byte(body),
 		})
-		failOnError(err, "Failed to publish a message")
+		if err != nil {
+			if parentCtx.Err() != nil {
+				log.Printf("Failed to publish message: %v", parentCtx.Err())
+				return // Exit gracefully on Ctrl+C
+			}
+			log.Printf("Failed to publish: %v", err)
+			break
+		}
 	}
 
 	// Wait for the async goroutine listener to finish processing all confirmations
 	wg.Wait()
-
-	duration := time.Since(start)
-	log.Printf("Published %d messages and handled confirms asynchronously in %v\n", MessageCount, duration)
+	log.Printf("Published %d messages and handled confirms asynchronously in %v", MessageCount, time.Since(start))
 }
