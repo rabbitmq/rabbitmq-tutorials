@@ -65,7 +65,13 @@ func handlePublisherConfirmsIndividually(parentCtx context.Context, conn *amqp.C
 			ContentType: amqp.MimeTextPlain,
 			Body:        []byte(body),
 		})
-		failOnError(err, "Failed to publish a message")
+		if err != nil {
+			if parentCtx.Err() != nil {
+				log.Printf("Failed to publish message: %v", parentCtx.Err())
+				return // Exit gracefully on Ctrl+C
+			}
+			failOnError(err, "Failed to publish a message")
+		}
 
 		// Wait for confirmation
 		ctx, cancel := context.WithTimeout(parentCtx, confirmTimeout)
@@ -119,7 +125,13 @@ func handlePublisherConfirmsInBatches(parentCtx context.Context, conn *amqp.Conn
 			ContentType: amqp.MimeTextPlain,
 			Body:        []byte(body),
 		})
-		failOnError(err, "Failed to publish a message")
+		if err != nil {
+			if parentCtx.Err() != nil {
+				log.Printf("Failed to publish message: %v", parentCtx.Err())
+				return // Exit gracefully on Ctrl+C
+			}
+			failOnError(err, "Failed to publish a message")
+		}
 
 		confirms = append(confirms, confirm)
 		if len(confirms) == batchSize {
@@ -186,6 +198,10 @@ func handlePublisherConfirmsAsynchronously(parentCtx context.Context, conn *amqp
 			Body:        []byte(body),
 		})
 		if err != nil {
+			if parentCtx.Err() != nil {
+				log.Printf("Failed to publish message: %v", parentCtx.Err())
+				return // Exit gracefully on Ctrl+C
+			}
 			log.Printf("Failed to publish: %v", err)
 			break
 		}
