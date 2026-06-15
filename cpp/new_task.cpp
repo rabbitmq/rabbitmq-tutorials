@@ -1,40 +1,76 @@
-#include <string.h>
+// Tutorial 2: Work Queues, task publisher
+//
+// Publishes a task (the words passed on the command line) to the `task_queue`
+// queue. Messages are persistent by default in rmqcpp, so a durable queue keeps
+// them across a broker restart.
+
+#include <rmqa_producer.h>
+#include <rmqa_rabbitcontext.h>
+#include <rmqa_topology.h>
+#include <rmqa_vhost.h>
+#include <rmqp_producer.h>
+#include <rmqt_confirmresponse.h>
+#include <rmqt_fieldvalue.h>
+#include <rmqt_message.h>
+#include <rmqt_plaincredentials.h>
+#include <rmqt_result.h>
+#include <rmqt_simpleendpoint.h>
+
+#include <bsl_memory.h>
+#include <bsl_string.h>
+#include <bsl_vector.h>
+
 #include <iostream>
-#include <sstream>
-#include <iterator>
+#include <string>
 
-#include <amqp.h>
-#include <amqp_tcp_socket.h>
+using namespace BloombergLP;
 
-int main(int argc, char const *const *argv)
+int main(int argc, char** argv)
 {
-  amqp_connection_state_t conn = amqp_new_connection();
-  amqp_socket_t *socket = amqp_tcp_socket_new(conn);
-  amqp_socket_open(socket, "localhost", AMQP_PROTOCOL_PORT);
-  amqp_login(conn, "/", 0, AMQP_DEFAULT_FRAME_SIZE, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest");
-  const amqp_channel_t KChannel = 1;
-  amqp_channel_open(conn, KChannel);
+    rmqa::RabbitContext rabbit;
 
-  amqp_bytes_t queueName(amqp_cstring_bytes("task_queue"));
-  amqp_queue_declare(conn, KChannel, queueName, false, /*durable*/ true, false, true, amqp_empty_table);
+    bsl::shared_ptr<rmqa::VHost> vhost = rabbit.createVHostConnection(
+        "tutorial-two publisher",
+        bsl::make_shared<rmqt::SimpleEndpoint>("localhost", "/"),
+        bsl::make_shared<rmqt::PlainCredentials>("guest", "guest"));
 
-  std::string message("Hello World!");
-  if (argc > 1)
-  {
-    std::stringstream s;
-    copy(&argv[1], &argv[argc], std::ostream_iterator<const char*>(s, " "));
-    message = s.str();
-  }
+    rmqa::Topology topology;
+    rmqt::FieldTable quorum;
+    quorum["x-queue-type"] = rmqt::FieldValue(bsl::string("quorum"));
+    topology.addQueue(
+        "task_queue", rmqt::AutoDelete::OFF, rmqt::Durable::ON, quorum);
 
-  amqp_basic_properties_t props;
-  props._flags = AMQP_BASIC_DELIVERY_MODE_FLAG;
-  props.delivery_mode = AMQP_DELIVERY_PERSISTENT;
+    rmqt::Result<rmqa::Producer> publisherResult = vhost->createProducer(
+        topology, topology.defaultExchange(), /* maxOutstandingConfirms */ 1);
+    if (!publisherResult) {
+        std::cerr << "Failed to create publisher: " << publisherResult.error()
+                  << "\n";
+        return 1;
+    }
+    auto publisher = publisherResult.value();
 
-  amqp_basic_publish(conn, KChannel, amqp_empty_bytes, /* routing key*/ queueName, false, false, &props, amqp_cstring_bytes(message.c_str()));
-  std::cout << " [x] Sent " << message << std::endl;
+    std::string text = "Hello World!";
+    if (argc > 1) {
+        text.clear();
+        for (int i = 1; i < argc; ++i) {
+            if (i > 1) {
+                text += ' ';
+            }
+            text += argv[i];
+        }
+    }
 
-  amqp_channel_close(conn, KChannel, AMQP_REPLY_SUCCESS);
-  amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
-  amqp_destroy_connection(conn);
-  return 0;
+    rmqt::Message message(
+        bsl::make_shared<bsl::vector<uint8_t> >(text.begin(), text.end()));
+
+    publisher->send(
+        message,
+        "task_queue",
+        [](const rmqt::Message&,
+           const bsl::string&,
+           const rmqt::ConfirmResponse&) {});
+    std::cout << " [x] Sent " << text << std::endl;
+
+    publisher->waitForConfirms();
+    return 0;
 }

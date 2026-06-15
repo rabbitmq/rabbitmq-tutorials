@@ -1,0 +1,14 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+    "name": "rabbitmq-tutorials-cpp",
+    "version": "1.0.0",
+    "description": "Dependencies needed to build rmqcpp from the vendored submodule",
+    "dependencies": [
+        "boost-asio",
+        "openssl",
+        "bde",
+        "pcre2",
+        "zstd",
+        "gtest"
+    ]
+}

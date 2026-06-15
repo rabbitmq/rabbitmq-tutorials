@@ -1,62 +1,126 @@
-#include <string.h>
+// Tutorial 6: Remote Procedure Call, server
+//
+// Consumes fib(n) requests from the `rpc_queue` queue and publishes each result
+// back to the queue named in the request's reply-to property, echoing the
+// correlation id so the client can match the reply to its request.
+
+#include <rmqa_consumer.h>
+#include <rmqa_producer.h>
+#include <rmqa_rabbitcontext.h>
+#include <rmqa_topology.h>
+#include <rmqa_vhost.h>
+#include <rmqp_messageguard.h>
+#include <rmqp_producer.h>
+#include <rmqt_confirmresponse.h>
+#include <rmqt_consumerconfig.h>
+#include <rmqt_fieldvalue.h>
+#include <rmqt_message.h>
+#include <rmqt_plaincredentials.h>
+#include <rmqt_properties.h>
+#include <rmqt_result.h>
+#include <rmqt_simpleendpoint.h>
+
+#include <bslmt_semaphore.h>
+
+#include <bsl_memory.h>
+#include <bsl_string.h>
+#include <bsl_vector.h>
+
 #include <iostream>
+#include <string>
 
-#include <amqp.h>
-#include <amqp_tcp_socket.h>
+using namespace BloombergLP;
 
-int fib(int n)
+namespace {
+
+long long fib(int n)
 {
-  if (n == 0)
-    return 0;
-  else if (n == 1)
-    return 1;
-  else
-    return fib(n-1) + fib(n-2);
+    if (n < 2) {
+        return n;
+    }
+    return fib(n - 1) + fib(n - 2);
 }
 
-int main(int argc, char const *const *argv)
+} // namespace
+
+int main()
 {
-  amqp_connection_state_t conn = amqp_new_connection();
-  amqp_socket_t *socket = amqp_tcp_socket_new(conn);
-  amqp_socket_open(socket, "localhost", AMQP_PROTOCOL_PORT);
-  amqp_login(conn, "/", 0, AMQP_DEFAULT_FRAME_SIZE, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest");
-  const amqp_channel_t KChannel = 1;
-  amqp_channel_open(conn, KChannel);
+    rmqa::RabbitContext rabbit;
 
-  amqp_bytes_t queueName(amqp_cstring_bytes("rpc_queue"));
-  amqp_queue_declare(conn, KChannel, queueName, false, false, false, false, amqp_empty_table);
+    bsl::shared_ptr<rmqa::VHost> vhost = rabbit.createVHostConnection(
+        "tutorial-six rpc server",
+        bsl::make_shared<rmqt::SimpleEndpoint>("localhost", "/"),
+        bsl::make_shared<rmqt::PlainCredentials>("guest", "guest"));
 
-  amqp_basic_qos(conn, KChannel, 0, /*prefetch_count*/1, 0);
-  amqp_basic_consume(conn, KChannel, queueName, amqp_empty_bytes, false, /* auto ack*/false, false, amqp_empty_table);
-  std::cout << " [x] Awaiting RPC requests" << std::endl;
+    rmqa::Topology topology;
+    rmqt::FieldTable quorum;
+    quorum["x-queue-type"] = rmqt::FieldValue(bsl::string("quorum"));
+    rmqt::QueueHandle rpcQueue = topology.addQueue(
+        "rpc_queue", rmqt::AutoDelete::OFF, rmqt::Durable::ON, quorum);
 
-  for (;;)
-  {
-    amqp_maybe_release_buffers(conn);
-    amqp_envelope_t envelope;
-    amqp_rpc_reply_t res = amqp_consume_message(conn, &envelope, nullptr, 0);
+    // Replies are published through the default exchange, routed by the
+    // reply-to queue name each client provides.
+    rmqt::Result<rmqa::Producer> publisherResult = vhost->createProducer(
+        topology, topology.defaultExchange(), /* maxOutstandingConfirms */ 10);
+    if (!publisherResult) {
+        std::cerr << "Failed to create publisher: " << publisherResult.error()
+                  << "\n";
+        return 1;
+    }
+    auto publisher = publisherResult.value();
 
-    int n = *(int *)envelope.message.body.bytes;
-    std::cout << " [.] fib(" <<  n << ")" << std::endl;
-    int response = fib(n);
-    amqp_bytes_t response_;
-    response_.bytes = &response;
-    response_.len = sizeof(response);
+    rmqt::Result<rmqa::Consumer> consumerResult = vhost->createConsumer(
+        topology,
+        rpcQueue,
+        [publisher](rmqp::MessageGuard& guard) {
+            const rmqt::Message& request = guard.message();
+            const rmqt::Properties& props = request.properties();
 
-    amqp_basic_properties_t props;
-    props._flags = AMQP_BASIC_CORRELATION_ID_FLAG;
-    props.correlation_id = envelope.message.properties.correlation_id;
+            if (props.replyTo.isNull()) {
+                guard.ack();
+                return;
+            }
 
-    amqp_channel_t replyChannel = envelope.channel;
-    amqp_basic_publish(conn, replyChannel, amqp_empty_bytes, /* routing key*/ envelope.message.properties.reply_to, false, false, &props, response_);
-    amqp_basic_ack(conn, replyChannel, envelope.delivery_tag, false);
-    
-    amqp_destroy_envelope(&envelope);
-  }
+            std::string body(reinterpret_cast<const char*>(request.payload()),
+                             request.payloadSize());
+            int n = 0;
+            try {
+                n = std::stoi(body);
+            }
+            catch (const std::exception&) {
+                // An unhandled exception in this callback would terminate the
+                // server, so reject requests that aren't an integer.
+                std::cerr << " [!] Ignoring unparseable request" << std::endl;
+                guard.nack(/* requeue */ false);
+                return;
+            }
+            std::cout << " [.] fib(" << n << ")" << std::endl;
 
-  amqp_channel_close(conn, KChannel, AMQP_REPLY_SUCCESS);
-  amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
-  amqp_destroy_connection(conn);
+            const std::string answer = std::to_string(fib(n));
+            rmqt::Message reply(bsl::make_shared<bsl::vector<uint8_t> >(
+                answer.begin(), answer.end()));
+            reply.properties().correlationId = props.correlationId;
 
-  return 0;
+            publisher->send(
+                reply,
+                props.replyTo.value(),
+                [](const rmqt::Message&,
+                   const bsl::string&,
+                   const rmqt::ConfirmResponse&) {});
+            guard.ack();
+        },
+        rmqt::ConsumerConfig()
+            .setConsumerTag("tutorial-six rpc server")
+            .setPrefetchCount(1));
+    if (!consumerResult) {
+        std::cerr << "Failed to create consumer: " << consumerResult.error()
+                  << "\n";
+        return 1;
+    }
+
+    std::cout << " [x] Awaiting RPC requests" << std::endl;
+
+    bslmt::Semaphore stop;
+    stop.wait();
+    return 0;
 }

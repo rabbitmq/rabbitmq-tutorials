@@ -1,40 +1,34 @@
-set(CMAKE_CXX_STANDARD 11)
+cmake_minimum_required(VERSION 3.25)
+project(rabbitmq-tutorials-cpp LANGUAGES CXX)
 
-add_executable(send send.cpp)
-target_link_libraries(send rabbitmq)
+# rmqcpp is built against C++17 (the standard its BDE dependency targets), so
+# the tutorials use the same standard.
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(receive receive.cpp)
-target_link_libraries(receive rabbitmq)
+# rmqcpp is vendored as a git submodule pinned to a fixed upstream commit (see
+# README.md). bal/bsl come from the BDE distribution rmqcpp is built on and are
+# resolved through the vcpkg toolchain.
+find_package(bal REQUIRED)
+add_subdirectory(rmqcpp)
 
-add_executable(new_task new_task.cpp)
-target_link_libraries(new_task rabbitmq)
+set(tutorials
+    send
+    receive
+    new_task
+    worker
+    emit_log
+    receive_logs
+    emit_log_direct
+    receive_logs_direct
+    emit_log_topic
+    receive_logs_topic
+    rpc_server
+    rpc_client
+    publisher_confirms)
 
-add_executable(worker worker.cpp)
-target_link_libraries(worker rabbitmq)
-
-add_executable(emit_log emit_log.cpp)
-target_link_libraries(emit_log rabbitmq)
-
-add_executable(receive_logs receive_logs.cpp)
-target_link_libraries(receive_logs rabbitmq)
-
-add_executable(emit_log_direct emit_log_direct.cpp)
-target_link_libraries(emit_log_direct rabbitmq)
-
-add_executable(receive_logs_direct receive_logs_direct.cpp)
-target_link_libraries(receive_logs_direct rabbitmq)
-
-add_executable(emit_log_topic emit_log_topic.cpp)
-target_link_libraries(emit_log_topic rabbitmq)
-
-add_executable(receive_logs_topic receive_logs_topic.cpp)
-target_link_libraries(receive_logs_topic rabbitmq)
-
-add_executable(rpc_server rpc_server.cpp)
-target_link_libraries(rpc_server rabbitmq)
-
-add_executable(rpc_client rpc_client.cpp)
-target_link_libraries(rpc_client rabbitmq)
-
-add_executable(publisher_confirms publisher_confirms.cpp)
-target_link_libraries(publisher_confirms rabbitmq)
+foreach(tutorial ${tutorials})
+    add_executable(${tutorial} ${tutorial}.cpp)
+    target_link_libraries(${tutorial} PRIVATE rmq bal)
+endforeach()

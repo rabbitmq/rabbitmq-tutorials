@@ -1,41 +1,68 @@
+// Tutorial 1: "Hello World!" consumer
+//
+// Consumes messages from the `hello` queue and prints them.
+
+#include <rmqa_consumer.h>
+#include <rmqa_rabbitcontext.h>
+#include <rmqa_topology.h>
+#include <rmqa_vhost.h>
+#include <rmqp_messageguard.h>
+#include <rmqt_consumerconfig.h>
+#include <rmqt_fieldvalue.h>
+#include <rmqt_message.h>
+#include <rmqt_plaincredentials.h>
+#include <rmqt_result.h>
+#include <rmqt_simpleendpoint.h>
+
+#include <bslmt_semaphore.h>
+
+#include <bsl_memory.h>
+#include <bsl_string.h>
+
 #include <iostream>
-#include <string.h>
+#include <string>
 
-#include <amqp.h>
-#include <amqp_tcp_socket.h>
+using namespace BloombergLP;
 
-
-int main(int argc, char const *const *argv)
+int main()
 {
+    rmqa::RabbitContext rabbit;
 
-  amqp_connection_state_t conn = amqp_new_connection();
+    bsl::shared_ptr<rmqa::VHost> vhost = rabbit.createVHostConnection(
+        "tutorial-one consumer",
+        bsl::make_shared<rmqt::SimpleEndpoint>("localhost", "/"),
+        bsl::make_shared<rmqt::PlainCredentials>("guest", "guest"));
 
-  amqp_socket_t *socket = amqp_tcp_socket_new(conn);
+    rmqa::Topology topology;
+    rmqt::FieldTable quorum;
+    quorum["x-queue-type"] = rmqt::FieldValue(bsl::string("quorum"));
+    rmqt::QueueHandle queue =
+        topology.addQueue("hello", rmqt::AutoDelete::OFF, rmqt::Durable::ON, quorum);
 
-  amqp_socket_open(socket, "localhost", AMQP_PROTOCOL_PORT);
+    // Each delivery is passed to this callback on a background thread. rmqcpp
+    // does not auto-acknowledge: acking only once the message is handled means
+    // an interrupted consumer leaves the message on the queue for redelivery.
+    rmqt::Result<rmqa::Consumer> consumerResult = vhost->createConsumer(
+        topology,
+        queue,
+        [](rmqp::MessageGuard& guard) {
+            const rmqt::Message& message = guard.message();
+            std::string body(reinterpret_cast<const char*>(message.payload()),
+                             message.payloadSize());
+            std::cout << " [x] Received " << body << std::endl;
+            guard.ack();
+        },
+        rmqt::ConsumerConfig().setConsumerTag("tutorial-one consumer"));
+    if (!consumerResult) {
+        std::cerr << "Failed to create consumer: " << consumerResult.error()
+                  << "\n";
+        return 1;
+    }
 
-  amqp_login(conn, "/", 0, AMQP_DEFAULT_FRAME_SIZE, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest");
-  const amqp_channel_t KChannel = 1;
-  amqp_channel_open(conn, KChannel);
+    std::cout << " [*] Waiting for messages. To exit press CTRL+C" << std::endl;
 
-  amqp_bytes_t queueName(amqp_cstring_bytes("hello"));
-  amqp_queue_declare(conn, KChannel, queueName, false, false, false, false, amqp_empty_table);
-
-  amqp_basic_consume(conn, KChannel, queueName, amqp_empty_bytes, false, /* auto ack*/true, false, amqp_empty_table);
-
-  for (;;)
-  {
-    amqp_maybe_release_buffers(conn);
-    amqp_envelope_t envelope;
-    amqp_consume_message(conn, &envelope, nullptr, 0);
-
-    std::cout << " [x] Received " << std::string((char *)envelope.message.body.bytes,(int)envelope.message.body.len) << std::endl;
-    amqp_destroy_envelope(&envelope);
-  }
-
-  amqp_channel_close(conn, KChannel, AMQP_REPLY_SUCCESS);
-  amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
-  amqp_destroy_connection(conn);
-
-  return 0;
+    // The consumer runs on background threads, so park the main thread here.
+    bslmt::Semaphore stop;
+    stop.wait();
+    return 0;
 }

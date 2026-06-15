@@ -1,89 +1,157 @@
-#include <string.h>
+// Tutorial 6: Remote Procedure Call, client
+//
+// Sends a fib(n) request to the `rpc_queue` queue and waits for the answer on a
+// private reply queue. Replies arrive on a background thread, so `call` bridges
+// the result back with a promise/future, matched to the request by correlation
+// id.
+
+#include <rmqa_consumer.h>
+#include <rmqa_producer.h>
+#include <rmqa_rabbitcontext.h>
+#include <rmqa_topology.h>
+#include <rmqa_vhost.h>
+#include <rmqp_messageguard.h>
+#include <rmqp_producer.h>
+#include <rmqt_confirmresponse.h>
+#include <rmqt_consumerconfig.h>
+#include <rmqt_fieldvalue.h>
+#include <rmqt_message.h>
+#include <rmqt_plaincredentials.h>
+#include <rmqt_properties.h>
+#include <rmqt_result.h>
+#include <rmqt_simpleendpoint.h>
+
+#include <bsl_memory.h>
+#include <bsl_string.h>
+#include <bsl_vector.h>
+
+#include <future>
 #include <iostream>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
+#include <string>
 
-#include <amqp.h>
-#include <amqp_tcp_socket.h>
+using namespace BloombergLP;
 
-class FibonacciRpcClient
-{
-public:
-  FibonacciRpcClient()
-  {
-    m_conn = amqp_new_connection();
-    amqp_socket_t *socket = amqp_tcp_socket_new(m_conn);
-    amqp_socket_open(socket, "localhost", AMQP_PROTOCOL_PORT);
-    amqp_login(m_conn, "/", 0, AMQP_DEFAULT_FRAME_SIZE, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest");
-
-    amqp_channel_open(m_conn, KChannel);
-
-    amqp_queue_declare_ok_t *r = amqp_queue_declare(m_conn, KChannel, amqp_empty_bytes, false, false, false, /*auto delete*/true, amqp_empty_table);
-    m_callbackQueue = amqp_bytes_malloc_dup(r->queue);
-  }
-
-  int call(int n)
-  {
-    m_corr_id = std::to_string(++m_requestCount);
-
-    amqp_basic_properties_t props;
-    props._flags = AMQP_BASIC_CORRELATION_ID_FLAG | AMQP_BASIC_REPLY_TO_FLAG;
-    props.correlation_id = amqp_cstring_bytes(m_corr_id.c_str());
-    props.reply_to = m_callbackQueue;
-
-    amqp_bytes_t n_;
-    n_.bytes = &n;
-    n_.len = sizeof(n);
-    amqp_basic_publish(m_conn, KChannel, amqp_empty_bytes, /* routing key*/ amqp_cstring_bytes("rpc_queue"), false, false, &props, n_);
-
-    amqp_basic_consume(m_conn, KChannel, m_callbackQueue, amqp_empty_bytes, false, /* auto ack*/ true, false, amqp_empty_table);
-
-    int response = 0;
-    bool keepProcessing = true;
-    while (keepProcessing)
+class FibonacciRpcClient {
+  public:
+    explicit FibonacciRpcClient(const bsl::shared_ptr<rmqa::VHost>& vhost)
+    : d_replyQueueName("rpc.reply." + rmqt::ConsumerConfig::generateConsumerTag())
     {
-      amqp_maybe_release_buffers(m_conn);
-      amqp_envelope_t envelope;
-      amqp_consume_message(m_conn, &envelope, nullptr, 0);
+        rmqt::FieldTable quorum;
+        quorum["x-queue-type"] = rmqt::FieldValue(bsl::string("quorum"));
+        d_topology.addQueue(
+            "rpc_queue", rmqt::AutoDelete::OFF, rmqt::Durable::ON, quorum);
 
-      std::string correlation_id((char *)envelope.message.properties.correlation_id.bytes, (int)envelope.message.properties.correlation_id.len);
-      if (correlation_id == m_corr_id)
-      {
-        response = *(int *)envelope.message.body.bytes;
-        keepProcessing = false;
-      }
+        // A private reply queue, auto-deleted once this client exits. Declared
+        // durable because RabbitMQ no longer permits transient, non-exclusive
+        // queues.
+        rmqt::QueueHandle replyQueue = d_topology.addQueue(
+            d_replyQueueName, rmqt::AutoDelete::ON, rmqt::Durable::ON);
 
-      amqp_destroy_envelope(&envelope);
+        rmqt::Result<rmqa::Producer> publisherResult = vhost->createProducer(
+            d_topology, d_topology.defaultExchange(), /* maxOutstandingConfirms */ 1);
+        if (!publisherResult) {
+            throw std::runtime_error("Failed to create publisher: " +
+                                     std::string(publisherResult.error()));
+        }
+        d_publisher = publisherResult.value();
+
+        rmqt::Result<rmqa::Consumer> consumerResult = vhost->createConsumer(
+            d_topology,
+            replyQueue,
+            [this](rmqp::MessageGuard& guard) { onReply(guard); },
+            rmqt::ConsumerConfig().setConsumerTag(d_replyQueueName));
+        if (!consumerResult) {
+            throw std::runtime_error("Failed to create consumer: " +
+                                     std::string(consumerResult.error()));
+        }
+        d_consumer = consumerResult.value();
     }
 
-    return response;
-  }
+    long long call(int n)
+    {
+        auto promise = std::make_shared<std::promise<long long> >();
+        std::future<long long> future = promise->get_future();
 
-  ~FibonacciRpcClient()
-  {
-    amqp_bytes_free(m_callbackQueue);
-    amqp_channel_close(m_conn, KChannel, AMQP_REPLY_SUCCESS);
-    amqp_connection_close(m_conn, AMQP_REPLY_SUCCESS);
-    amqp_destroy_connection(m_conn);
-  }
+        const bsl::string correlationId = bsl::to_string(++d_requestCount);
+        {
+            std::lock_guard<std::mutex> guard(d_mutex);
+            d_correlationId = correlationId;
+            d_pending       = promise;
+        }
 
-private:
-  amqp_connection_state_t m_conn;
-  const amqp_channel_t KChannel = 1;
-  amqp_bytes_t m_callbackQueue;
-  std::string m_corr_id;
-  int m_requestCount = 0;
+        const std::string payload = std::to_string(n);
+        rmqt::Message request(
+            bsl::make_shared<bsl::vector<uint8_t> >(payload.begin(), payload.end()));
+        request.properties().correlationId = correlationId;
+        request.properties().replyTo       = d_replyQueueName;
+
+        d_publisher->send(
+            request,
+            "rpc_queue",
+            [](const rmqt::Message&,
+               const bsl::string&,
+               const rmqt::ConfirmResponse&) {});
+
+        return future.get();
+    }
+
+  private:
+    void onReply(rmqp::MessageGuard& guard)
+    {
+        const rmqt::Message& message = guard.message();
+        const bsl::string correlationId =
+            message.properties().correlationId.value_or(bsl::string());
+
+        std::shared_ptr<std::promise<long long> > pending;
+        {
+            std::lock_guard<std::mutex> g(d_mutex);
+            if (d_pending && correlationId == d_correlationId) {
+                pending = d_pending;
+                d_pending.reset();
+            }
+        }
+
+        if (pending) {
+            std::string body(reinterpret_cast<const char*>(message.payload()),
+                             message.payloadSize());
+            pending->set_value(std::stoll(body));
+        }
+        guard.ack();
+    }
+
+    bsl::string d_replyQueueName;
+    rmqa::Topology d_topology;
+    int d_requestCount = 0;
+    std::mutex d_mutex;
+    bsl::string d_correlationId;
+    std::shared_ptr<std::promise<long long> > d_pending;
+    bsl::shared_ptr<rmqa::Producer> d_publisher;
+    // Declared last so the consumer stops before the members its callback uses.
+    bsl::shared_ptr<rmqa::Consumer> d_consumer;
 };
 
-int main(int argc, char const *const *argv)
+int main(int argc, char** argv)
 {
-  int n = 30;
-  if (argc > 1)
-  {
-    n = std::stoi(argv[1]);
-  }
+    const int n = argc > 1 ? std::stoi(argv[1]) : 30;
 
-  FibonacciRpcClient fibonacciRpcClient;
-  std::cout << " [x] Requesting fib(" << n << ")" << std::endl;
-  int response = fibonacciRpcClient.call(n);
-  std::cout << " [.] Got " << response << std::endl;
-  return 0;
+    rmqa::RabbitContext rabbit;
+    bsl::shared_ptr<rmqa::VHost> vhost = rabbit.createVHostConnection(
+        "tutorial-six rpc client",
+        bsl::make_shared<rmqt::SimpleEndpoint>("localhost", "/"),
+        bsl::make_shared<rmqt::PlainCredentials>("guest", "guest"));
+
+    try {
+        FibonacciRpcClient client(vhost);
+        std::cout << " [x] Requesting fib(" << n << ")" << std::endl;
+        const long long response = client.call(n);
+        std::cout << " [.] Got " << response << std::endl;
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << "\n";
+        return 1;
+    }
+    return 0;
 }

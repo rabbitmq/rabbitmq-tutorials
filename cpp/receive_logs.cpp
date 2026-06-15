@@ -1,52 +1,77 @@
-  #include <iostream>
-#include <string.h>
-#include <algorithm>
-#include <thread>
-#include <chrono>
+// Tutorial 3: Publish/Subscribe, log subscriber
+//
+// Subscribes to the `logs` fanout exchange through a private, temporary queue
+// and prints every message it receives.
 
-#include <amqp.h>
-#include <amqp_tcp_socket.h>
+#include <rmqa_consumer.h>
+#include <rmqa_rabbitcontext.h>
+#include <rmqa_topology.h>
+#include <rmqa_vhost.h>
+#include <rmqp_messageguard.h>
+#include <rmqt_consumerconfig.h>
+#include <rmqt_exchangetype.h>
+#include <rmqt_message.h>
+#include <rmqt_plaincredentials.h>
+#include <rmqt_result.h>
+#include <rmqt_simpleendpoint.h>
 
+#include <bslmt_semaphore.h>
 
-int main(int argc, char const *const *argv)
+#include <bsl_memory.h>
+#include <bsl_string.h>
+
+#include <iostream>
+#include <string>
+
+using namespace BloombergLP;
+
+int main()
 {
+    rmqa::RabbitContext rabbit;
 
-  amqp_connection_state_t conn = amqp_new_connection();
-  amqp_socket_t *socket = amqp_tcp_socket_new(conn);
-  amqp_socket_open(socket, "localhost", AMQP_PROTOCOL_PORT);
+    bsl::shared_ptr<rmqa::VHost> vhost = rabbit.createVHostConnection(
+        "tutorial-three subscriber",
+        bsl::make_shared<rmqt::SimpleEndpoint>("localhost", "/"),
+        bsl::make_shared<rmqt::PlainCredentials>("guest", "guest"));
 
-  amqp_login(conn, "/", 0, AMQP_DEFAULT_FRAME_SIZE, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest");
-  const amqp_channel_t KChannel = 1;
-  amqp_channel_open(conn, KChannel);
+    rmqa::Topology topology;
+    // Transient exchange, matching the convention used by the other tutorials.
+    rmqt::ExchangeHandle logs = topology.addExchange(
+        "logs",
+        rmqt::ExchangeType::FANOUT,
+        rmqt::AutoDelete::OFF,
+        rmqt::Durable::OFF);
 
-  amqp_bytes_t exchangeName(amqp_cstring_bytes("logs"));
-  amqp_exchange_declare(conn, KChannel, exchangeName, amqp_cstring_bytes("fanout"), 
-                        false, false, false, false, amqp_empty_table);
+    // A fresh, uniquely named queue, auto-deleted when this subscriber
+    // disconnects, so each subscriber gets its own private copy of the logs.
+    // Declared durable because RabbitMQ no longer permits transient,
+    // non-exclusive queues.
+    rmqt::QueueHandle queue = topology.addQueue(
+        rmqt::ConsumerConfig::generateConsumerTag(),
+        rmqt::AutoDelete::ON,
+        rmqt::Durable::ON);
+    topology.bind(logs, queue, "");
 
-  amqp_queue_declare_ok_t *r = amqp_queue_declare(conn, KChannel, amqp_empty_bytes, false, false, true, false, amqp_empty_table);
-  amqp_bytes_t queueName = amqp_bytes_malloc_dup(r->queue);
+    rmqt::Result<rmqa::Consumer> consumerResult = vhost->createConsumer(
+        topology,
+        queue,
+        [](rmqp::MessageGuard& guard) {
+            const rmqt::Message& message = guard.message();
+            std::string body(reinterpret_cast<const char*>(message.payload()),
+                             message.payloadSize());
+            std::cout << " [x] " << body << std::endl;
+            guard.ack();
+        },
+        rmqt::ConsumerConfig().setConsumerTag("tutorial-three subscriber"));
+    if (!consumerResult) {
+        std::cerr << "Failed to create consumer: " << consumerResult.error()
+                  << "\n";
+        return 1;
+    }
 
-  amqp_queue_bind(conn, KChannel, queueName, exchangeName, amqp_empty_bytes, amqp_empty_table);
+    std::cout << " [*] Waiting for logs. To exit press CTRL+C" << std::endl;
 
-  std::cout << "[*] Waiting for logs. To exit press CTRL+C'" << std::endl;
-  amqp_basic_consume(conn, KChannel, queueName, amqp_empty_bytes, false, /* auto ack*/true, false, amqp_empty_table);
-
-  for (;;)
-  {
-    amqp_maybe_release_buffers(conn);
-    amqp_envelope_t envelope;
-    amqp_consume_message(conn, &envelope, nullptr, 0);
-
-    std::string message((char *)envelope.message.body.bytes,(int)envelope.message.body.len);
-    std::cout << " [x] Received " <<  message << std::endl;
-
-    amqp_destroy_envelope(&envelope);
-  }
-
-  amqp_bytes_free(queueName);
-  amqp_channel_close(conn, KChannel, AMQP_REPLY_SUCCESS);
-  amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
-  amqp_destroy_connection(conn);
-
-  return 0;
+    bslmt::Semaphore stop;
+    stop.wait();
+    return 0;
 }

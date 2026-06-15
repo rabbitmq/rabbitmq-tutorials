@@ -1,60 +1,85 @@
+// Tutorial 5: Topics, log subscriber
+//
+// Subscribes to the `topic_logs` topic exchange, binding a private queue for
+// each binding pattern passed on the command line, e.g. `kern.*` or `*.critical`.
+
+#include <rmqa_consumer.h>
+#include <rmqa_rabbitcontext.h>
+#include <rmqa_topology.h>
+#include <rmqa_vhost.h>
+#include <rmqp_messageguard.h>
+#include <rmqt_consumerconfig.h>
+#include <rmqt_envelope.h>
+#include <rmqt_exchangetype.h>
+#include <rmqt_message.h>
+#include <rmqt_plaincredentials.h>
+#include <rmqt_result.h>
+#include <rmqt_simpleendpoint.h>
+
+#include <bslmt_semaphore.h>
+
+#include <bsl_memory.h>
+#include <bsl_string.h>
+
 #include <iostream>
-#include <string.h>
-#include <algorithm>
-#include <thread>
-#include <chrono>
+#include <string>
 
-#include <amqp.h>
-#include <amqp_tcp_socket.h>
+using namespace BloombergLP;
 
-int main(int argc, char const *const *argv)
+int main(int argc, char** argv)
 {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " [binding_key]...\n";
+        return 1;
+    }
 
-  amqp_connection_state_t conn = amqp_new_connection();
-  amqp_socket_t *socket = amqp_tcp_socket_new(conn);
-  amqp_socket_open(socket, "localhost", AMQP_PROTOCOL_PORT);
+    rmqa::RabbitContext rabbit;
 
-  amqp_login(conn, "/", 0, AMQP_DEFAULT_FRAME_SIZE, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest");
-  const amqp_channel_t KChannel = 1;
-  amqp_channel_open(conn, KChannel);
+    bsl::shared_ptr<rmqa::VHost> vhost = rabbit.createVHostConnection(
+        "tutorial-five subscriber",
+        bsl::make_shared<rmqt::SimpleEndpoint>("localhost", "/"),
+        bsl::make_shared<rmqt::PlainCredentials>("guest", "guest"));
 
-  amqp_bytes_t exchangeName(amqp_cstring_bytes("topic_logs"));
-  amqp_exchange_declare(conn, KChannel, exchangeName, amqp_cstring_bytes("topic"),
-                        false, false, false, false, amqp_empty_table);
+    rmqa::Topology topology;
+    // Transient exchange, matching the convention used by the other tutorials.
+    rmqt::ExchangeHandle topicLogs = topology.addExchange(
+        "topic_logs",
+        rmqt::ExchangeType::TOPIC,
+        rmqt::AutoDelete::OFF,
+        rmqt::Durable::OFF);
 
-  amqp_queue_declare_ok_t *r = amqp_queue_declare(conn, KChannel, amqp_empty_bytes, false, false, /*exclusive*/ true, false, amqp_empty_table);
-  amqp_bytes_t queueName = amqp_bytes_malloc_dup(r->queue);
+    // Private, auto-deleted queue with a unique name. Declared durable because
+    // RabbitMQ no longer permits transient, non-exclusive queues.
+    rmqt::QueueHandle queue = topology.addQueue(
+        rmqt::ConsumerConfig::generateConsumerTag(),
+        rmqt::AutoDelete::ON,
+        rmqt::Durable::ON);
 
-  if (argc > 1)
-  {
-    for (int i = 1; i < argc; ++i)
-      amqp_queue_bind(conn, KChannel, queueName, exchangeName, amqp_cstring_bytes(argv[i]), amqp_empty_table);
-  }
-  else
-  {
-    std::cout << "Usage: " << argv[0] << " [binding_key] ..." << std::endl;
-    return 1;
-  }
+    for (int i = 1; i < argc; ++i) {
+        topology.bind(topicLogs, queue, argv[i]);
+    }
 
-  std::cout << "[*] Waiting for logs. To exit press CTRL+C'" << std::endl;
-  amqp_basic_consume(conn, KChannel, queueName, amqp_empty_bytes, false, /* auto ack*/ true, false, amqp_empty_table);
+    rmqt::Result<rmqa::Consumer> consumerResult = vhost->createConsumer(
+        topology,
+        queue,
+        [](rmqp::MessageGuard& guard) {
+            const rmqt::Message& message = guard.message();
+            std::string body(reinterpret_cast<const char*>(message.payload()),
+                             message.payloadSize());
+            std::cout << " [x] " << guard.envelope().routingKey() << ":" << body
+                      << std::endl;
+            guard.ack();
+        },
+        rmqt::ConsumerConfig().setConsumerTag("tutorial-five subscriber"));
+    if (!consumerResult) {
+        std::cerr << "Failed to create consumer: " << consumerResult.error()
+                  << "\n";
+        return 1;
+    }
 
-  for (;;)
-  {
-    amqp_maybe_release_buffers(conn);
-    amqp_envelope_t envelope;
-    amqp_consume_message(conn, &envelope, nullptr, 0);
+    std::cout << " [*] Waiting for logs. To exit press CTRL+C" << std::endl;
 
-    std::string message((char *)envelope.message.body.bytes, (int)envelope.message.body.len);
-    std::cout << " [x] Received " << std::string((char*)envelope.routing_key.bytes, (int)envelope.routing_key.len) << ":" << message << std::endl;
-
-    amqp_destroy_envelope(&envelope);
-  }
-
-  amqp_bytes_free(queueName);
-  amqp_channel_close(conn, KChannel, AMQP_REPLY_SUCCESS);
-  amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
-  amqp_destroy_connection(conn);
-
-  return 0;
+    bslmt::Semaphore stop;
+    stop.wait();
+    return 0;
 }

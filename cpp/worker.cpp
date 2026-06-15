@@ -1,49 +1,79 @@
-#include <iostream>
-#include <string.h>
+// Tutorial 2: Work Queues, worker
+//
+// Consumes tasks from the `task_queue` queue and simulates work by sleeping one
+// second per dot in the message body.
+
+#include <rmqa_consumer.h>
+#include <rmqa_rabbitcontext.h>
+#include <rmqa_topology.h>
+#include <rmqa_vhost.h>
+#include <rmqp_messageguard.h>
+#include <rmqt_consumerconfig.h>
+#include <rmqt_fieldvalue.h>
+#include <rmqt_message.h>
+#include <rmqt_plaincredentials.h>
+#include <rmqt_result.h>
+#include <rmqt_simpleendpoint.h>
+
+#include <bslmt_semaphore.h>
+
+#include <bsl_memory.h>
+#include <bsl_string.h>
+
 #include <algorithm>
-#include <thread>
 #include <chrono>
+#include <iostream>
+#include <string>
+#include <thread>
 
-#include <amqp.h>
-#include <amqp_tcp_socket.h>
+using namespace BloombergLP;
 
-
-int main(int argc, char const *const *argv)
+int main()
 {
+    rmqa::RabbitContext rabbit;
 
-  amqp_connection_state_t conn = amqp_new_connection();
-  amqp_socket_t *socket = amqp_tcp_socket_new(conn);
-  amqp_socket_open(socket, "localhost", AMQP_PROTOCOL_PORT);
+    bsl::shared_ptr<rmqa::VHost> vhost = rabbit.createVHostConnection(
+        "tutorial-two worker",
+        bsl::make_shared<rmqt::SimpleEndpoint>("localhost", "/"),
+        bsl::make_shared<rmqt::PlainCredentials>("guest", "guest"));
 
-  amqp_login(conn, "/", 0, AMQP_DEFAULT_FRAME_SIZE, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest");
-  const amqp_channel_t KChannel = 1;
-  amqp_channel_open(conn, KChannel);
+    rmqa::Topology topology;
+    rmqt::FieldTable quorum;
+    quorum["x-queue-type"] = rmqt::FieldValue(bsl::string("quorum"));
+    rmqt::QueueHandle queue = topology.addQueue(
+        "task_queue", rmqt::AutoDelete::OFF, rmqt::Durable::ON, quorum);
 
-  amqp_bytes_t queueName(amqp_cstring_bytes("task_queue"));
-  amqp_queue_declare(conn, KChannel, queueName, false, /*durable*/ true, false, true, amqp_empty_table);
+    // A prefetch count of 1 spreads work fairly: the broker won't hand a worker
+    // a new task until the previous one has been acknowledged.
+    rmqt::Result<rmqa::Consumer> consumerResult = vhost->createConsumer(
+        topology,
+        queue,
+        [](rmqp::MessageGuard& guard) {
+            const rmqt::Message& message = guard.message();
+            std::string body(reinterpret_cast<const char*>(message.payload()),
+                             message.payloadSize());
+            std::cout << " [x] Received " << body << std::endl;
 
-  amqp_basic_qos(conn, KChannel, 0, /*prefetch_count*/1, 0);
-  amqp_basic_consume(conn, KChannel, queueName, amqp_empty_bytes, false, /* auto ack*/false, false, amqp_empty_table);
+            const long seconds = std::count(body.begin(), body.end(), '.');
+            std::this_thread::sleep_for(std::chrono::seconds(seconds));
 
-  for (;;)
-  {
-    amqp_maybe_release_buffers(conn);
-    amqp_envelope_t envelope;
-    amqp_consume_message(conn, &envelope, nullptr, 0);
+            std::cout << " [x] Done" << std::endl;
+            // Ack after the work is finished, so an interrupted task is
+            // redelivered to another worker rather than lost.
+            guard.ack();
+        },
+        rmqt::ConsumerConfig()
+            .setConsumerTag("tutorial-two worker")
+            .setPrefetchCount(1));
+    if (!consumerResult) {
+        std::cerr << "Failed to create consumer: " << consumerResult.error()
+                  << "\n";
+        return 1;
+    }
 
-    std::string message((char *)envelope.message.body.bytes,(int)envelope.message.body.len);
-    std::cout << " [x] Received " <<  message << std::endl;
-    const int seconds = std::count(std::begin(message), std::end(message), '.');
-    std::this_thread::sleep_for(std::chrono::seconds(seconds));
-    std::cout << " [x] Done" << std::endl;
+    std::cout << " [*] Waiting for messages. To exit press CTRL+C" << std::endl;
 
-    amqp_basic_ack(conn, KChannel, envelope.delivery_tag, false);
-    amqp_destroy_envelope(&envelope);
-  }
-
-  amqp_channel_close(conn, KChannel, AMQP_REPLY_SUCCESS);
-  amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
-  amqp_destroy_connection(conn);
-
-  return 0;
+    bslmt::Semaphore stop;
+    stop.wait();
+    return 0;
 }

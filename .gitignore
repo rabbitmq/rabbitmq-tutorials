@@ -18,6 +18,8 @@ ruby*/gems/
 venv/*
 ruby*/rubygems*
 
+cpp/build/
+
 elixir-stream/deps
 elixir-stream/_build
 elixir-stream/.elixir_ls
