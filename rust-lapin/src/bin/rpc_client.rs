@@ -3,7 +3,6 @@ use lapin::{
     options::*, types::FieldTable, types::ShortString, BasicProperties, Channel, Connection,
     ConnectionProperties, Consumer, Queue,
 };
-use std::convert::TryInto;
 use std::fmt::Display;
 use uuid::Uuid;
 
@@ -72,12 +71,15 @@ impl FibonacciRpcClient {
     }
 
     async fn call(&mut self, n: u64) -> Result<u64, Box<dyn std::error::Error>> {
+        // The request and reply carry the number as UTF-8 text, matching the
+        // other language tutorials.
+        let body = n.to_string();
         self.channel
             .basic_publish(
                 "",
                 "rpc_queue",
                 BasicPublishOptions::default(),
-                &*n.to_le_bytes().to_vec(),
+                body.as_bytes(),
                 BasicProperties::default()
                     .with_reply_to(self.callback_queue.name().clone())
                     .with_correlation_id(self.correlation_id.clone()),
@@ -88,13 +90,11 @@ impl FibonacciRpcClient {
         while let Some(delivery) = self.consumer.next().await {
             if let Ok(delivery) = delivery {
                 if delivery.properties.correlation_id().as_ref() == Some(&self.correlation_id) {
-                    return Ok(u64::from_le_bytes(
-                        delivery
-                            .data
-                            .as_slice()
-                            .try_into()
-                            .map_err(|_| Error::CannotDecodeReply)?,
-                    ));
+                    return Ok(std::str::from_utf8(&delivery.data)
+                        .map_err(|_| Error::CannotDecodeReply)?
+                        .trim()
+                        .parse()
+                        .map_err(|_| Error::CannotDecodeReply)?);
                 }
             }
         }

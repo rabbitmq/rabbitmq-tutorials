@@ -1,4 +1,3 @@
-use std::convert::TryInto;
 use std::fmt::Display;
 use futures::StreamExt;
 use lapin::{BasicProperties, Connection, ConnectionProperties, options::*, types::{AMQPValue, FieldTable}};
@@ -63,16 +62,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     while let Some(delivery) = consumer.next().await {
         if let Ok(delivery) = delivery {
             println!(" [x] Received {:?}", std::str::from_utf8(&delivery.data)?);
-            let n = u64::from_le_bytes(
-                delivery
-                    .data
-                    .as_slice()
-                    .try_into()
-                    .map_err(|_| Error::CannotDecodeArg)?,
-            );
+            // The number is sent as UTF-8 text, matching the other tutorials.
+            let n: u64 = std::str::from_utf8(&delivery.data)
+                .map_err(|_| Error::CannotDecodeArg)?
+                .trim()
+                .parse()
+                .map_err(|_| Error::CannotDecodeArg)?;
             println!(" [.] fib({})", n);
             let response = fib(n);
-            let payload = response.to_le_bytes();
+            let payload = response.to_string();
 
             let routing_key = delivery
                 .properties
@@ -92,7 +90,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "",
                     routing_key,
                     BasicPublishOptions::default(),
-                    &payload,
+                    payload.as_bytes(),
                     BasicProperties::default().with_correlation_id(correlation_id),
                 )
                 .await?;
