@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.rabbitmq:amqp-client:5.33.0'
+    implementation 'com.rabbitmq:amqp-client:5.33.1'
     implementation 'org.slf4j:slf4j-simple:2.0.18'
     testImplementation 'org.assertj:assertj-core:3.27.7'
     testImplementation 'org.mockito:mockito-core:5.23.0'
