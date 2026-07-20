@@ -33,9 +33,14 @@ class ServerCallback(val ch: Channel, val latch: CountDownLatch) extends Deliver
 
 object Fibonacci {
    def fib(n: Int): Int = {
-    if (n == 0) return 0
-    if (n == 1) return 1
-    fib(n - 1) + fib(n - 2)
+    var a = 0
+    var b = 1
+    for (_ <- 0 until n) {
+      val next = a + b
+      a = b
+      b = next
+    }
+    a
   }
 }
 

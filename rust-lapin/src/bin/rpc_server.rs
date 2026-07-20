@@ -22,11 +22,11 @@ impl Display for Error {
 }
 
 fn fib(n: u64) -> u64 {
-    if n < 2 {
-        n
-    } else {
-        fib(n - 1) + fib(n - 2)
+    let (mut a, mut b) = (0u64, 1u64);
+    for _ in 0..n {
+        (a, b) = (b, a + b);
     }
+    a
 }
 
 #[tokio::main]

@@ -5,13 +5,11 @@ using JSON
 
 
 function fib(n)
-    if n == 0
-        return 0
-    elseif n == 1
-        return 1
-    else
-        return fib(n - 1) + fib(n - 2)
+    a, b = 0, 1
+    for _ in 1:n
+        a, b = b, a + b
     end
+    return a
 end
 
 function receive()

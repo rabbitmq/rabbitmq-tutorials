@@ -12,13 +12,12 @@ $channel->queue_declare('rpc_queue', false, true, false, false, false, new AMQPT
 
 function fib($n)
 {
-    if ($n == 0) {
-        return 0;
+    $a = 0;
+    $b = 1;
+    for ($i = 0; $i < $n; $i++) {
+        [$a, $b] = [$b, $a + $b];
     }
-    if ($n == 1) {
-        return 1;
-    }
-    return fib($n-1) + fib($n-2);
+    return $a;
 }
 
 echo " [x] Awaiting RPC requests\n";

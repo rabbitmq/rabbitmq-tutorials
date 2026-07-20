@@ -35,10 +35,14 @@ namespace {
 
 long long fib(int n)
 {
-    if (n < 2) {
-        return n;
+    long long a = 0;
+    long long b = 1;
+    for (int i = 0; i < n; ++i) {
+        long long next = a + b;
+        a = b;
+        b = next;
     }
-    return fib(n - 1) + fib(n - 2);
+    return a;
 }
 
 } // namespace

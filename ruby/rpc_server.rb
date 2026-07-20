@@ -42,9 +42,9 @@ class FibonacciServer
   end
 
   def fibonacci(value)
-    return value if value.zero? || value == 1
-
-    fibonacci(value - 1) + fibonacci(value - 2)
+    a, b = 0, 1
+    value.times { a, b = b, a + b }
+    a
   end
 end
 

@@ -12,12 +12,11 @@ import (
 const brokerURI = "amqp://guest:guest@localhost:5672/"
 
 func fib(n int) int {
-	if n == 0 {
-		return 0
-	} else if n == 1 {
-		return 1
+	a, b := 0, 1
+	for i := 0; i < n; i++ {
+		a, b = b, a+b
 	}
-	return fib(n-1) + fib(n-2)
+	return a
 }
 
 func main() {

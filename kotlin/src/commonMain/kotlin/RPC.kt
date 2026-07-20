@@ -7,16 +7,17 @@ import kotlinx.coroutines.*
 import kotlin.uuid.Uuid
 
 /**
- * Fibonacci function - calculates Fibonacci number recursively.
- * Note: This is a simple recursive implementation for demonstration.
- * Not suitable for large numbers in production.
+ * Fibonacci function - calculates the nth Fibonacci number iteratively.
  */
 private fun fib(n: Int): Int {
-    return when {
-        n == 0 -> 0
-        n == 1 -> 1
-        else -> fib(n - 1) + fib(n - 2)
+    var a = 0
+    var b = 1
+    repeat(n) {
+        val next = a + b
+        a = b
+        b = next
     }
+    return a
 }
 
 /**

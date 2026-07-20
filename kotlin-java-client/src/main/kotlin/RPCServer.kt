@@ -8,8 +8,14 @@ class RPCServer {
         const val RPC_QUEUE_NAME = "rpc_queue"
 
         fun fib(n: Int): Int {
-            if (n == 0) return 0
-            return if (n == 1) 1 else fib(n - 1) + fib(n - 2)
+            var a = 0
+            var b = 1
+            repeat(n) {
+                val next = a + b
+                a = b
+                b = next
+            }
+            return a
         }
     }
 }

@@ -54,14 +54,15 @@ Console.WriteLine(" Press [enter] to exit.");
 Console.ReadLine();
 
 // Assumes only valid positive integer input.
-// Don't expect this one to work for big numbers,
-// and it's probably the slowest recursive implementation possible.
 static int Fib(int n)
 {
-    if (n is 0 or 1)
+    int a = 0;
+    int b = 1;
+
+    for (int i = 0; i < n; i++)
     {
-        return n;
+        (a, b) = (b, a + b);
     }
 
-    return Fib(n - 1) + Fib(n - 2);
+    return a;
 }

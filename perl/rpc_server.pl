@@ -21,13 +21,11 @@ $channel->declare_queue(queue => 'rpc_queue');
 
 sub fib {
     my $n = shift;
-    if ($n == 0) {
-        return 0;
-    } elsif ($n == 1) {
-        return 1;
-    } else {
-        return fib($n-1) + fib($n-2);
+    my ($a, $b) = (0, 1);
+    for (1..$n) {
+        ($a, $b) = ($b, $a + $b);
     }
+    return $a;
 }
 
 sub on_request {

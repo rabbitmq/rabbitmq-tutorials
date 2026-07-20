@@ -41,7 +41,7 @@ handleRequest ch m (msg, envelope) = do
     replyTo = fromJust $ msgReplyTo msg
 
 fib :: Int -> Int
-fib n
-    | n >= 2    = fib (n - 1) + fib (n - 2)
-    | n == 1    = 1
-    | otherwise = 0
+fib n = go n 0 1
+  where
+    go 0 a _ = a
+    go k a b = go (k - 1) b (a + b)

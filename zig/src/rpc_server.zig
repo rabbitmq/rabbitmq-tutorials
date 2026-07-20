@@ -2,8 +2,15 @@ const std = @import("std");
 const bunny = @import("bunny");
 
 fn fibonacci(n: u64) u64 {
-    if (n == 0 or n == 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
+    var a: u64 = 0;
+    var b: u64 = 1;
+    var i: u64 = 0;
+    while (i < n) : (i += 1) {
+        const next = a + b;
+        a = b;
+        b = next;
+    }
+    return a;
 }
 
 pub fn main(init: std.process.Init) !void {

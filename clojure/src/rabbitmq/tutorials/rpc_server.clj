@@ -9,12 +9,10 @@
 
 (defn fib
   [n]
-  (if (zero? n)
-    0
-    (if (= n 1)
-      1
-      (+ (fib (- n 1))
-         (fib (- n 2))))))
+  (loop [a 0 b 1 i n]
+    (if (zero? i)
+      a
+      (recur b (+ a b) (dec i)))))
 
 (defn handle-delivery
   "Handles message delivery"

@@ -6,9 +6,14 @@ public class RPCServer {
     private static final String RPC_QUEUE_NAME = "rpc_queue";
 
     private static int fib(int n) {
-        if (n == 0) return 0;
-        if (n == 1) return 1;
-        return fib(n - 1) + fib(n - 2);
+        int a = 0;
+        int b = 1;
+        for (int i = 0; i < n; i++) {
+            int next = a + b;
+            a = b;
+            b = next;
+        }
+        return a;
     }
 
     public static void main(String[] argv) throws Exception {
