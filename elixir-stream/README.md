@@ -4,7 +4,7 @@ Here you can find Elixir code examples from [RabbitMQ tutorials](https://www.rab
 
 ## Requirements
 
-These examples use the [`VictorGaiva/rabbitmq-stream`](https://github.com/VictorGaiva/rabbitmq-stream) client library.
+These examples use the [`rabbitmq-community/rabbitmq-stream-elixir-client`](https://github.com/rabbitmq-community/rabbitmq-stream-elixir-client) client library.
 
 The dependencies are installed during the exection of the examples using `Mix.install/1`
 
@@ -22,4 +22,14 @@ elixir publish.exs
 elixir consume.exs
 ```
 
-To learn more, see [`VictorGaiva/rabbitmq-stream`](https://github.com/VictorGaiva/rabbitmq-stream).
+Offset tracking tutorial:
+
+``` shell
+# run the publisher
+elixir offset_tracking_send.exs
+
+# run the consumer
+elixir offset_tracking_receive.exs
+```
+
+To learn more, see [`rabbitmq-community/rabbitmq-stream-elixir-client`](https://github.com/rabbitmq-community/rabbitmq-stream-elixir-client).
