@@ -1,13 +1,14 @@
-# Dotnet C# code for RabbitMQ tutorials
+# Dotnet and C# code for RabbitMQ tutorials
 
-Here you can find the C# code examples for [RabbitMQ
-tutorials](https://www.rabbitmq.com/tutorials) using .NET 8 and RabbitMQ.Client 7.2.x.
+This repository contains C# code examples based on the official
+[RabbitMQ tutorials](https://www.rabbitmq.com/tutorials),
+using .NET 8 and RabbitMQ.Client 7.2.x.
 
 You will also find a solution file for Visual Studio 2022.
 
-To successfully use the examples you will need a running RabbitMQ server.
+A running RabbitMQ server is required to execute these examples.
 
-You can easily set this up by [installing RabbitMQ](https://www.rabbitmq.com/docs/download).
+Follow the official [RabbitMQ installation guide](https://www.rabbitmq.com/docs/download) to set up your server.
 
 ## Requirements
 
