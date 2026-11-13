@@ -68,19 +68,32 @@ public class RpcClient : IAsyncDisposable
         var tcs = new TaskCompletionSource<string>(
                 TaskCreationOptions.RunContinuationsAsynchronously);
         _callbackMapper.TryAdd(correlationId, tcs);
+        // remove pending callbacks even if publishing fails
+        try
+        {
+            var messageBytes = Encoding.UTF8.GetBytes(message);
 
-        var messageBytes = Encoding.UTF8.GetBytes(message);
-        await _channel.BasicPublishAsync(exchange: string.Empty, routingKey: QUEUE_NAME,
-            mandatory: true, basicProperties: props, body: messageBytes);
+            await _channel.BasicPublishAsync(
+                exchange: string.Empty,
+                routingKey: QUEUE_NAME,
+                mandatory: true,
+                basicProperties: props,
+                body: messageBytes);
 
-        using CancellationTokenRegistration ctr =
-            cancellationToken.Register(() =>
-            {
-                _callbackMapper.TryRemove(correlationId, out _);
-                tcs.SetCanceled();
-            });
+            using CancellationTokenRegistration ctr =
+                cancellationToken.Register(() =>
+                {
+                    _callbackMapper.TryRemove(correlationId, out _);
+                    tcs.SetCanceled();
+                });
 
-        return await tcs.Task;
+            return await tcs.Task;
+        }
+        finally
+        {
+            _callbackMapper.TryRemove(correlationId, out _);
+        }
+
     }
 
     public async ValueTask DisposeAsync()
